@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>単語帳SRS — 準1級ボキャブラリー</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2B3A55">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+  :root{
+    --paper:#F7F3EC;
+    --ink:#24232A;
+    --navy:#2B3A55;
+    --navy-2:#3C4F73;
+    --coral:#E2654A;
+    --coral-dark:#C6512C;
+    --sage:#6F8F6B;
+    --gold:#D9A441;
+    --line:#E4DCC9;
+    --card:#FFFFFF;
+    --shadow: 0 2px 10px rgba(43,58,85,0.08), 0 1px 2px rgba(43,58,85,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:24px;
+  }
+  .wrap{max-width:520px;margin:0 auto;padding:0 16px;}
+  header.top{
+    background:var(--navy);
+    color:#fff;
+    padding:22px 16px 20px;
+    border-radius:0 0 22px 22px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+    position:relative;
+  }
+  header.top .reset-link{
+    position:absolute;top:20px;right:16px;
+    background:rgba(255,255,255,0.14);color:#fff;border:none;
+    font-size:11.5px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:inherit;
+  }
+  header.top .eyebrow{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:#B9C4DA;margin-bottom:4px;font-weight:600;
+  }
+  header.top h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:24px;margin:0;font-weight:700;letter-spacing:.01em;
+  }
+  header.top .sub{font-size:12.5px;color:#C9D2E4;margin-top:6px;line-height:1.5;}
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* ---- checkbox signature element ---- */
+  .box-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border:2px solid var(--navy);border-radius:4px;
+    flex-shrink:0;font-size:13px;color:transparent;
+  }
+  .box-icon.new{border-color:#C9BFA3;background:transparent;}
+  .box-icon.learning{border-color:var(--gold);background:rgba(217,164,65,0.18);}
+  .box-icon.mastered{border-color:var(--sage);background:var(--sage);color:#fff;}
+  .box-icon.locked{border-color:#D8D2C0;background:repeating-linear-gradient(45deg,#F0EBDD,#F0EBDD 3px,#E9E3D3 3px,#E9E3D3 6px);}
+  .dual-icons{display:flex;gap:8px;}
+  .di{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .di-label{font-size:9px;color:#8A8474;}
+
+  /* ---- stat cards ---- */
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+  .stat-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 14px;box-shadow:var(--shadow);
+  }
+  .stat-card .n{font-family:Georgia,serif;font-size:26px;font-weight:700;color:var(--navy);line-height:1;}
+  .stat-card .l{font-size:12px;color:#6B6558;margin-top:6px;}
+
+  .progress-bar{
+    height:8px;border-radius:6px;background:var(--line);overflow:hidden;margin:6px 0 18px;
+  }
+  .progress-bar > div{height:100%;background:var(--sage);border-radius:6px;transition:width .4s ease;}
+
+  .btn{
+    display:block;width:100%;text-align:center;padding:15px 18px;border-radius:14px;
+    border:none;font-size:15.5px;font-weight:700;cursor:pointer;
+    font-family:inherit;letter-spacing:.01em;
+  }
+  .btn-primary{background:var(--coral);color:#fff;box-shadow:0 4px 12px rgba(226,101,74,0.35);}
+  .btn-primary:active{background:var(--coral-dark);}
+  .btn-secondary{background:var(--card);color:var(--navy);border:1.5px solid var(--navy);}
+  .btn-ghost{background:transparent;color:#8A8474;font-weight:600;font-size:13px;padding:8px;}
+  .btn-row{display:flex;gap:10px;margin-top:10px;}
+  .btn-row .btn{flex:1;}
+
+  section.block{margin-bottom:20px;}
+  section.block h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8A8474;margin:0 0 10px;font-weight:700;}
+
+  /* ---- browse list ---- */
+  .search{
+    width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);
+    background:var(--card);font-size:15px;margin-bottom:12px;font-family:inherit;
+  }
+  .word-row{
+    display:flex;align-items:center;gap:10px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px;
+    cursor:pointer;
+  }
+  .word-row .wtext{flex:1;min-width:0;}
+  .word-row .en{font-family:Georgia,serif;font-weight:700;font-size:16px;color:var(--navy);}
+  .word-row .pos{font-size:10.5px;color:#fff;background:var(--navy-2);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+  .word-row .jp{font-size:13px;color:#5B5648;margin-top:2px;}
+  .word-detail{
+    display:none;margin-top:8px;padding-top:10px;border-top:1px dashed var(--line);
+  }
+  .word-detail.open{display:block;}
+  .word-detail .ex{font-size:14px;color:var(--ink);margin-bottom:4px;}
+  .word-detail .exja{font-size:12.5px;color:#8A8474;}
+  .speak-btn{
+    display:inline-flex;align-items:center;gap:4px;background:var(--navy);color:#fff;
+    border:none;border-radius:20px;padding:6px 12px;font-size:12.5px;margin-top:8px;cursor:pointer;
+  }
+
+  /* ---- study card ---- */
+  .card-area{margin-top:8px;}
+  .flash{
+    background:var(--card);border-radius:20px;box-shadow:var(--shadow);
+    border:1px solid var(--line);padding:34px 22px;text-align:center;min-height:260px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .flash .pos-tag{
+    font-size:11px;background:var(--navy);color:#fff;border-radius:8px;padding:2px 9px;
+    display:inline-block;margin-bottom:14px;letter-spacing:.04em;
+  }
+  .flash .word{font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--navy);word-break:break-word;}
+  .flash .meaning{font-size:20px;margin-top:14px;color:var(--coral-dark);font-weight:700;display:none;}
+  .flash .example{font-size:15px;margin-top:18px;color:var(--ink);line-height:1.6;display:none;}
+  .flash .exampleja{font-size:13px;margin-top:4px;color:#8A8474;display:none;}
+  .flash.revealed .meaning,.flash.revealed .example,.flash.revealed .exampleja{display:block;}
+  .speak-row{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+  .reveal-btn{margin-top:22px;}
+
+  .rate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px;}
+  .rate-btn{
+    padding:13px 4px;border-radius:12px;border:none;font-size:12.5px;font-weight:700;color:#fff;cursor:pointer;
+  }
+  .rate-again{background:#B8523A;}
+  .rate-hard{background:var(--gold);}
+  .rate-good{background:var(--sage);}
+  .rate-easy{background:var(--navy);}
+  .rate-btn .sub{display:block;font-weight:400;font-size:10px;opacity:.85;margin-top:2px;}
+
+  .queue-status{font-size:12.5px;color:#8A8474;text-align:center;margin-top:14px;}
+
+  .empty-state{
+    text-align:center;padding:50px 20px;color:#8A8474;
+  }
+  .empty-state .box-icon{width:40px;height:40px;font-size:24px;margin-bottom:14px;}
+
+  nav.tabbar{
+    position:fixed;bottom:0;left:0;right:0;background:var(--card);
+    border-top:1px solid var(--line);display:flex;padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+    box-shadow:0 -2px 10px rgba(43,58,85,0.06);
+  }
+  nav.tabbar button{
+    flex:1;background:none;border:none;font-family:inherit;font-size:11.5px;color:#8A8474;
+    padding:8px 2px 4px;cursor:pointer;font-weight:600;
+  }
+  nav.tabbar button.active{color:var(--coral-dark);}
+  nav.tabbar button .ic{display:block;font-size:19px;margin-bottom:2px;}
+  main{padding-bottom:140px;}
+  #screen-browse{padding-bottom:60px;}
+  #screen-home{padding-bottom:40px;}
+
+  .modal-bg{
+    display:none;position:fixed;inset:0;background:rgba(36,35,42,0.45);z-index:10;
+    align-items:flex-end;justify-content:center;
+  }
+  .modal-bg.open{display:flex;}
+  .modal{
+    background:var(--paper);width:100%;max-width:520px;border-radius:20px 20px 0 0;
+    padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <button class="reset-link" id="btn-reset">進捗をリセット</button>
+    <div class="eyebrow">Vocabulary SRS</div>
+    <h1>もっと！単語帳</h1>
+    <div class="sub">エビングハウスの忘却曲線（1→2→4→7→15→30→90日）に沿って復習します。</div>
+  </header>
+</div>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen active">
+
+    <section class="block">
+      <h2>読み（英語→日本語）</h2>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="n" id="r-due">0</div><div class="l">今日の復習</div></div>
+        <div class="stat-card"><div class="n" id="r-new">0</div><div class="l">未学習</div></div>
+        <div class="stat-card"><div class="n" id="r-mastered">0</div><div class="l">定着</div></div>
+        <div class="stat-card"><div class="n" id="r-total">0</div><div class="l">総単語数</div></div>
+      </div>
+      <div class="progress-bar"><div id="r-progress-fill" style="width:0%"></div></div>
+      <button class="btn btn-primary" id="btn-start-recognize">読んで覚える</button>
+    </section>
+
+    <section class="block">
+      <h2>書き（日本語→英語つづり）</h2>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="n" id="s-due">0</div><div class="l">今日の復習</div></div>
+        <div class="stat-card"><div class="n" id="s-new">0</div><div class="l">未学習</div></div>
+        <div class="stat-card"><div class="n" id="s-mastered">0</div><div class="l">定着</div></div>
+        <div class="stat-card"><div class="n" id="s-locked">0</div><div class="l">読み未習得</div></div>
+      </div>
+      <div class="progress-bar"><div id="s-progress-fill" style="width:0%"></div></div>
+      <div id="s-lock-note" style="font-size:12.5px;color:#8A8474;margin:-10px 0 10px;"></div>
+      <button class="btn btn-primary" id="btn-start-spell" style="background:var(--navy);">書いて覚える</button>
+    </section>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btn-goto-browse">単語一覧を見る</button>
+    </div>
+  </section>
+
+  <!-- STUDY -->
+  <section id="screen-study" class="screen">
+    <div id="study-body"></div>
+  </section>
+
+  <!-- BROWSE -->
+  <section id="screen-browse" class="screen">
+    <input class="search" id="search-input" placeholder="英単語・意味で検索…">
+    <div id="browse-list"></div>
+  </section>
+
+</main>
+
+<nav class="tabbar">
+  <button data-screen="home" class="tab-btn active"><span class="ic">🏠</span>ホーム</button>
+  <button data-screen="study" class="tab-btn"><span class="ic">📇</span>学習</button>
+  <button data-screen="browse" class="tab-btn"><span class="ic">🔍</span>一覧</button>
+</nav>
+
+<script>
+/* ============ 単語データ ============ */
+const WORDS = [
+{w:"avoidance",pos:"名",m:"回避",ex:"Avoidance of the topic made everyone suspicious.",exja:"その話題を避けたことで皆が怪しんだ。"},
+{w:"apply",pos:"動",m:"申し込む、適用する",ex:"You can apply for the scholarship online.",exja:"その奨学金にはオンラインで申し込める。"},
+{w:"collide",pos:"動",m:"衝突する",ex:"The two cars collided at the intersection.",exja:"二台の車が交差点で衝突した。"},
+{w:"collision",pos:"名",m:"衝突",ex:"The collision caused minor injuries.",exja:"衝突で軽傷者が出た。"},
+{w:"compensate",pos:"動",m:"補償する",ex:"The company compensated him for the loss.",exja:"会社は彼の損失を補償した。"},
+{w:"compensation",pos:"名",m:"補償",ex:"She received compensation for the damage.",exja:"彼女は損害への補償を受けた。"},
+{w:"complaint",pos:"名",m:"苦情",ex:"He filed a complaint about the noise.",exja:"彼は騒音について苦情を申し立てた。"},
+{w:"complain",pos:"動",m:"不満を言う",ex:"Stop complaining and start working.",exja:"文句を言うのをやめて働き始めなさい。"},
+{w:"complete",pos:"動/形",m:"完了する、完全な",ex:"Please complete the form by Friday.",exja:"金曜までにその用紙を記入してください。"},
+{w:"consequence",pos:"名",m:"結果",ex:"Every action has a consequence.",exja:"どんな行動にも結果が伴う。"},
+{w:"consequent",pos:"形",m:"結果として起こる",ex:"The flood and its consequent damage were severe.",exja:"洪水とその結果生じた被害は深刻だった。"},
+{w:"consistent",pos:"形",m:"一貫した",ex:"Try to be consistent with your schedule.",exja:"スケジュールに一貫性を持たせるようにしなさい。"},
+{w:"consistency",pos:"名",m:"一貫性",ex:"The report lacks consistency.",exja:"その報告書には一貫性が欠けている。"},
+{w:"depress",pos:"動",m:"落ち込ませる",ex:"Bad news can depress anyone.",exja:"悪い知らせは誰でも落ち込ませる。"},
+{w:"depression",pos:"名",m:"憂鬱、不景気",ex:"The country fell into depression.",exja:"その国は不景気に陥った。"},
+{w:"detain",pos:"動",m:"拘留する",ex:"Police detained the suspect overnight.",exja:"警察はその容疑者を一晩拘留した。"},
+{w:"detention",pos:"名",m:"拘留",ex:"He was held in detention for a week.",exja:"彼は一週間拘留された。"},
+{w:"emit",pos:"動",m:"排出する",ex:"Factories emit a lot of smoke.",exja:"工場は多くの煙を排出する。"},
+{w:"emission",pos:"名",m:"排出",ex:"The law limits carbon emission.",exja:"その法律は二酸化炭素の排出を制限する。"},
+{w:"exist",pos:"動",m:"存在する",ex:"Does life exist on other planets?",exja:"他の惑星に生命は存在するのか。"},
+{w:"existence",pos:"名",m:"存在",ex:"The company has been in existence for decades.",exja:"その会社は数十年存在し続けている。"},
+{w:"expose",pos:"動",m:"さらす、暴く",ex:"The report exposed the truth.",exja:"その報道が真実を暴いた。"},
+{w:"exposure",pos:"名",m:"露出",ex:"Long exposure to the sun is harmful.",exja:"長時間日光にさらされるのは有害だ。"},
+{w:"immigrate",pos:"動",m:"移住する",ex:"They immigrated to Canada last year.",exja:"彼らは昨年カナダに移住した。"},
+{w:"immigrant",pos:"名",m:"移民",ex:"Many immigrants work in this city.",exja:"多くの移民がこの街で働いている。"},
+{w:"regulate",pos:"動",m:"規制する",ex:"The government regulates food safety.",exja:"政府は食品安全を規制している。"},
+{w:"regulation",pos:"名",m:"規制",ex:"New regulations were introduced.",exja:"新しい規制が導入された。"},
+{w:"reside",pos:"動",m:"住む",ex:"She resides in a small village.",exja:"彼女は小さな村に住んでいる。"},
+{w:"residential",pos:"形",m:"住宅の",ex:"This is a quiet residential area.",exja:"ここは静かな住宅地だ。"},
+{w:"resident",pos:"名",m:"住民",ex:"Local residents opposed the plan.",exja:"地元住民はその計画に反対した。"},
+{w:"suspect",pos:"動",m:"疑いを持つ",ex:"Police suspect he is lying.",exja:"警察は彼が嘘をついていると疑っている。"},
+{w:"suspicion",pos:"名",m:"疑い",ex:"Her behavior raised suspicion.",exja:"彼女の行動は疑いを招いた。"},
+{w:"transport",pos:"動",m:"輸送する",ex:"Goods are transported by ship.",exja:"商品は船で輸送される。"},
+{w:"transportation",pos:"名",m:"輸送、交通機関",ex:"Public transportation is convenient here.",exja:"ここでは公共交通機関が便利だ。"},
+{w:"require",pos:"動",m:"要求する",ex:"The job requires experience.",exja:"その仕事は経験を要求する。"},
+{w:"requirement",pos:"名",m:"必要条件",ex:"Meeting the requirement takes time.",exja:"必要条件を満たすには時間がかかる。"},
+{w:"recede",pos:"動",m:"後退する",ex:"The flood water slowly receded.",exja:"洪水の水は徐々に引いた。"},
+{w:"recession",pos:"名",m:"不景気",ex:"The economy entered a recession.",exja:"経済は不景気に突入した。"},
+{w:"deforestation",pos:"名",m:"森林伐採",ex:"Deforestation harms wildlife.",exja:"森林伐採は野生生物に害を与える。"},
+{w:"disorder",pos:"名",m:"混乱、障害",ex:"The room was in complete disorder.",exja:"部屋は完全に混乱していた。"},
+{w:"coauthor",pos:"名",m:"共著者",ex:"She is the coauthor of this book.",exja:"彼女はこの本の共著者だ。"},
+{w:"inequality",pos:"名",m:"不平等",ex:"Income inequality is a serious issue.",exja:"所得の不平等は深刻な問題だ。"},
+{w:"precaution",pos:"名",m:"用心、予防",ex:"Take precautions against fire.",exja:"火災への予防措置を取りなさい。"},
+{w:"microscope",pos:"名",m:"顕微鏡",ex:"He examined the cell under a microscope.",exja:"彼は顕微鏡で細胞を調べた。"},
+{w:"telescope",pos:"名",m:"望遠鏡",ex:"We watched stars through a telescope.",exja:"望遠鏡で星を観察した。"},
+{w:"alimony",pos:"名",m:"離婚後の扶養料",ex:"He pays alimony every month.",exja:"彼は毎月扶養料を支払っている。"},
+{w:"anatomy",pos:"名",m:"解剖学",ex:"She studies human anatomy.",exja:"彼女は人体解剖学を学んでいる。"},
+{w:"anthropology",pos:"名",m:"人類学",ex:"He majored in anthropology.",exja:"彼は人類学を専攻した。"},
+{w:"bankruptcy",pos:"名",m:"倒産",ex:"The store filed for bankruptcy.",exja:"その店は倒産を申請した。"},
+{w:"debris",pos:"名",m:"破片",ex:"Debris covered the street after the storm.",exja:"嵐の後、道路は破片で覆われた。"},
+{w:"hydrogen",pos:"名",m:"水素",ex:"Hydrogen is the lightest element.",exja:"水素は最も軽い元素だ。"},
+{w:"infrastructure",pos:"名",m:"基盤、インフラ",ex:"The city needs better infrastructure.",exja:"この市はより良いインフラを必要としている。"},
+{w:"irrigation",pos:"名",m:"灌漑",ex:"Irrigation helps crops grow in dry areas.",exja:"灌漑は乾燥地で作物の成長を助ける。"},
+{w:"sanction",pos:"名",m:"制裁",ex:"The country faced economic sanctions.",exja:"その国は経済制裁を受けた。"},
+{w:"revenue",pos:"名",m:"収入、歳入",ex:"The company's revenue increased this year.",exja:"今年会社の収入は増加した。"},
+{w:"veterinarian",pos:"名",m:"獣医",ex:"The veterinarian examined my dog.",exja:"獣医が私の犬を診察した。"},
+{w:"bankrupt",pos:"形",m:"倒産した",ex:"The business went bankrupt last year.",exja:"その会社は昨年倒産した。"},
+{w:"beneficial",pos:"形",m:"有益な",ex:"Exercise is beneficial to health.",exja:"運動は健康に有益だ。"},
+{w:"decisive",pos:"形",m:"決定的な",ex:"She took decisive action.",exja:"彼女は決定的な行動を取った。"},
+{w:"flexible",pos:"形",m:"柔軟な",ex:"My work hours are flexible.",exja:"私の勤務時間は柔軟だ。"},
+{w:"neurological",pos:"形",m:"神経の",ex:"He has a neurological disorder.",exja:"彼は神経疾患を抱えている。"},
+{w:"reliable",pos:"形",m:"信頼できる",ex:"She is a reliable friend.",exja:"彼女は信頼できる友人だ。"},
+{w:"spacious",pos:"形",m:"広々とした",ex:"They live in a spacious apartment.",exja:"彼らは広々とした部屋に住んでいる。"},
+{w:"vigorous",pos:"形",m:"活発な",ex:"He does vigorous exercise every morning.",exja:"彼は毎朝活発な運動をする。"},
+{w:"clinical",pos:"形",m:"臨床の",ex:"The drug passed clinical trials.",exja:"その薬は臨床試験に合格した。"},
+{w:"deceitful",pos:"形",m:"嘘つきの",ex:"He is known for deceitful behavior.",exja:"彼は嘘つきな行動で知られている。"},
+{w:"disabled",pos:"形",m:"障がいを持った",ex:"The building has access for disabled people.",exja:"その建物には障がい者用の入口がある。"},
+{w:"extraordinary",pos:"形",m:"並外れた",ex:"She has extraordinary talent.",exja:"彼女は並外れた才能を持つ。"},
+{w:"illegal",pos:"形",m:"違法の",ex:"Parking here is illegal.",exja:"ここに駐車するのは違法だ。"},
+{w:"indispensable",pos:"形",m:"不可欠な",ex:"Water is indispensable to life.",exja:"水は生命に不可欠だ。"},
+{w:"threatened",pos:"形",m:"危機に瀕した",ex:"The species is now threatened.",exja:"その種は今や絶滅の危機にある。"},
+{w:"unexpected",pos:"形",m:"予期せぬ",ex:"We had an unexpected visitor.",exja:"予期せぬ来客があった。"},
+{w:"formidable task",pos:"熟",m:"手強い課題",ex:"Learning a new language is a formidable task.",exja:"新しい言語を学ぶことは手強い課題だ。"},
+{w:"moderate income",pos:"熟",m:"適度な収入",ex:"They live comfortably on a moderate income.",exja:"彼らは適度な収入で快適に暮らしている。"},
+{w:"preliminary survey",pos:"熟",m:"予備的な調査",ex:"The preliminary survey results look promising.",exja:"予備調査の結果は有望に見える。"},
+{w:"unanimous vote",pos:"熟",m:"満場一致の投票",ex:"The board reached a unanimous vote.",exja:"役員会は満場一致の投票に至った。"},
+{w:"approximately",pos:"副",m:"おおよそ",ex:"It takes approximately two hours.",exja:"それにはおおよそ2時間かかる。"},
+{w:"definitely",pos:"副",m:"確かに",ex:"I will definitely call you back.",exja:"必ず折り返し電話します。"},
+{w:"desperately",pos:"副",m:"必死に",ex:"He desperately needed help.",exja:"彼は必死に助けを必要としていた。"},
+{w:"genuinely",pos:"副",m:"真に",ex:"She is genuinely happy for you.",exja:"彼女はあなたのことを心から喜んでいる。"},
+{w:"intuitively",pos:"副",m:"直感的に",ex:"The app is intuitively designed.",exja:"そのアプリは直感的に設計されている。"},
+{w:"profoundly",pos:"副",m:"深く",ex:"The book profoundly changed my view.",exja:"その本は私の考えを深く変えた。"},
+{w:"boost",pos:"動",m:"押し上げる",ex:"The sale boosted the company's morale.",exja:"そのセールは会社の士気を押し上げた。"},
+{w:"consume",pos:"動",m:"消費する",ex:"We consume too much energy at night.",exja:"私たちは夜にエネルギーを消費しすぎる。"},
+{w:"generate",pos:"動",m:"生み出す",ex:"Wind turbines generate power.",exja:"風力タービンは電力を生み出す。"},
+{w:"implement",pos:"動",m:"実行する",ex:"The company will implement the new plan.",exja:"会社は新しい計画を実行するだろう。"},
+{w:"issue",pos:"動",m:"発する、発行する",ex:"The government issued a warning.",exja:"政府は警告を発した。"},
+{w:"retain",pos:"動",m:"保つ",ex:"She retains a clear memory of that day.",exja:"彼女はその日の記憶を鮮明に保っている。"},
+{w:"spoil",pos:"動",m:"台無しにする、甘やかす",ex:"Don't spoil the child too much.",exja:"その子どもをあまり甘やかさないで。"},
+{w:"stimulate",pos:"動",m:"刺激する",ex:"Coffee stimulates the appetite.",exja:"コーヒーは食欲を刺激する。"},
+{w:"transmit",pos:"動",m:"伝える",ex:"The virus is transmitted through contact.",exja:"そのウイルスは接触によって伝わる。"},
+{w:"yield",pos:"動",m:"産出する",ex:"The field yields a good crop each year.",exja:"その畑は毎年良い作物を産出する。"},
+{w:"affliction",pos:"名",m:"苦悩、苦痛",ex:"He suffered a long affliction.",exja:"彼は長い苦悩に苦しんだ。"},
+{w:"bully",pos:"動",m:"いじめる",ex:"He was bullied at school.",exja:"彼は学校でいじめられた。"},
+{w:"cram",pos:"動",m:"詰め込み学習する",ex:"Students cram for exams the night before.",exja:"学生は試験前夜に詰め込み勉強する。"},
+{w:"cultivate",pos:"動",m:"育てる、養う",ex:"Teachers cultivate curiosity in students.",exja:"教師は生徒の好奇心を養う。"},
+{w:"enrollment",pos:"名",m:"入学、入学者数",ex:"School enrollment increased this year.",exja:"今年、学校の入学者数が増えた。"},
+{w:"evaluate",pos:"動",m:"評価する",ex:"Teachers evaluate students' progress.",exja:"教師は生徒の進歩を評価する。"},
+{w:"humiliate",pos:"動",m:"辱める",ex:"He felt humiliated in front of the class.",exja:"彼はクラスの前で辱められたと感じた。"},
+{w:"incentive",pos:"名",m:"動機、要因",ex:"The bonus is a strong incentive to work hard.",exja:"ボーナスは一生懸命働く強い動機になる。"},
+{w:"temperament",pos:"名",m:"気質、気性",ex:"She has a calm temperament.",exja:"彼女は穏やかな気質を持つ。"},
+{w:"tempt",pos:"動",m:"引きつける",ex:"The smell tempted him to eat more.",exja:"その匂いは彼にもっと食べたいと思わせた。"},
+{w:"truant",pos:"動",m:"無断欠席する",ex:"He often plays truant from school.",exja:"彼はよく学校を無断欠席する。"},
+{w:"abandon",pos:"動",m:"捨て去る",ex:"They had to abandon the old plan.",exja:"彼らは古い計画を捨てざるを得なかった。"},
+{w:"adjust",pos:"動",m:"順応する",ex:"It took time to adjust to the new culture.",exja:"新しい文化に順応するのに時間がかかった。"},
+{w:"ancestor",pos:"名",m:"祖先",ex:"Her ancestors came from Ireland.",exja:"彼女の祖先はアイルランド出身だ。"},
+{w:"assimilate",pos:"動",m:"同化する",ex:"Immigrants often assimilate into the local culture.",exja:"移民はしばしば地元の文化に同化する。"},
+{w:"dictator",pos:"名",m:"独裁者",ex:"The country was ruled by a dictator.",exja:"その国は独裁者に支配されていた。"},
+{w:"inherit",pos:"動",m:"受け継ぐ",ex:"She inherited the family business.",exja:"彼女は家業を受け継いだ。"},
+{w:"materialism",pos:"名",m:"物質主義",ex:"He rejects modern materialism.",exja:"彼は現代の物質主義を拒否する。"},
+{w:"nomadic",pos:"形",m:"遊牧の",ex:"They live a nomadic lifestyle.",exja:"彼らは遊牧的な生活を送っている。"},
+{w:"pilgrim",pos:"名",m:"巡礼者",ex:"Pilgrims travel to the holy site.",exja:"巡礼者たちはその聖地へ旅する。"},
+{w:"tyrant",pos:"名",m:"暴君",ex:"The king ruled as a tyrant.",exja:"その王は暴君として統治した。"},
+{w:"conserve",pos:"動",m:"保存する",ex:"We should conserve water.",exja:"私たちは水を節約すべきだ。"},
+{w:"contaminate",pos:"動",m:"汚染する",ex:"Chemicals contaminated the river.",exja:"化学物質が川を汚染した。"},
+{w:"fertilize",pos:"動",m:"肥沃にする",ex:"Farmers fertilize the soil every spring.",exja:"農家は毎春土壌を肥沃にする。"},
+{w:"forestry",pos:"名",m:"森林管理",ex:"He studies forestry at university.",exja:"彼は大学で森林管理学を学んでいる。"},
+{w:"groundwater",pos:"名",m:"地下水",ex:"The town relies on groundwater.",exja:"その町は地下水に頼っている。"},
+{w:"irrigate",pos:"動",m:"灌漑する",ex:"Farmers irrigate the fields in summer.",exja:"農家は夏に畑を灌漑する。"},
+{w:"nitrogen",pos:"名",m:"窒素",ex:"Plants need nitrogen to grow.",exja:"植物は成長に窒素を必要とする。"},
+{w:"phenomenon",pos:"名",m:"現象",ex:"It is a rare natural phenomenon.",exja:"それは珍しい自然現象だ。"},
+{w:"pollination",pos:"名",m:"授粉",ex:"Bees play a key role in pollination.",exja:"ミツバチは授粉に重要な役割を果たす。"},
+{w:"preserve",pos:"動",m:"保護する",ex:"We must preserve the forest.",exja:"私たちは森を保護しなければならない。"},
+{w:"reproduce",pos:"動",m:"子を産む",ex:"Rabbits reproduce quickly.",exja:"ウサギは速く繁殖する。"},
+{w:"beam",pos:"動",m:"ほほ笑む",ex:"She beamed with joy.",exja:"彼女は喜びに満ちてほほ笑んだ。"},
+{w:"boast",pos:"動",m:"自慢する",ex:"He boasted about his new car.",exja:"彼は新しい車を自慢した。"},
+{w:"corridor",pos:"名",m:"廊下",ex:"The classroom is down the corridor.",exja:"教室は廊下の先にある。"},
+{w:"fumble",pos:"動",m:"手で探る",ex:"He fumbled for his keys in the dark.",exja:"彼は暗闇の中で鍵を手探りした。"},
+{w:"grumble",pos:"動",m:"ぶつぶつ文句を言う",ex:"She grumbled about the weather.",exja:"彼女は天気について文句を言った。"},
+{w:"hectic",pos:"形",m:"忙しい",ex:"I had a hectic day at work.",exja:"仕事で慌ただしい一日だった。"},
+{w:"irritate",pos:"動",m:"いらつかせる",ex:"The noise irritated everyone.",exja:"その騒音はみんなをいらつかせた。"},
+{w:"leftover",pos:"名",m:"食べ残し",ex:"We had leftovers for dinner.",exja:"夕食は残り物で済ませた。"},
+{w:"loiter",pos:"動",m:"ぶらぶらする",ex:"Teenagers were loitering near the store.",exja:"十代の若者たちが店の近くをぶらついていた。"},
+{w:"luxurious",pos:"形",m:"ぜいたくな",ex:"They stayed in a luxurious hotel.",exja:"彼らはぜいたくなホテルに泊まった。"},
+{w:"nudge",pos:"動",m:"小突く",ex:"She nudged him to wake up.",exja:"彼女は彼を起こそうと小突いた。"},
+{w:"workout",pos:"名",m:"運動",ex:"I do a workout every morning.",exja:"私は毎朝運動をしている。"},
+{w:"autobiography",pos:"名",m:"自伝",ex:"He wrote his autobiography at 80.",exja:"彼は80歳で自伝を書いた。"},
+{w:"bystander",pos:"名",m:"傍観者",ex:"Several bystanders witnessed the accident.",exja:"数人の傍観者がその事故を目撃した。"},
+{w:"decentralize",pos:"動",m:"分散させる",ex:"The company decided to decentralize its offices.",exja:"その会社はオフィスを分散させることにした。"},
+{w:"dehydration",pos:"名",m:"脱水",ex:"He suffered from dehydration in the heat.",exja:"彼は暑さで脱水症状になった。"},
+{w:"discredit",pos:"動",m:"信頼を失わせる",ex:"The scandal discredited the politician.",exja:"その醜聞はその政治家の信頼を失わせた。"},
+{w:"enforce",pos:"動",m:"強化する、実行する",ex:"Police enforce the traffic laws.",exja:"警察は交通法を執行する。"},
+{w:"indefinite",pos:"形",m:"不定の",ex:"The meeting was postponed indefinitely.",exja:"会議は無期限に延期された。"},
+{w:"intersection",pos:"名",m:"交差点",ex:"Turn left at the next intersection.",exja:"次の交差点を左に曲がって。"},
+{w:"offset",pos:"動",m:"相殺する",ex:"The bonus offsets the pay cut.",exja:"ボーナスが減給を相殺する。"},
+{w:"overrated",pos:"形",m:"過大評価された",ex:"I think the movie was overrated.",exja:"その映画は過大評価されていると思う。"},
+{w:"postscript",pos:"名",m:"追伸",ex:"She added a postscript to the letter.",exja:"彼女は手紙に追伸を加えた。"},
+{w:"restore",pos:"動",m:"復元する",ex:"They restored the old painting.",exja:"彼らは古い絵画を修復した。"},
+{w:"underdressed",pos:"形",m:"控えめな服装の",ex:"I felt underdressed at the party.",exja:"パーティーで服装が地味すぎると感じた。"},
+{w:"get along",pos:"熟",m:"順調に進む、仲良くやる",ex:"We get along well with our neighbors.",exja:"私たちは近所の人とうまくやっている。"},
+{w:"get around to doing",pos:"熟",m:"〜する時間ができて取り掛かる",ex:"I finally got around to cleaning my room.",exja:"やっと部屋の掃除に取り掛かった。"},
+{w:"get away with",pos:"熟",m:"罰されずに〜する",ex:"He got away with the lie.",exja:"彼はその嘘を罰されずに済ませた。"},
+{w:"get by",pos:"熟",m:"何とかやっていく",ex:"We can get by on a small budget.",exja:"少ない予算でも何とかやっていける。"},
+{w:"get down to",pos:"熟",m:"本腰を入れて取り組む",ex:"Let's get down to business.",exja:"さあ本題に取り掛かろう。"},
+{w:"make for",pos:"熟",m:"〜に急いで向かう",ex:"He made for the exit immediately.",exja:"彼はすぐに出口に向かった。"},
+{w:"make out",pos:"熟",m:"理解する、判読する",ex:"I couldn't make out what he said.",exja:"彼が何と言ったのか聞き取れなかった。"},
+{w:"make up for",pos:"熟",m:"埋め合わせをする",ex:"Extra practice will make up for lost time.",exja:"追加練習が失った時間を埋め合わせるだろう。"},
+{w:"make it",pos:"熟",m:"間に合う、成功する",ex:"We made it to the station on time.",exja:"私たちは駅に間に合った。"},
+{w:"take after",pos:"熟",m:"似ている",ex:"She takes after her mother.",exja:"彼女は母親に似ている。"},
+{w:"take on",pos:"熟",m:"引き受ける",ex:"He took on extra work this month.",exja:"彼は今月追加の仕事を引き受けた。"},
+{w:"take over",pos:"熟",m:"引き継ぐ",ex:"She will take over the project next week.",exja:"彼女は来週そのプロジェクトを引き継ぐ。"},
+{w:"take to",pos:"熟",m:"気に入る",ex:"He quickly took to his new job.",exja:"彼はすぐに新しい仕事を気に入った。"},
+{w:"take up",pos:"熟",m:"始める、取り上げる",ex:"She took up painting last year.",exja:"彼女は昨年絵を始めた。"},
+{w:"put aside",pos:"熟",m:"脇に置く",ex:"Let's put aside our differences.",exja:"私たちの意見の違いは脇に置こう。"},
+{w:"put down",pos:"熟",m:"書き留める",ex:"Please put down your address here.",exja:"ここに住所を書いてください。"},
+{w:"put forth",pos:"熟",m:"〜を出す",ex:"She put forth a new proposal.",exja:"彼女は新しい提案を出した。"},
+{w:"put off",pos:"熟",m:"延期する",ex:"We had to put off the meeting.",exja:"私たちは会議を延期しなければならなかった。"},
+{w:"put through",pos:"熟",m:"電話をつなぐ",ex:"Please put me through to the manager.",exja:"マネージャーにつないでください。"},
+{w:"see about",pos:"熟",m:"検討する",ex:"I'll see about getting a refund.",exja:"返金について検討してみる。"},
+{w:"see off",pos:"熟",m:"見送る",ex:"We went to see her off at the airport.",exja:"私たちは空港で彼女を見送った。"},
+{w:"see to",pos:"熟",m:"手配する",ex:"He will see to the arrangements.",exja:"彼が手配してくれるだろう。"},
+{w:"turn away",pos:"熟",m:"追い返す",ex:"The guard turned away uninvited guests.",exja:"警備員は招かれていない客を追い返した。"},
+{w:"turn down",pos:"熟",m:"断る、音を下げる",ex:"She turned down the job offer.",exja:"彼女はその仕事の申し出を断った。"},
+{w:"turn in",pos:"熟",m:"提出する",ex:"Please turn in your homework by Friday.",exja:"金曜までに宿題を提出してください。"},
+{w:"turn up",pos:"熟",m:"現れる、音を上げる",ex:"He turned up late again.",exja:"彼はまた遅れて現れた。"},
+{w:"account for",pos:"熟",m:"説明する、占める",ex:"Tourism accounts for a large part of the economy.",exja:"観光業は経済の大部分を占める。"},
+{w:"allow for",pos:"熟",m:"考慮に入れる",ex:"You should allow for delays.",exja:"遅延を考慮に入れておくべきだ。"},
+{w:"bank on",pos:"熟",m:"頼りにする",ex:"Don't bank on his help.",exja:"彼の助けを当てにしないほうがいい。"},
+{w:"bear with",pos:"熟",m:"辛抱して付き合う",ex:"Please bear with me for a moment.",exja:"少しの間我慢してお付き合いください。"},
+{w:"bow out",pos:"熟",m:"退場する、引退する",ex:"He decided to bow out of the race.",exja:"彼はそのレースから退くことにした。"},
+{w:"chip in",pos:"熟",m:"負担を分け合う",ex:"Everyone chipped in for the gift.",exja:"みんなでその贈り物の費用を出し合った。"},
+{w:"draw on",pos:"熟",m:"使用する",ex:"She drew on her experience to solve it.",exja:"彼女は経験を活用してそれを解決した。"},
+{w:"feel out",pos:"熟",m:"意向を探る",ex:"He tried to feel out her opinion.",exja:"彼は彼女の意見を探ろうとした。"},
+{w:"knock down",pos:"熟",m:"引き倒す",ex:"They knocked down the old building.",exja:"彼らは古い建物を取り壊した。"},
+{w:"let down",pos:"熟",m:"がっかりさせる",ex:"I don't want to let you down.",exja:"あなたをがっかりさせたくない。"},
+{w:"mess with",pos:"熟",m:"干渉する",ex:"Don't mess with my computer.",exja:"私のパソコンをいじらないで。"},
+{w:"pull over",pos:"熟",m:"車を路肩に寄せる",ex:"The police told him to pull over.",exja:"警察は彼に車を路肩に寄せるよう言った。"},
+{w:"relate to",pos:"熟",m:"関係がある、共感する",ex:"I really relate to her story.",exja:"私は彼女の話に本当に共感する。"},
+{w:"settle for",pos:"熟",m:"妥協する",ex:"He wasn't willing to settle for less.",exja:"彼はそれ以下で妥協するつもりはなかった。"},
+{w:"throw up",pos:"熟",m:"吐く",ex:"She felt sick and threw up.",exja:"彼女は気分が悪くなって吐いた。"}
+];
+WORDS.forEach((c,i)=>c.id=i);
+
+/* ============ 復習間隔（エビングハウス風）============ */
+const DAYS = [1,2,4,7,15,30,90]; // box 0..6 の次回間隔（日）
+const MASTER_BOX = 4; // これ以上を「定着」とみなす
+const SPELL_UNLOCK_BOX = MASTER_BOX; // 読みがこの段階に達したら書き練習が解禁される
+const DAY_MS = 24*60*60*1000;
+const NEW_PER_SESSION = 15;
+
+let progress = {}; // { id: { recognize:{box,due,reps}, spell:{box,due,reps} } }
+let queue = [];
+let currentCard = null;
+let currentRevealed = false;
+
+/* ============ ストレージ（localStorage） ============ */
+const STORAGE_KEY = 'vocab-srs-progress-v2';
+function loadProgress(){
+  try{
+    const v = localStorage.getItem(STORAGE_KEY);
+    progress = v ? JSON.parse(v) : {};
+  }catch(e){ progress = {}; }
+}
+function saveProgress(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+  catch(e){ console.error('storage save failed', e); }
+}
+
+/* ============ SRS ロジック（読み／書きを別管理） ============ */
+function getP(id, mode){ const c = progress[id]; return c ? c[mode] : undefined; }
+function isNew(id, mode){ return !getP(id, mode); }
+function isDue(id, mode){ const p = getP(id, mode); return p && p.due <= Date.now(); }
+function isMastered(id, mode){ const p = getP(id, mode); return p && p.box >= MASTER_BOX; }
+function isUnlockedForSpell(id){ return isMastered(id, 'recognize'); }
+
+function rate(id, mode, grade){
+  if(!progress[id]) progress[id] = {};
+  let p = progress[id][mode] || {box:0, due:0, reps:0};
+  p.reps = (p.reps||0)+1;
+  if(grade==='again'){ p.box = 0; p.due = Date.now(); }
+  else if(grade==='hard'){ p.due = Date.now() + DAYS[p.box]*DAY_MS; }
+  else if(grade==='good'){ p.box = Math.min(p.box+1, DAYS.length-1); p.due = Date.now() + DAYS[p.box]*DAY_MS; }
+  else if(grade==='easy'){ p.box = Math.min(p.box+2, DAYS.length-1); p.due = Date.now() + DAYS[p.box]*DAY_MS; }
+  progress[id][mode] = p;
+  saveProgress();
+}
+
+function buildQueue(mode){
+  const pool = mode==='spell' ? WORDS.filter(c=>isUnlockedForSpell(c.id)) : WORDS;
+  const due = pool.filter(c=>isDue(c.id, mode)).map(c=>c.id);
+  const news = pool.filter(c=>isNew(c.id, mode)).map(c=>c.id).slice(0, NEW_PER_SESSION);
+  // shuffle due lightly
+  for(let i=due.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [due[i],due[j]]=[due[j],due[i]]; }
+  queue = due.concat(news);
+}
+
+/* ============ 音声読み上げ ============ */
+function speak(text, lang){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang || 'en-US';
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+/* ============ 画面切替 ============ */
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
+  if(name==='home') renderHome();
+  if(name==='browse') renderBrowse();
+}
+
+/* ============ ホーム ============ */
+function renderHome(){
+  const total = WORDS.length;
+
+  // 読み
+  const rDue = WORDS.filter(c=>isDue(c.id,'recognize')).length;
+  const rNew = WORDS.filter(c=>isNew(c.id,'recognize')).length;
+  const rMastered = WORDS.filter(c=>isMastered(c.id,'recognize')).length;
+  document.getElementById('r-due').textContent = rDue;
+  document.getElementById('r-new').textContent = rNew;
+  document.getElementById('r-mastered').textContent = rMastered;
+  document.getElementById('r-total').textContent = total;
+  document.getElementById('r-progress-fill').style.width = Math.round(rMastered/total*100)+'%';
+
+  // 書き（読みが定着した単語だけが対象）
+  const unlocked = WORDS.filter(c=>isUnlockedForSpell(c.id));
+  const sLocked = total - unlocked.length;
+  const sDue = unlocked.filter(c=>isDue(c.id,'spell')).length;
+  const sNew = unlocked.filter(c=>isNew(c.id,'spell')).length;
+  const sMastered = unlocked.filter(c=>isMastered(c.id,'spell')).length;
+  document.getElementById('s-due').textContent = sDue;
+  document.getElementById('s-new').textContent = sNew;
+  document.getElementById('s-mastered').textContent = sMastered;
+  document.getElementById('s-locked').textContent = sLocked;
+  document.getElementById('s-progress-fill').style.width = Math.round(sMastered/total*100)+'%';
+
+  const note = document.getElementById('s-lock-note');
+  note.textContent = sLocked>0
+    ? `読みが定着した単語から書き練習に追加されます（あと${sLocked}語）`
+    : 'すべての単語が書き練習の対象です。';
+}
+
+/* ============ 学習画面 ============ */
+let studyMode = 'recognize'; // 'recognize'=英→日, 'spell'=日→英（つづり）
+
+function startStudy(mode){
+  studyMode = mode;
+  buildQueue(mode);
+  showScreen('study');
+  nextCard();
+}
+
+function nextCard(){
+  currentRevealed = false;
+  if(queue.length===0){
+    if(studyMode==='spell' && WORDS.filter(c=>isUnlockedForSpell(c.id)).length===0){
+      document.getElementById('study-body').innerHTML =
+        '<div class="empty-state"><div class="box-icon locked">🔒</div>' +
+        '<div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">まだ書ける単語がありません</div>' +
+        '<div>先に「読んで覚える」で単語を定着させましょう。</div></div>' +
+        '<button class="btn btn-secondary" style="margin-top:18px;" onclick="showScreen(\'home\')">ホームに戻る</button>';
+    } else {
+      document.getElementById('study-body').innerHTML =
+        '<div class="empty-state"><div class="box-icon mastered">✓</div>' +
+        '<div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">今日の学習は完了です</div>' +
+        '<div>また時間をおいて復習しましょう。</div></div>' +
+        '<button class="btn btn-secondary" style="margin-top:18px;" onclick="showScreen(\'home\')">ホームに戻る</button>';
+    }
+    return;
+  }
+  currentCard = queue[0];
+  const c = WORDS[currentCard];
+  const remaining = queue.length;
+
+  if(studyMode==='spell'){
+    document.getElementById('study-body').innerHTML = `
+      <div class="card-area">
+        <div class="flash" id="flash">
+          <span class="pos-tag">${c.pos}</span>
+          <div class="word" style="font-size:24px;">${c.m}</div>
+          <input type="text" id="spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
+                 placeholder="英単語のつづりを入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+          <div id="spell-feedback" style="margin-top:10px;font-weight:700;"></div>
+          <div class="word" id="spell-answer" style="display:none;margin-top:6px;">${c.w}</div>
+          <div class="example">${c.ex}</div>
+          <div class="exampleja">${c.exja}</div>
+          <div class="speak-row" id="spell-speak" style="display:none;">
+            <button class="speak-btn" onclick="speak('${escAttr(c.w)}','en-US')">🔊 単語</button>
+            <button class="speak-btn" onclick="speak('${escAttr(c.ex)}','en-US')">🔊 例文</button>
+          </div>
+          <button class="btn btn-primary reveal-btn" id="check-btn">答え合わせ</button>
+        </div>
+        <div class="rate-grid" id="rate-grid" style="display:none;">
+          <button class="rate-btn rate-again" onclick="answer('again')">もう一度<span class="sub">今日中に再出題</span></button>
+          <button class="rate-btn rate-hard" onclick="answer('hard')">いまいち<span class="sub">同じ間隔</span></button>
+          <button class="rate-btn rate-good" onclick="answer('good')">できた<span class="sub">次は${nextIntervalLabel('good')}</span></button>
+          <button class="rate-btn rate-easy" onclick="answer('easy')">簡単<span class="sub">次は${nextIntervalLabel('easy')}</span></button>
+        </div>
+        <div class="queue-status">残り ${remaining} 枚（つづり練習）</div>
+      </div>`;
+    document.getElementById('check-btn').addEventListener('click', checkSpelling);
+    const input = document.getElementById('spell-input');
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); checkSpelling(); } });
+    setTimeout(()=>input.focus(), 50);
+  } else {
+    document.getElementById('study-body').innerHTML = `
+      <div class="card-area">
+        <div class="flash" id="flash">
+          <span class="pos-tag">${c.pos}</span>
+          <div class="word">${c.w}</div>
+          <div class="meaning">${c.m}</div>
+          <div class="example">${c.ex}</div>
+          <div class="exampleja">${c.exja}</div>
+          <div class="speak-row">
+            <button class="speak-btn" onclick="speak('${escAttr(c.w)}','en-US')">🔊 単語</button>
+            <button class="speak-btn" onclick="speak('${escAttr(c.ex)}','en-US')">🔊 例文</button>
+          </div>
+          <button class="btn btn-primary reveal-btn" id="reveal-btn">意味を見る</button>
+        </div>
+        <div class="rate-grid" id="rate-grid" style="display:none;">
+          <button class="rate-btn rate-again" onclick="answer('again')">もう一度<span class="sub">今日中に再出題</span></button>
+          <button class="rate-btn rate-hard" onclick="answer('hard')">いまいち<span class="sub">同じ間隔</span></button>
+          <button class="rate-btn rate-good" onclick="answer('good')">できた<span class="sub">次は${nextIntervalLabel('good')}</span></button>
+          <button class="rate-btn rate-easy" onclick="answer('easy')">簡単<span class="sub">次は${nextIntervalLabel('easy')}</span></button>
+        </div>
+        <div class="queue-status">残り ${remaining} 枚</div>
+      </div>`;
+    document.getElementById('reveal-btn').addEventListener('click', reveal);
+  }
+}
+
+function normalizeSpelling(s){
+  return s.toLowerCase().trim().replace(/\s+/g,' ');
+}
+
+function checkSpelling(){
+  const c = WORDS[currentCard];
+  const input = document.getElementById('spell-input');
+  const userVal = normalizeSpelling(input.value);
+  const correctVal = normalizeSpelling(c.w);
+  const isCorrect = userVal === correctVal;
+  input.disabled = true;
+  document.getElementById('spell-answer').style.display='block';
+  document.getElementById('spell-speak').style.display='flex';
+  document.getElementById('flash').classList.add('revealed');
+  const fb = document.getElementById('spell-feedback');
+  if(isCorrect){
+    fb.textContent = '正解！';
+    fb.style.color = 'var(--sage)';
+  } else {
+    fb.textContent = '不正解（正しいつづり ↓）';
+    fb.style.color = 'var(--coral-dark)';
+  }
+  document.getElementById('check-btn').style.display='none';
+  document.getElementById('rate-grid').style.display='grid';
+  currentRevealed = true;
+}
+
+function nextIntervalLabel(grade){
+  const p = getP(currentCard, studyMode) || {box:0};
+  let box = p.box;
+  if(grade==='good') box = Math.min(box+1, DAYS.length-1);
+  if(grade==='easy') box = Math.min(box+2, DAYS.length-1);
+  return DAYS[box]+'日後';
+}
+
+function reveal(){
+  currentRevealed = true;
+  document.getElementById('flash').classList.add('revealed');
+  document.getElementById('reveal-btn').style.display='none';
+  document.getElementById('rate-grid').style.display='grid';
+}
+
+function answer(grade){
+  if(!currentRevealed) return;
+  rate(currentCard, studyMode, grade);
+  if(grade==='again'){
+    queue.shift();
+    const pos = Math.min(3, queue.length);
+    queue.splice(pos,0,currentCard);
+  } else {
+    queue.shift();
+  }
+  nextCard();
+}
+
+function escAttr(s){ return s.replace(/'/g, "\\'").replace(/"/g,'&quot;'); }
+
+/* ============ 一覧画面 ============ */
+function renderBrowse(filter){
+  filter = (filter||'').trim().toLowerCase();
+  const list = WORDS.filter(c=>{
+    if(!filter) return true;
+    return c.w.toLowerCase().includes(filter) || c.m.includes(filter);
+  });
+  const el = document.getElementById('browse-list');
+  el.innerHTML = list.map(c=>{
+    const rp = getP(c.id,'recognize');
+    let rCls='new', rMark='';
+    if(rp && rp.box>=MASTER_BOX){ rCls='mastered'; rMark='✓'; }
+    else if(rp){ rCls='learning'; }
+
+    let sCls='locked', sMark='', sTitle='読み未習得';
+    if(isUnlockedForSpell(c.id)){
+      const sp = getP(c.id,'spell');
+      if(sp && sp.box>=MASTER_BOX){ sCls='mastered'; sMark='✓'; sTitle='定着'; }
+      else if(sp){ sCls='learning'; sTitle='学習中'; }
+      else { sCls='new'; sTitle='未学習'; }
+    }
+
+    return `<div class="word-row" onclick="toggleDetail(${c.id})">
+      <div class="dual-icons">
+        <div class="di"><span class="box-icon ${rCls}">${rMark}</span><span class="di-label">読</span></div>
+        <div class="di"><span class="box-icon ${sCls}" title="${sTitle}">${sMark}</span><span class="di-label">書</span></div>
+      </div>
+      <div class="wtext">
+        <span class="en">${c.w}</span><span class="pos">${c.pos}</span>
+        <div class="jp">${c.m}</div>
+        <div class="word-detail" id="detail-${c.id}">
+          <div class="ex">${c.ex}</div>
+          <div class="exja">${c.exja}</div>
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${escAttr(c.w)}','en-US')">🔊 単語</button>
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${escAttr(c.ex)}','en-US')">🔊 例文</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleDetail(id){
+  const d = document.getElementById('detail-'+id);
+  const open = d.classList.contains('open');
+  document.querySelectorAll('.word-detail.open').forEach(x=>x.classList.remove('open'));
+  if(!open) d.classList.add('open');
+}
+
+/* ============ 初期化 ============ */
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click', ()=>showScreen(b.dataset.screen));
+});
+document.getElementById('btn-start-recognize').addEventListener('click', ()=>startStudy('recognize'));
+document.getElementById('btn-start-spell').addEventListener('click', ()=>startStudy('spell'));
+document.getElementById('btn-goto-browse').addEventListener('click', ()=>showScreen('browse'));
+document.getElementById('search-input').addEventListener('input', (e)=>renderBrowse(e.target.value));
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  if(confirm('本当にすべての学習進捗をリセットしますか？この操作は元に戻せません。')){
+    progress = {};
+    saveProgress();
+    renderHome();
+  }
+});
+
+(function init(){
+  loadProgress();
+  renderHome();
+})();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(e=>console.log('SW registration failed', e));
+  });
+}
+</script>
+</body>
+</html>
