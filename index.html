@@ -183,6 +183,8 @@
   main{padding-bottom:140px;}
   #screen-browse{padding-bottom:60px;}
   #screen-home{padding-bottom:40px;}
+  #screen-study{padding-bottom:60px;}
+  #screen-train{padding-bottom:60px;}
 
   .modal-bg{
     display:none;position:fixed;inset:0;background:rgba(36,35,42,0.45);z-index:10;
@@ -243,6 +245,36 @@
     </div>
   </section>
 
+  <!-- 特訓（テスト直前モード＋小テスト） -->
+  <section id="screen-train" class="screen">
+    <section class="block">
+      <h2>🔥 テスト直前モード</h2>
+      <div style="font-size:12.5px;color:#8A8474;margin:-4px 0 12px;">復習期限を無視して、範囲を何周でも回せます。</div>
+      <div style="font-size:12px;color:#8A8474;margin-bottom:6px;font-weight:700;">読み</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-recognize-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-recognize-weak">苦手な単語だけ</button>
+      </div>
+      <div style="font-size:12px;color:#8A8474;margin:14px 0 6px;font-weight:700;">書き</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-spell-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-spell-weak">苦手な単語だけ</button>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>📝 小テスト</h2>
+      <div style="font-size:12.5px;color:#8A8474;margin:-4px 0 12px;">ランダムに5問だけ出題、最後に採点します。</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-test-recognize">読み（5問）</button>
+        <button class="btn btn-secondary" id="btn-test-spell">書き（5問）</button>
+      </div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="btn-test-listening">リスニング（5問）</button>
+      </div>
+    </section>
+  </section>
+
   <!-- STUDY -->
   <section id="screen-study" class="screen">
     <div id="study-body"></div>
@@ -259,6 +291,7 @@
 <nav class="tabbar">
   <button data-screen="home" class="tab-btn active"><span class="ic">🏠</span>ホーム</button>
   <button data-screen="study" class="tab-btn"><span class="ic">📇</span>学習</button>
+  <button data-screen="train" class="tab-btn"><span class="ic">🔥</span>特訓</button>
   <button data-screen="browse" class="tab-btn"><span class="ic">🔍</span>一覧</button>
 </nav>
 
@@ -502,13 +535,25 @@ function rate(id, mode, grade){
   saveProgress();
 }
 
-function buildQueue(mode){
+function shuffleArr(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+function buildQueue(mode, opts){
+  opts = opts || {};
+  if(opts.cram){
+    let ids = WORDS.map(c=>c.id);
+    if(opts.weakOnly){
+      ids = ids.filter(id => { const p=getP(id,mode); return !p || p.box<=1; });
+    }
+    queue = shuffleArr(ids);
+    return;
+  }
   const pool = mode==='spell' ? WORDS.filter(c=>isUnlockedForSpell(c.id)) : WORDS;
   const due = pool.filter(c=>isDue(c.id, mode)).map(c=>c.id);
   const news = pool.filter(c=>isNew(c.id, mode)).map(c=>c.id).slice(0, NEW_PER_SESSION);
-  // shuffle due lightly
-  for(let i=due.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [due[i],due[j]]=[due[j],due[i]]; }
-  queue = due.concat(news);
+  queue = shuffleArr(due).concat(news);
 }
 
 /* ============ 音声読み上げ ============ */
@@ -528,6 +573,250 @@ function showScreen(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
   if(name==='home') renderHome();
   if(name==='browse') renderBrowse();
+}
+
+/* ============ 小テスト（5問・採点あり） ============ */
+let testMode = 'recognize';
+let testQueue = [];
+let testIndex = 0;
+let testScore = 0;
+let testMissed = [];
+
+let testDifficulty = 0; // 0=4択 1=3択 2=2択 3=ヒントなし（テスト開始時に選択し、テスト中は固定）
+const TEST_DIFF_LABELS = ['4択','3択','2択','ヒントなし'];
+const TEST_DIFF_CHOICES = [4,3,2];
+
+function startMiniTest(mode){
+  testMode = mode;
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング'}[mode];
+  showScreen('study');
+  document.getElementById('study-body').innerHTML = `
+    <div class="card-area">
+      <div class="flash" style="text-align:center;">
+        <span class="pos-tag">小テスト（${modeLabel}）</span>
+        <div style="font-size:15px;color:var(--navy);font-weight:700;margin-top:14px;">難易度を選んでください</div>
+        <div style="width:100%;margin-top:14px;">
+          ${TEST_DIFF_LABELS.map((label,i)=>
+            `<button class="btn btn-secondary" style="margin-top:8px;" onclick="startMiniTestWithDifficulty('${mode}',${i})">${label}</button>`
+          ).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function startMiniTestWithDifficulty(mode, diffIndex){
+  testMode = mode;
+  testQueue = shuffleArr(WORDS.map(c=>c.id)).slice(0,5);
+  testIndex = 0;
+  testScore = 0;
+  testMissed = [];
+  testDifficulty = diffIndex;
+  renderTestQuestion();
+}
+
+function advanceTest(){
+  testIndex++;
+}
+
+function renderTestQuestion(){
+  if(testIndex >= testQueue.length){ renderTestResult(); return; }
+  const c = WORDS[testQueue[testIndex]];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング'}[testMode];
+  const diffLabel = TEST_DIFF_LABELS[testDifficulty];
+  const statusHtml = `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　難易度：${diffLabel}</div>`;
+
+  if(testMode==='recognize' || testMode==='listening'){
+    if(testDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[testDifficulty];
+      const choices = buildMeaningChoices(c.m, n);
+      const choiceButtons = choices.map(opt =>
+        `<button class="btn btn-secondary mc-btn" data-meaning="${escAttr(opt)}" onclick="testSelectMeaning(this)" style="margin-top:8px;">${opt}</button>`
+      ).join('');
+      if(testMode==='listening'){
+        document.getElementById('study-body').innerHTML = `
+          <div class="card-area">
+            <div class="flash" id="flash">
+              <span class="pos-tag">小テスト（リスニング・${diffLabel}）${testIndex+1}/5</span>
+              <button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>
+              <div class="word" id="test-listen-word" style="display:none;margin-top:16px;">${c.w}</div>
+              <div class="ipa" id="test-listen-ipa" style="display:none;">${c.ipa}</div>
+              <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+              <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            </div>
+            ${statusHtml}
+          </div>`;
+        document.getElementById('test-listen-play').addEventListener('click', ()=>speak(c.w,'en-US'));
+        setTimeout(()=>speak(c.w,'en-US'), 300);
+      } else {
+        document.getElementById('study-body').innerHTML = `
+          <div class="card-area">
+            <div class="flash" id="flash">
+              <span class="pos-tag">小テスト（読み・${diffLabel}）${testIndex+1}/5</span>
+              <div class="word">${c.w}</div>
+              <div class="ipa">${c.ipa}</div>
+              <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+              <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            </div>
+            ${statusHtml}
+          </div>`;
+      }
+    } else {
+      // ヒントなし：自己採点
+      const promptHtml = testMode==='listening'
+        ? `<button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>`
+        : `<div class="word">${c.w}</div><div class="ipa">${c.ipa}</div>`;
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">小テスト（${modeLabel}・${diffLabel}）${testIndex+1}/5</span>
+            ${promptHtml}
+            <div class="meaning" id="test-self-meaning" style="display:none;">${c.m}</div>
+            <div class="example" id="test-self-example" style="display:none;">${c.ex}</div>
+            <div class="exampleja" id="test-self-exampleja" style="display:none;">${c.exja}</div>
+            <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
+            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
+              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
+              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
+            </div>
+          </div>
+          ${statusHtml}
+        </div>`;
+      if(testMode==='listening'){
+        document.getElementById('test-listen-play').addEventListener('click', ()=>speak(c.w,'en-US'));
+        setTimeout(()=>speak(c.w,'en-US'), 300);
+      }
+      document.getElementById('test-self-reveal').addEventListener('click', ()=>{
+        document.getElementById('test-self-meaning').style.display='block';
+        document.getElementById('test-self-example').style.display='block';
+        document.getElementById('test-self-exampleja').style.display='block';
+        document.getElementById('test-self-reveal').style.display='none';
+        document.getElementById('test-self-grade').style.display='grid';
+      });
+    }
+  } else {
+    // 書き
+    if(testDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[testDifficulty];
+      const choices = buildChoices(c.w, n);
+      const choiceButtons = choices.map(opt =>
+        `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${opt}</button>`
+      ).join('');
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">小テスト（書き・${diffLabel}）${testIndex+1}/5</span>
+            <div class="emoji">${c.emoji}</div>
+            <div class="word" style="font-size:24px;">${c.m}</div>
+            <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+            <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+          </div>
+          ${statusHtml}
+        </div>`;
+    } else {
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">小テスト（書き・${diffLabel}）${testIndex+1}/5</span>
+            <div class="word" style="font-size:24px;">${c.m}</div>
+            <input type="text" id="test-spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
+                   placeholder="英単語のつづりを入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <div id="test-feedback" style="margin-top:10px;font-weight:700;"></div>
+            <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
+            <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
+            <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+          </div>
+          ${statusHtml}
+        </div>`;
+      document.getElementById('test-check-btn').addEventListener('click', testCheckSpelling);
+      document.getElementById('test-next-btn').addEventListener('click', ()=>{ renderTestQuestion(); });
+      const input = document.getElementById('test-spell-input');
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckSpelling(); } });
+      setTimeout(()=>input.focus(), 50);
+    }
+  }
+}
+
+function testSelectMeaning(btn){
+  const c = WORDS[testQueue[testIndex]];
+  const chosen = btn.dataset.meaning;
+  const isCorrect = chosen === c.m;
+  document.querySelectorAll('.mc-btn').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.meaning === c.m){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
+    else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
+  });
+  if(isCorrect) testScore++; else testMissed.push(c);
+  const listenWord = document.getElementById('test-listen-word');
+  if(listenWord){
+    listenWord.style.display='block';
+    document.getElementById('test-listen-ipa').style.display='block';
+  }
+  const fb = document.getElementById('test-feedback');
+  fb.textContent = isCorrect ? '正解！' : '不正解';
+  fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
+  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+}
+
+function testSelectSpelling(btn){
+  const c = WORDS[testQueue[testIndex]];
+  const chosen = btn.dataset.word;
+  const isCorrect = chosen === c.w;
+  document.querySelectorAll('.mc-btn').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.word === c.w){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
+    else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
+  });
+  if(isCorrect) testScore++; else testMissed.push(c);
+  const fb = document.getElementById('test-feedback');
+  fb.textContent = isCorrect ? '正解！' : '不正解';
+  fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
+  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+}
+
+function testSelfGrade(isCorrect){
+  const c = WORDS[testQueue[testIndex]];
+  if(isCorrect) testScore++; else testMissed.push(c);
+  advanceTest();
+  renderTestQuestion();
+}
+
+function testCheckSpelling(){
+  const c = WORDS[testQueue[testIndex]];
+  const input = document.getElementById('test-spell-input');
+  const isCorrect = normalizeSpelling(input.value) === normalizeSpelling(c.w);
+  input.disabled = true;
+  if(isCorrect) testScore++; else testMissed.push(c);
+  document.getElementById('test-answer').style.display='block';
+  const fb = document.getElementById('test-feedback');
+  fb.textContent = isCorrect ? '正解！' : '不正解（正しいつづり ↓）';
+  fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
+  document.getElementById('test-check-btn').style.display='none';
+  document.getElementById('test-next-btn').style.display='block';
+  document.getElementById('test-next-btn').dataset.pending = isCorrect ? '1' : '0';
+  document.getElementById('test-next-btn').onclick = ()=>{ advanceTest(); renderTestQuestion(); };
+}
+
+function renderTestResult(){
+  const missedHtml = testMissed.length
+    ? '<div style="margin-top:18px;text-align:left;width:100%;"><b style="color:var(--navy);">間違えた単語</b><br>' +
+      testMissed.map(m=>`<div style="margin-top:6px;">${m.emoji} <b>${m.w}</b>（${m.m}）</div>`).join('') + '</div>'
+    : '<div style="margin-top:18px;">全問正解です！🎉</div>';
+  const modeLabel = {recognize:'読み小テスト', spell:'書き小テスト', listening:'リスニング小テスト'}[testMode];
+  document.getElementById('study-body').innerHTML = `
+    <div class="card-area">
+      <div class="flash" style="text-align:center;">
+        <div style="font-size:13px;color:#8A8474;">${modeLabel}</div>
+        <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:var(--navy);margin-top:6px;">${testScore} / ${testQueue.length}</div>
+        ${missedHtml}
+      </div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
+        <button class="btn btn-primary" onclick="startMiniTestWithDifficulty('${testMode}',${testDifficulty})">同じ難易度でもう一度</button>
+      </div>
+      <div style="text-align:center;margin-top:10px;margin-bottom:30px;">
+        <button class="btn-ghost" onclick="startMiniTest('${testMode}')">難易度を選び直す</button>
+      </div>
+    </div>`;
 }
 
 /* ============ ホーム ============ */
@@ -564,10 +853,12 @@ function renderHome(){
 
 /* ============ 学習画面 ============ */
 let studyMode = 'recognize'; // 'recognize'=英→日, 'spell'=日→英（つづり）
+let cramMode = false;
 
-function startStudy(mode){
+function startStudy(mode, opts){
   studyMode = mode;
-  buildQueue(mode);
+  cramMode = !!(opts && opts.cram);
+  buildQueue(mode, opts);
   showScreen('study');
   nextCard();
 }
@@ -575,11 +866,17 @@ function startStudy(mode){
 function nextCard(){
   currentRevealed = false;
   if(queue.length===0){
-    if(studyMode==='spell' && WORDS.filter(c=>isUnlockedForSpell(c.id)).length===0){
+    if(!cramMode && studyMode==='spell' && WORDS.filter(c=>isUnlockedForSpell(c.id)).length===0){
       document.getElementById('study-body').innerHTML =
         '<div class="empty-state"><div class="box-icon locked">🔒</div>' +
         '<div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">まだ書ける単語がありません</div>' +
         '<div>先に「読んで覚える」で単語を定着させましょう。</div></div>' +
+        '<button class="btn btn-secondary" style="margin-top:18px;" onclick="showScreen(\'home\')">ホームに戻る</button>';
+    } else if(cramMode){
+      document.getElementById('study-body').innerHTML =
+        '<div class="empty-state"><div class="box-icon mastered">✓</div>' +
+        '<div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">この範囲は周回完了です</div>' +
+        '<div>お疲れさまでした。もう一周するか、ホームに戻りましょう。</div></div>' +
         '<button class="btn btn-secondary" style="margin-top:18px;" onclick="showScreen(\'home\')">ホームに戻る</button>';
     } else {
       document.getElementById('study-body').innerHTML =
@@ -930,6 +1227,13 @@ document.querySelectorAll('.tab-btn').forEach(b=>{
 });
 document.getElementById('btn-start-recognize').addEventListener('click', ()=>startStudy('recognize'));
 document.getElementById('btn-start-spell').addEventListener('click', ()=>startStudy('spell'));
+document.getElementById('btn-cram-recognize-all').addEventListener('click', ()=>startStudy('recognize', {cram:true}));
+document.getElementById('btn-cram-recognize-weak').addEventListener('click', ()=>startStudy('recognize', {cram:true, weakOnly:true}));
+document.getElementById('btn-cram-spell-all').addEventListener('click', ()=>startStudy('spell', {cram:true}));
+document.getElementById('btn-cram-spell-weak').addEventListener('click', ()=>startStudy('spell', {cram:true, weakOnly:true}));
+document.getElementById('btn-test-recognize').addEventListener('click', ()=>startMiniTest('recognize'));
+document.getElementById('btn-test-spell').addEventListener('click', ()=>startMiniTest('spell'));
+document.getElementById('btn-test-listening').addEventListener('click', ()=>startMiniTest('listening'));
 document.getElementById('btn-goto-browse').addEventListener('click', ()=>showScreen('browse'));
 document.getElementById('search-input').addEventListener('input', (e)=>renderBrowse(e.target.value));
 document.getElementById('btn-reset').addEventListener('click', ()=>{
