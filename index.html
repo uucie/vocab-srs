@@ -260,6 +260,21 @@
         <button class="btn btn-secondary" id="btn-cram-spell-all">全190語を周回</button>
         <button class="btn btn-secondary" id="btn-cram-spell-weak">苦手な単語だけ</button>
       </div>
+      <div style="font-size:12px;color:#8A8474;margin:14px 0 6px;font-weight:700;">リスニング</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-listening-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-listening-weak">苦手な単語だけ</button>
+      </div>
+      <div style="font-size:12px;color:#8A8474;margin:14px 0 6px;font-weight:700;">品詞当て</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-pos-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-pos-weak">苦手な単語だけ</button>
+      </div>
+      <div style="font-size:12px;color:#8A8474;margin:14px 0 6px;font-weight:700;">例文穴埋め</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-cloze-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-cloze-weak">苦手な単語だけ</button>
+      </div>
     </section>
 
     <section class="block">
@@ -271,6 +286,10 @@
       </div>
       <div class="btn-row" style="margin-top:10px;">
         <button class="btn btn-secondary" id="btn-test-listening">リスニング（5問）</button>
+      </div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="btn-test-pos">品詞当て（5問）</button>
+        <button class="btn btn-secondary" id="btn-test-cloze">例文穴埋め（5問）</button>
       </div>
     </section>
 
@@ -594,6 +613,8 @@ let testIndex = 0;
 let testScore = 0;
 let testMissed = [];
 let isMockExam = false;
+let sessionType = 'miniTest'; // 'miniTest' | 'mockExam' | 'cramDrill' | 'posQuiz'
+let cramWeakOnly = false;
 
 let testDifficulty = 0; // 0=4択 1=3択 2=2択 3=ヒントなし（テスト開始時に選択し、テスト中は固定）
 const TEST_DIFF_LABELS = ['4択','3択','2択','ヒントなし'];
@@ -601,7 +622,7 @@ const TEST_DIFF_CHOICES = [4,3,2];
 
 function startMiniTest(mode){
   testMode = mode;
-  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング'}[mode];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め'}[mode];
   showScreen('study');
   document.getElementById('study-body').innerHTML = `
     <div class="card-area">
@@ -625,6 +646,7 @@ function startMiniTestWithDifficulty(mode, diffIndex){
   testMissed = [];
   testDifficulty = diffIndex;
   isMockExam = false;
+  sessionType = 'miniTest';
   renderTestQuestion();
 }
 
@@ -636,6 +658,67 @@ function startMockExam(mode){
   testMissed = [];
   testDifficulty = 3; // ヒントなし固定
   isMockExam = true;
+  sessionType = 'mockExam';
+  showScreen('study');
+  renderTestQuestion();
+}
+
+function startPosQuiz(){
+  testMode = 'pos';
+  testQueue = shuffleArr(WORDS.map(c=>c.id)).slice(0,5);
+  testIndex = 0;
+  testScore = 0;
+  testMissed = [];
+  testDifficulty = 0;
+  isMockExam = false;
+  sessionType = 'posQuiz';
+  showScreen('study');
+  renderTestQuestion();
+}
+
+function startFullDrill(mode, weakOnly){
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', pos:'品詞当て'}[mode];
+  showScreen('study');
+  if(mode==='pos'){
+    startFullDrillWithDifficulty(mode, weakOnly, 0);
+    return;
+  }
+  document.getElementById('study-body').innerHTML = `
+    <div class="card-area">
+      <div class="flash" style="text-align:center;">
+        <span class="pos-tag">テスト直前モード（${modeLabel}・${weakOnly?'苦手のみ':'全190語'}）</span>
+        <div style="font-size:15px;color:var(--navy);font-weight:700;margin-top:14px;">難易度を選んでください</div>
+        <div style="width:100%;margin-top:14px;">
+          ${TEST_DIFF_LABELS.map((label,i)=>
+            `<button class="btn btn-secondary" style="margin-top:8px;" onclick="startFullDrillWithDifficulty('${mode}',${weakOnly},${i})">${label}</button>`
+          ).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function startFullDrillWithDifficulty(mode, weakOnly, diffIndex){
+  let ids = WORDS.map(c=>c.id);
+  if(weakOnly){
+    ids = ids.filter(id => { const p = getP(id,'recognize'); return !p || p.box<=1; });
+  }
+  if(ids.length===0){
+    document.getElementById('study-body').innerHTML =
+      '<div class="card-area"><div class="empty-state"><div class="box-icon mastered">✓</div>' +
+      '<div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">対象の単語がありません</div>' +
+      '<div>苦手な単語（読みの習熟度が低い単語）が今はないようです。</div></div>' +
+      '<button class="btn btn-secondary" style="margin-top:18px;" onclick="showScreen(\'train\')">戻る</button></div>';
+    return;
+  }
+  testMode = mode;
+  testQueue = shuffleArr(ids);
+  testIndex = 0;
+  testScore = 0;
+  testMissed = [];
+  testDifficulty = diffIndex;
+  isMockExam = false;
+  sessionType = 'cramDrill';
+  cramWeakOnly = weakOnly;
   showScreen('study');
   renderTestQuestion();
 }
@@ -647,9 +730,9 @@ function advanceTest(){
 function renderTestQuestion(){
   if(testIndex >= testQueue.length){ renderTestResult(); return; }
   const c = WORDS[testQueue[testIndex]];
-  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング'}[testMode];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め'}[testMode];
   const diffLabel = TEST_DIFF_LABELS[testDifficulty];
-  const testTypeLabel = isMockExam ? '模擬試験' : '小テスト';
+  const testTypeLabel = sessionType==='cramDrill' ? 'テスト直前' : (isMockExam ? '模擬試験' : '小テスト');
   const countLabel = `${testIndex+1}/${testQueue.length}`;
   const statusHtml = `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　難易度：${diffLabel}</div>`;
 
@@ -721,7 +804,7 @@ function renderTestQuestion(){
         document.getElementById('test-self-grade').style.display='grid';
       });
     }
-  } else {
+  } else if(testMode==='spell') {
     // 書き
     if(testDifficulty <= 2){
       const n = TEST_DIFF_CHOICES[testDifficulty];
@@ -761,6 +844,65 @@ function renderTestQuestion(){
       input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckSpelling(); } });
       setTimeout(()=>input.focus(), 50);
     }
+  } else if(testMode==='cloze') {
+    const cz = buildCloze(c.ex, c.w);
+    if(testDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[testDifficulty];
+      const choices = buildChoices(c.w, n);
+      const choiceButtons = choices.map(opt =>
+        `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${opt}</button>`
+      ).join('');
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${diffLabel}）${countLabel}</span>
+            <div class="example" style="font-size:17px;margin-top:10px;">${cz.cloze}</div>
+            <div class="exampleja">${c.exja}</div>
+            <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+            <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+          </div>
+          ${statusHtml}
+        </div>`;
+    } else {
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${diffLabel}）${countLabel}</span>
+            <div class="example" style="font-size:17px;margin-top:10px;">${cz.cloze}</div>
+            <div class="exampleja">${c.exja}</div>
+            <input type="text" id="test-spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
+                   placeholder="空欄の単語を入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <div id="test-feedback" style="margin-top:10px;font-weight:700;"></div>
+            <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
+            <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
+            <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+          </div>
+          ${statusHtml}
+        </div>`;
+      document.getElementById('test-check-btn').addEventListener('click', ()=>testCheckCloze(cz));
+      document.getElementById('test-next-btn').addEventListener('click', ()=>{ renderTestQuestion(); });
+      const input = document.getElementById('test-spell-input');
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckCloze(cz); } });
+      setTimeout(()=>input.focus(), 50);
+    }
+  } else if(testMode==='pos') {
+    const tags = shuffleArr(['名','動','形','副','熟']);
+    const choiceButtons = tags.map(tag =>
+      `<button class="btn btn-secondary mc-btn" data-tag="${tag}" onclick="testSelectPos(this)" style="margin-top:8px;">${tag}</button>`
+    ).join('');
+    document.getElementById('study-body').innerHTML = `
+      <div class="card-area">
+        <div class="flash" id="flash">
+          <span class="pos-tag">${testTypeLabel}（品詞当て）${countLabel}</span>
+          <div class="emoji">${c.emoji}</div>
+          <div class="word">${c.w}</div>
+          <div class="ipa">${c.ipa}</div>
+          <div class="meaning" style="font-size:16px;">${c.m}</div>
+          <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+          <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+        </div>
+        ${statusHtml}
+      </div>`;
   }
 }
 
@@ -824,15 +966,65 @@ function testCheckSpelling(){
   document.getElementById('test-next-btn').onclick = ()=>{ advanceTest(); renderTestQuestion(); };
 }
 
+function testCheckCloze(cz){
+  const c = WORDS[testQueue[testIndex]];
+  const input = document.getElementById('test-spell-input');
+  const userVal = normalizeSpelling(input.value);
+  const isCorrect = userVal === normalizeSpelling(c.w) || (cz.found && userVal === normalizeSpelling(cz.match));
+  input.disabled = true;
+  if(isCorrect) testScore++; else testMissed.push(c);
+  document.getElementById('test-answer').style.display='block';
+  const fb = document.getElementById('test-feedback');
+  fb.textContent = isCorrect ? '正解！' : '不正解（正しい単語 ↓）';
+  fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
+  document.getElementById('test-check-btn').style.display='none';
+  document.getElementById('test-next-btn').style.display='block';
+  document.getElementById('test-next-btn').onclick = ()=>{ advanceTest(); renderTestQuestion(); };
+}
+
+function testSelectPos(btn){
+  const c = WORDS[testQueue[testIndex]];
+  const chosen = btn.dataset.tag;
+  const correctTags = c.pos.split('/');
+  const isCorrect = correctTags.includes(chosen);
+  document.querySelectorAll('.mc-btn').forEach(b=>{
+    b.disabled = true;
+    if(correctTags.includes(b.dataset.tag)){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
+    else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
+  });
+  if(isCorrect) testScore++; else testMissed.push(c);
+  const fb = document.getElementById('test-feedback');
+  fb.textContent = isCorrect ? '正解！' : `不正解（正解：${c.pos}）`;
+  fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
+  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+}
+
 function renderTestResult(){
   const missedHtml = testMissed.length
     ? '<div style="margin-top:18px;text-align:left;width:100%;"><b style="color:var(--navy);">間違えた単語</b><br>' +
       testMissed.map(m=>`<div style="margin-top:6px;">${m.emoji} <b>${m.w}</b>（${m.m}）</div>`).join('') + '</div>'
     : '<div style="margin-top:18px;">全問正解です！🎉</div>';
-  const modeLabel = isMockExam
-    ? {recognize:'読み模擬試験', spell:'書き模擬試験', listening:'リスニング模擬試験'}[testMode]
-    : {recognize:'読み小テスト', spell:'書き小テスト', listening:'リスニング小テスト'}[testMode];
-  const retryButtonsHtml = isMockExam
+  const modeLabel = sessionType==='cramDrill'
+    ? {recognize:'読みテスト直前', spell:'書きテスト直前', listening:'リスニングテスト直前', cloze:'例文穴埋めテスト直前', pos:'品詞当てテスト直前'}[testMode]
+    : isMockExam
+    ? {recognize:'読み模擬試験', spell:'書き模擬試験', listening:'リスニング模擬試験', cloze:'例文穴埋め模擬試験'}[testMode]
+    : {recognize:'読み小テスト', spell:'書き小テスト', listening:'リスニング小テスト', cloze:'例文穴埋め小テスト', pos:'品詞当て小テスト'}[testMode];
+  const retryButtonsHtml = sessionType==='cramDrill'
+    ? (testMode==='pos'
+      ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
+           <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
+           <button class="btn btn-primary" onclick="startFullDrillWithDifficulty('pos',${cramWeakOnly},0)">もう一周</button>
+         </div>`
+      : `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
+           <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
+           <button class="btn btn-primary" onclick="startFullDrillWithDifficulty('${testMode}',${cramWeakOnly},${testDifficulty})">もう一周</button>
+         </div>`)
+    : testMode==='pos'
+    ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
+         <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
+         <button class="btn btn-primary" onclick="startPosQuiz()">もう一度</button>
+       </div>`
+    : isMockExam
     ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
          <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
          <button class="btn btn-primary" onclick="startMockExam('${testMode}')">もう一度</button>
@@ -1066,6 +1258,43 @@ function buildChoices(correctWord, n){
   return options;
 }
 
+/* ============ 例文穴埋め用ヘルパー ============ */
+const CLOZE_IRREGULAR = {get:'got', take:'took', see:'saw', throw:'threw', make:'made', draw:'drew', feel:'felt', bear:'bore'};
+
+function escapeRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function findClozeMatch(sentence, word){
+  const searchWord = word.replace(/\s+doing$/i, ''); // 「get around to doing」等のプレースホルダーを除く
+  let re = new RegExp('\\b'+escapeRe(searchWord)+'\\b', 'i');
+  let m = sentence.match(re);
+  if(m) return m[0];
+  const parts = searchWord.split(' ');
+  const first = parts[0].toLowerCase();
+  const candidates = [first];
+  if(CLOZE_IRREGULAR[first]) candidates.push(CLOZE_IRREGULAR[first]);
+  for(const cand of candidates){
+    const phrase = [cand].concat(parts.slice(1)).join(' ');
+    re = new RegExp('\\b'+escapeRe(phrase)+'\\b', 'i');
+    m = sentence.match(re);
+    if(m) return m[0];
+  }
+  for(const cand of candidates){
+    const stemLen = Math.min(5, Math.max(3, cand.length-2));
+    const stem = cand.slice(0, stemLen);
+    re = new RegExp('\\b'+escapeRe(stem)+"[a-zA-Z']*", 'i');
+    m = sentence.match(re);
+    if(m) return m[0];
+  }
+  return null;
+}
+
+function buildCloze(sentence, word){
+  const match = findClozeMatch(sentence, word);
+  if(!match) return {cloze: sentence, found:false};
+  const blank = match.replace(/\S/g, '_');
+  return {cloze: sentence.replace(match, blank), found:true, match};
+}
+
 function renderSpellCard(c, remaining){
   const spellBox = (getP(c.id,'spell') || {box:0}).box;
   const qt = quizTypeForBox(spellBox);
@@ -1267,9 +1496,17 @@ document.getElementById('btn-cram-recognize-all').addEventListener('click', ()=>
 document.getElementById('btn-cram-recognize-weak').addEventListener('click', ()=>startStudy('recognize', {cram:true, weakOnly:true}));
 document.getElementById('btn-cram-spell-all').addEventListener('click', ()=>startStudy('spell', {cram:true}));
 document.getElementById('btn-cram-spell-weak').addEventListener('click', ()=>startStudy('spell', {cram:true, weakOnly:true}));
+document.getElementById('btn-cram-listening-all').addEventListener('click', ()=>startFullDrill('listening', false));
+document.getElementById('btn-cram-listening-weak').addEventListener('click', ()=>startFullDrill('listening', true));
+document.getElementById('btn-cram-pos-all').addEventListener('click', ()=>startFullDrill('pos', false));
+document.getElementById('btn-cram-pos-weak').addEventListener('click', ()=>startFullDrill('pos', true));
+document.getElementById('btn-cram-cloze-all').addEventListener('click', ()=>startFullDrill('cloze', false));
+document.getElementById('btn-cram-cloze-weak').addEventListener('click', ()=>startFullDrill('cloze', true));
 document.getElementById('btn-test-recognize').addEventListener('click', ()=>startMiniTest('recognize'));
 document.getElementById('btn-test-spell').addEventListener('click', ()=>startMiniTest('spell'));
 document.getElementById('btn-test-listening').addEventListener('click', ()=>startMiniTest('listening'));
+document.getElementById('btn-test-pos').addEventListener('click', ()=>startPosQuiz());
+document.getElementById('btn-test-cloze').addEventListener('click', ()=>startMiniTest('cloze'));
 document.getElementById('btn-mock-recognize').addEventListener('click', ()=>startMockExam('recognize'));
 document.getElementById('btn-mock-spell').addEventListener('click', ()=>startMockExam('spell'));
 document.getElementById('btn-mock-listening').addEventListener('click', ()=>startMockExam('listening'));
