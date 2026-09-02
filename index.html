@@ -275,6 +275,11 @@
         <button class="btn btn-secondary" id="btn-cram-cloze-all">全190語を周回</button>
         <button class="btn btn-secondary" id="btn-cram-cloze-weak">苦手な単語だけ</button>
       </div>
+      <div style="font-size:12px;color:#8A8474;margin:14px 0 6px;font-weight:700;">英英定義当て</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cram-definition-all">全190語を周回</button>
+        <button class="btn btn-secondary" id="btn-cram-definition-weak">苦手な単語だけ</button>
+      </div>
     </section>
 
     <section class="block">
@@ -290,6 +295,9 @@
       <div class="btn-row" style="margin-top:10px;">
         <button class="btn btn-secondary" id="btn-test-pos">品詞当て（5問）</button>
         <button class="btn btn-secondary" id="btn-test-cloze">例文穴埋め（5問）</button>
+      </div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="btn-test-definition">英英定義当て（5問）</button>
       </div>
     </section>
 
@@ -329,196 +337,196 @@
 <script>
 /* ============ 単語データ ============ */
 const WORDS = [
-{w:"avoidance",emoji:"🙈",ipa:"/əˈvɔɪdəns/",pos:"名",m:"回避",ex:"Avoidance of the topic made everyone suspicious.",exja:"その話題を避けたことで皆が怪しんだ。"},
-{w:"apply",emoji:"📝",ipa:"/əˈplaɪ/",pos:"動",m:"申し込む、適用する",ex:"You can apply for the scholarship online.",exja:"その奨学金にはオンラインで申し込める。"},
-{w:"collide",emoji:"💥",ipa:"/kəˈlaɪd/",pos:"動",m:"衝突する",ex:"The two cars collided at the intersection.",exja:"二台の車が交差点で衝突した。"},
-{w:"collision",emoji:"💥",ipa:"/kəˈlɪʒən/",pos:"名",m:"衝突",ex:"The collision caused minor injuries.",exja:"衝突で軽傷者が出た。"},
-{w:"compensate",emoji:"💰",ipa:"/ˈkɑːmpənseɪt/",pos:"動",m:"補償する",ex:"The company compensated him for the loss.",exja:"会社は彼の損失を補償した。"},
-{w:"compensation",emoji:"💰",ipa:"/ˌkɑːmpənˈseɪʃən/",pos:"名",m:"補償",ex:"She received compensation for the damage.",exja:"彼女は損害への補償を受けた。"},
-{w:"complaint",emoji:"😠",ipa:"/kəmˈpleɪnt/",pos:"名",m:"苦情",ex:"He filed a complaint about the noise.",exja:"彼は騒音について苦情を申し立てた。"},
-{w:"complain",emoji:"😠",ipa:"/kəmˈpleɪn/",pos:"動",m:"不満を言う",ex:"Stop complaining and start working.",exja:"文句を言うのをやめて働き始めなさい。"},
-{w:"complete",emoji:"✅",ipa:"/kəmˈpliːt/",pos:"動/形",m:"完了する、完全な",ex:"Please complete the form by Friday.",exja:"金曜までにその用紙を記入してください。"},
-{w:"consequence",emoji:"➡️",ipa:"/ˈkɑːnsɪkwens/",pos:"名",m:"結果",ex:"Every action has a consequence.",exja:"どんな行動にも結果が伴う。"},
-{w:"consequent",emoji:"➡️",ipa:"/ˈkɑːnsɪkwənt/",pos:"形",m:"結果として起こる",ex:"The flood and its consequent damage were severe.",exja:"洪水とその結果生じた被害は深刻だった。"},
-{w:"consistent",emoji:"🔁",ipa:"/kənˈsɪstənt/",pos:"形",m:"一貫した",ex:"Try to be consistent with your schedule.",exja:"スケジュールに一貫性を持たせるようにしなさい。"},
-{w:"consistency",emoji:"🔁",ipa:"/kənˈsɪstənsi/",pos:"名",m:"一貫性",ex:"The report lacks consistency.",exja:"その報告書には一貫性が欠けている。"},
-{w:"depress",emoji:"😞",ipa:"/dɪˈpres/",pos:"動",m:"落ち込ませる",ex:"Bad news can depress anyone.",exja:"悪い知らせは誰でも落ち込ませる。"},
-{w:"depression",emoji:"😞",ipa:"/dɪˈpreʃən/",pos:"名",m:"憂鬱、不景気",ex:"The country fell into depression.",exja:"その国は不景気に陥った。"},
-{w:"detain",emoji:"🚔",ipa:"/dɪˈteɪn/",pos:"動",m:"拘留する",ex:"Police detained the suspect overnight.",exja:"警察はその容疑者を一晩拘留した。"},
-{w:"detention",emoji:"🚔",ipa:"/dɪˈtenʃən/",pos:"名",m:"拘留",ex:"He was held in detention for a week.",exja:"彼は一週間拘留された。"},
-{w:"emit",emoji:"💨",ipa:"/ɪˈmɪt/",pos:"動",m:"排出する",ex:"Factories emit a lot of smoke.",exja:"工場は多くの煙を排出する。"},
-{w:"emission",emoji:"💨",ipa:"/ɪˈmɪʃən/",pos:"名",m:"排出",ex:"The law limits carbon emission.",exja:"その法律は二酸化炭素の排出を制限する。"},
-{w:"exist",emoji:"🌍",ipa:"/ɪɡˈzɪst/",pos:"動",m:"存在する",ex:"Does life exist on other planets?",exja:"他の惑星に生命は存在するのか。"},
-{w:"existence",emoji:"🌍",ipa:"/ɪɡˈzɪstəns/",pos:"名",m:"存在",ex:"The company has been in existence for decades.",exja:"その会社は数十年存在し続けている。"},
-{w:"expose",emoji:"🔦",ipa:"/ɪkˈspoʊz/",pos:"動",m:"さらす、暴く",ex:"The report exposed the truth.",exja:"その報道が真実を暴いた。"},
-{w:"exposure",emoji:"🔦",ipa:"/ɪkˈspoʊʒər/",pos:"名",m:"露出",ex:"Long exposure to the sun is harmful.",exja:"長時間日光にさらされるのは有害だ。"},
-{w:"immigrate",emoji:"✈️",ipa:"/ˈɪmɪɡreɪt/",pos:"動",m:"移住する",ex:"They immigrated to Canada last year.",exja:"彼らは昨年カナダに移住した。"},
-{w:"immigrant",emoji:"🧳",ipa:"/ˈɪmɪɡrənt/",pos:"名",m:"移民",ex:"Many immigrants work in this city.",exja:"多くの移民がこの街で働いている。"},
-{w:"regulate",emoji:"⚖️",ipa:"/ˈreɡjəleɪt/",pos:"動",m:"規制する",ex:"The government regulates food safety.",exja:"政府は食品安全を規制している。"},
-{w:"regulation",emoji:"⚖️",ipa:"/ˌreɡjəˈleɪʃən/",pos:"名",m:"規制",ex:"New regulations were introduced.",exja:"新しい規制が導入された。"},
-{w:"reside",emoji:"🏠",ipa:"/rɪˈzaɪd/",pos:"動",m:"住む",ex:"She resides in a small village.",exja:"彼女は小さな村に住んでいる。"},
-{w:"residential",emoji:"🏘️",ipa:"/ˌrezɪˈdenʃəl/",pos:"形",m:"住宅の",ex:"This is a quiet residential area.",exja:"ここは静かな住宅地だ。"},
-{w:"resident",emoji:"🏠",ipa:"/ˈrezɪdənt/",pos:"名",m:"住民",ex:"Local residents opposed the plan.",exja:"地元住民はその計画に反対した。"},
-{w:"suspect",emoji:"🕵️",ipa:"/səˈspekt/",pos:"動",m:"疑いを持つ",ex:"Police suspect he is lying.",exja:"警察は彼が嘘をついていると疑っている。"},
-{w:"suspicion",emoji:"🕵️",ipa:"/səˈspɪʃən/",pos:"名",m:"疑い",ex:"Her behavior raised suspicion.",exja:"彼女の行動は疑いを招いた。"},
-{w:"transport",emoji:"🚚",ipa:"/trænsˈpɔːrt/",pos:"動",m:"輸送する",ex:"Goods are transported by ship.",exja:"商品は船で輸送される。"},
-{w:"transportation",emoji:"🚌",ipa:"/ˌtrænspərˈteɪʃən/",pos:"名",m:"輸送、交通機関",ex:"Public transportation is convenient here.",exja:"ここでは公共交通機関が便利だ。"},
-{w:"require",emoji:"❗",ipa:"/rɪˈkwaɪər/",pos:"動",m:"要求する",ex:"The job requires experience.",exja:"その仕事は経験を要求する。"},
-{w:"requirement",emoji:"📋",ipa:"/rɪˈkwaɪərmənt/",pos:"名",m:"必要条件",ex:"Meeting the requirement takes time.",exja:"必要条件を満たすには時間がかかる。"},
-{w:"recede",emoji:"⬅️",ipa:"/rɪˈsiːd/",pos:"動",m:"後退する",ex:"The flood water slowly receded.",exja:"洪水の水は徐々に引いた。"},
-{w:"recession",emoji:"📉",ipa:"/rɪˈseʃən/",pos:"名",m:"不景気",ex:"The economy entered a recession.",exja:"経済は不景気に突入した。"},
-{w:"deforestation",emoji:"🪓🌲",ipa:"/diːˌfɔːrɪˈsteɪʃən/",pos:"名",m:"森林伐採",ex:"Deforestation harms wildlife.",exja:"森林伐採は野生生物に害を与える。"},
-{w:"disorder",emoji:"🌀",ipa:"/dɪsˈɔːrdər/",pos:"名",m:"混乱、障害",ex:"The room was in complete disorder.",exja:"部屋は完全に混乱していた。"},
-{w:"coauthor",emoji:"👥📖",ipa:"/ˌkoʊˈɔːθər/",pos:"名",m:"共著者",ex:"She is the coauthor of this book.",exja:"彼女はこの本の共著者だ。"},
-{w:"inequality",emoji:"⚖️",ipa:"/ˌɪnɪˈkwɑːləti/",pos:"名",m:"不平等",ex:"Income inequality is a serious issue.",exja:"所得の不平等は深刻な問題だ。"},
-{w:"precaution",emoji:"⚠️",ipa:"/prɪˈkɔːʃən/",pos:"名",m:"用心、予防",ex:"Take precautions against fire.",exja:"火災への予防措置を取りなさい。"},
-{w:"microscope",emoji:"🔬",ipa:"/ˈmaɪkrəskoʊp/",pos:"名",m:"顕微鏡",ex:"He examined the cell under a microscope.",exja:"彼は顕微鏡で細胞を調べた。"},
-{w:"telescope",emoji:"🔭",ipa:"/ˈtelɪskoʊp/",pos:"名",m:"望遠鏡",ex:"We watched stars through a telescope.",exja:"望遠鏡で星を観察した。"},
-{w:"alimony",emoji:"💸",ipa:"/ˈæləˌmoʊni/",pos:"名",m:"離婚後の扶養料",ex:"He pays alimony every month.",exja:"彼は毎月扶養料を支払っている。"},
-{w:"anatomy",emoji:"🫀",ipa:"/əˈnætəmi/",pos:"名",m:"解剖学",ex:"She studies human anatomy.",exja:"彼女は人体解剖学を学んでいる。"},
-{w:"anthropology",emoji:"🧑‍🤝‍🧑",ipa:"/ˌænθrəˈpɑːlədʒi/",pos:"名",m:"人類学",ex:"He majored in anthropology.",exja:"彼は人類学を専攻した。"},
-{w:"bankruptcy",emoji:"💸📉",ipa:"/ˈbæŋkrʌptsi/",pos:"名",m:"倒産",ex:"The store filed for bankruptcy.",exja:"その店は倒産を申請した。"},
-{w:"debris",emoji:"🧱",ipa:"/dəˈbriː/",pos:"名",m:"破片",ex:"Debris covered the street after the storm.",exja:"嵐の後、道路は破片で覆われた。"},
-{w:"hydrogen",emoji:"⚛️",ipa:"/ˈhaɪdrədʒən/",pos:"名",m:"水素",ex:"Hydrogen is the lightest element.",exja:"水素は最も軽い元素だ。"},
-{w:"infrastructure",emoji:"🏗️",ipa:"/ˈɪnfrəstrʌktʃər/",pos:"名",m:"基盤、インフラ",ex:"The city needs better infrastructure.",exja:"この市はより良いインフラを必要としている。"},
-{w:"irrigation",emoji:"💧",ipa:"/ˌɪrɪˈɡeɪʃən/",pos:"名",m:"灌漑",ex:"Irrigation helps crops grow in dry areas.",exja:"灌漑は乾燥地で作物の成長を助ける。"},
-{w:"sanction",emoji:"🚫",ipa:"/ˈsæŋkʃən/",pos:"名",m:"制裁",ex:"The country faced economic sanctions.",exja:"その国は経済制裁を受けた。"},
-{w:"revenue",emoji:"💵",ipa:"/ˈrevənuː/",pos:"名",m:"収入、歳入",ex:"The company's revenue increased this year.",exja:"今年会社の収入は増加した。"},
-{w:"veterinarian",emoji:"🐾",ipa:"/ˌvetərəˈneriən/",pos:"名",m:"獣医",ex:"The veterinarian examined my dog.",exja:"獣医が私の犬を診察した。"},
-{w:"bankrupt",emoji:"💸",ipa:"/ˈbæŋkrʌpt/",pos:"形",m:"倒産した",ex:"The business went bankrupt last year.",exja:"その会社は昨年倒産した。"},
-{w:"beneficial",emoji:"👍",ipa:"/ˌbenɪˈfɪʃəl/",pos:"形",m:"有益な",ex:"Exercise is beneficial to health.",exja:"運動は健康に有益だ。"},
-{w:"decisive",emoji:"✅",ipa:"/dɪˈsaɪsɪv/",pos:"形",m:"決定的な",ex:"She took decisive action.",exja:"彼女は決定的な行動を取った。"},
-{w:"flexible",emoji:"🤸",ipa:"/ˈfleksəbəl/",pos:"形",m:"柔軟な",ex:"My work hours are flexible.",exja:"私の勤務時間は柔軟だ。"},
-{w:"neurological",emoji:"🧠",ipa:"/ˌnʊərəˈlɑːdʒɪkəl/",pos:"形",m:"神経の",ex:"He has a neurological disorder.",exja:"彼は神経疾患を抱えている。"},
-{w:"reliable",emoji:"🤝",ipa:"/rɪˈlaɪəbəl/",pos:"形",m:"信頼できる",ex:"She is a reliable friend.",exja:"彼女は信頼できる友人だ。"},
-{w:"spacious",emoji:"🏠",ipa:"/ˈspeɪʃəs/",pos:"形",m:"広々とした",ex:"They live in a spacious apartment.",exja:"彼らは広々とした部屋に住んでいる。"},
-{w:"vigorous",emoji:"💪",ipa:"/ˈvɪɡərəs/",pos:"形",m:"活発な",ex:"He does vigorous exercise every morning.",exja:"彼は毎朝活発な運動をする。"},
-{w:"clinical",emoji:"🏥",ipa:"/ˈklɪnɪkəl/",pos:"形",m:"臨床の",ex:"The drug passed clinical trials.",exja:"その薬は臨床試験に合格した。"},
-{w:"deceitful",emoji:"🤥",ipa:"/dɪˈsiːtfəl/",pos:"形",m:"嘘つきの",ex:"He is known for deceitful behavior.",exja:"彼は嘘つきな行動で知られている。"},
-{w:"disabled",emoji:"♿",ipa:"/dɪsˈeɪbəld/",pos:"形",m:"障がいを持った",ex:"The building has access for disabled people.",exja:"その建物には障がい者用の入口がある。"},
-{w:"extraordinary",emoji:"🌟",ipa:"/ɪkˈstrɔːrdəneri/",pos:"形",m:"並外れた",ex:"She has extraordinary talent.",exja:"彼女は並外れた才能を持つ。"},
-{w:"illegal",emoji:"🚫",ipa:"/ɪˈliːɡəl/",pos:"形",m:"違法の",ex:"Parking here is illegal.",exja:"ここに駐車するのは違法だ。"},
-{w:"indispensable",emoji:"🔑",ipa:"/ˌɪndɪˈspensəbəl/",pos:"形",m:"不可欠な",ex:"Water is indispensable to life.",exja:"水は生命に不可欠だ。"},
-{w:"threatened",emoji:"⚠️",ipa:"/ˈθretənd/",pos:"形",m:"危機に瀕した",ex:"The species is now threatened.",exja:"その種は今や絶滅の危機にある。"},
-{w:"unexpected",emoji:"😲",ipa:"/ˌʌnɪkˈspektɪd/",pos:"形",m:"予期せぬ",ex:"We had an unexpected visitor.",exja:"予期せぬ来客があった。"},
-{w:"formidable task",emoji:"💪📚",ipa:"/ˈfɔːrmɪdəbəl tæsk/",pos:"熟",m:"手強い課題",ex:"Learning a new language is a formidable task.",exja:"新しい言語を学ぶことは手強い課題だ。"},
-{w:"moderate income",emoji:"💵",ipa:"/ˈmɑːdərət ˈɪnkʌm/",pos:"熟",m:"適度な収入",ex:"They live comfortably on a moderate income.",exja:"彼らは適度な収入で快適に暮らしている。"},
-{w:"preliminary survey",emoji:"📋",ipa:"/prɪˈlɪməneri ˈsɜːrveɪ/",pos:"熟",m:"予備的な調査",ex:"The preliminary survey results look promising.",exja:"予備調査の結果は有望に見える。"},
-{w:"unanimous vote",emoji:"🙌🗳️",ipa:"/juˈnænɪməs voʊt/",pos:"熟",m:"満場一致の投票",ex:"The board reached a unanimous vote.",exja:"役員会は満場一致の投票に至った。"},
-{w:"approximately",emoji:"≈",ipa:"/əˈprɑːksɪmətli/",pos:"副",m:"おおよそ",ex:"It takes approximately two hours.",exja:"それにはおおよそ2時間かかる。"},
-{w:"definitely",emoji:"✔️",ipa:"/ˈdefɪnətli/",pos:"副",m:"確かに",ex:"I will definitely call you back.",exja:"必ず折り返し電話します。"},
-{w:"desperately",emoji:"😣",ipa:"/ˈdespərətli/",pos:"副",m:"必死に",ex:"He desperately needed help.",exja:"彼は必死に助けを必要としていた。"},
-{w:"genuinely",emoji:"💯",ipa:"/ˈdʒenjuɪnli/",pos:"副",m:"真に",ex:"She is genuinely happy for you.",exja:"彼女はあなたのことを心から喜んでいる。"},
-{w:"intuitively",emoji:"💡",ipa:"/ɪnˈtuːɪtɪvli/",pos:"副",m:"直感的に",ex:"The app is intuitively designed.",exja:"そのアプリは直感的に設計されている。"},
-{w:"profoundly",emoji:"🌊",ipa:"/prəˈfaʊndli/",pos:"副",m:"深く",ex:"The book profoundly changed my view.",exja:"その本は私の考えを深く変えた。"},
-{w:"boost",emoji:"📈",ipa:"/buːst/",pos:"動",m:"押し上げる",ex:"The sale boosted the company's morale.",exja:"そのセールは会社の士気を押し上げた。"},
-{w:"consume",emoji:"🍽️",ipa:"/kənˈsuːm/",pos:"動",m:"消費する",ex:"We consume too much energy at night.",exja:"私たちは夜にエネルギーを消費しすぎる。"},
-{w:"generate",emoji:"⚡",ipa:"/ˈdʒenəreɪt/",pos:"動",m:"生み出す",ex:"Wind turbines generate power.",exja:"風力タービンは電力を生み出す。"},
-{w:"implement",emoji:"🛠️",ipa:"/ˈɪmplɪment/",pos:"動",m:"実行する",ex:"The company will implement the new plan.",exja:"会社は新しい計画を実行するだろう。"},
-{w:"issue",emoji:"📢",ipa:"/ˈɪʃuː/",pos:"動",m:"発する、発行する",ex:"The government issued a warning.",exja:"政府は警告を発した。"},
-{w:"retain",emoji:"🧷",ipa:"/rɪˈteɪn/",pos:"動",m:"保つ",ex:"She retains a clear memory of that day.",exja:"彼女はその日の記憶を鮮明に保っている。"},
-{w:"spoil",emoji:"🍼",ipa:"/spɔɪl/",pos:"動",m:"台無しにする、甘やかす",ex:"Don't spoil the child too much.",exja:"その子どもをあまり甘やかさないで。"},
-{w:"stimulate",emoji:"⚡",ipa:"/ˈstɪmjəleɪt/",pos:"動",m:"刺激する",ex:"Coffee stimulates the appetite.",exja:"コーヒーは食欲を刺激する。"},
-{w:"transmit",emoji:"📡",ipa:"/trænsˈmɪt/",pos:"動",m:"伝える",ex:"The virus is transmitted through contact.",exja:"そのウイルスは接触によって伝わる。"},
-{w:"yield",emoji:"🌾",ipa:"/jiːld/",pos:"動",m:"産出する",ex:"The field yields a good crop each year.",exja:"その畑は毎年良い作物を産出する。"},
-{w:"affliction",emoji:"😖",ipa:"/əˈflɪkʃən/",pos:"名",m:"苦悩、苦痛",ex:"He suffered a long affliction.",exja:"彼は長い苦悩に苦しんだ。"},
-{w:"bully",emoji:"😈",ipa:"/ˈbʊli/",pos:"動",m:"いじめる",ex:"He was bullied at school.",exja:"彼は学校でいじめられた。"},
-{w:"cram",emoji:"📚",ipa:"/kræm/",pos:"動",m:"詰め込み学習する",ex:"Students cram for exams the night before.",exja:"学生は試験前夜に詰め込み勉強する。"},
-{w:"cultivate",emoji:"🌱",ipa:"/ˈkʌltɪveɪt/",pos:"動",m:"育てる、養う",ex:"Teachers cultivate curiosity in students.",exja:"教師は生徒の好奇心を養う。"},
-{w:"enrollment",emoji:"🏫",ipa:"/ɪnˈroʊlmənt/",pos:"名",m:"入学、入学者数",ex:"School enrollment increased this year.",exja:"今年、学校の入学者数が増えた。"},
-{w:"evaluate",emoji:"📝",ipa:"/ɪˈvæljueɪt/",pos:"動",m:"評価する",ex:"Teachers evaluate students' progress.",exja:"教師は生徒の進歩を評価する。"},
-{w:"humiliate",emoji:"😳",ipa:"/hjuːˈmɪlieɪt/",pos:"動",m:"辱める",ex:"He felt humiliated in front of the class.",exja:"彼はクラスの前で辱められたと感じた。"},
-{w:"incentive",emoji:"🎯",ipa:"/ɪnˈsentɪv/",pos:"名",m:"動機、要因",ex:"The bonus is a strong incentive to work hard.",exja:"ボーナスは一生懸命働く強い動機になる。"},
-{w:"temperament",emoji:"🎭",ipa:"/ˈtempərəmənt/",pos:"名",m:"気質、気性",ex:"She has a calm temperament.",exja:"彼女は穏やかな気質を持つ。"},
-{w:"tempt",emoji:"🍫",ipa:"/tempt/",pos:"動",m:"引きつける",ex:"The smell tempted him to eat more.",exja:"その匂いは彼にもっと食べたいと思わせた。"},
-{w:"truant",emoji:"🚫🏫",ipa:"/ˈtruːənt/",pos:"動",m:"無断欠席する",ex:"He often plays truant from school.",exja:"彼はよく学校を無断欠席する。"},
-{w:"abandon",emoji:"🗑️",ipa:"/əˈbændən/",pos:"動",m:"捨て去る",ex:"They had to abandon the old plan.",exja:"彼らは古い計画を捨てざるを得なかった。"},
-{w:"adjust",emoji:"🔧",ipa:"/əˈdʒʌst/",pos:"動",m:"順応する",ex:"It took time to adjust to the new culture.",exja:"新しい文化に順応するのに時間がかかった。"},
-{w:"ancestor",emoji:"👴",ipa:"/ˈænsestər/",pos:"名",m:"祖先",ex:"Her ancestors came from Ireland.",exja:"彼女の祖先はアイルランド出身だ。"},
-{w:"assimilate",emoji:"🔄",ipa:"/əˈsɪməleɪt/",pos:"動",m:"同化する",ex:"Immigrants often assimilate into the local culture.",exja:"移民はしばしば地元の文化に同化する。"},
-{w:"dictator",emoji:"👑",ipa:"/ˈdɪkteɪtər/",pos:"名",m:"独裁者",ex:"The country was ruled by a dictator.",exja:"その国は独裁者に支配されていた。"},
-{w:"inherit",emoji:"🎁",ipa:"/ɪnˈherɪt/",pos:"動",m:"受け継ぐ",ex:"She inherited the family business.",exja:"彼女は家業を受け継いだ。"},
-{w:"materialism",emoji:"💎",ipa:"/məˈtɪəriəlɪzəm/",pos:"名",m:"物質主義",ex:"He rejects modern materialism.",exja:"彼は現代の物質主義を拒否する。"},
-{w:"nomadic",emoji:"⛺",ipa:"/noʊˈmædɪk/",pos:"形",m:"遊牧の",ex:"They live a nomadic lifestyle.",exja:"彼らは遊牧的な生活を送っている。"},
-{w:"pilgrim",emoji:"🚶‍♂️⛪",ipa:"/ˈpɪlɡrɪm/",pos:"名",m:"巡礼者",ex:"Pilgrims travel to the holy site.",exja:"巡礼者たちはその聖地へ旅する。"},
-{w:"tyrant",emoji:"👑",ipa:"/ˈtaɪrənt/",pos:"名",m:"暴君",ex:"The king ruled as a tyrant.",exja:"その王は暴君として統治した。"},
-{w:"conserve",emoji:"♻️",ipa:"/kənˈsɜːrv/",pos:"動",m:"保存する",ex:"We should conserve water.",exja:"私たちは水を節約すべきだ。"},
-{w:"contaminate",emoji:"☣️",ipa:"/kənˈtæmɪneɪt/",pos:"動",m:"汚染する",ex:"Chemicals contaminated the river.",exja:"化学物質が川を汚染した。"},
-{w:"fertilize",emoji:"🌱",ipa:"/ˈfɜːrtəlaɪz/",pos:"動",m:"肥沃にする",ex:"Farmers fertilize the soil every spring.",exja:"農家は毎春土壌を肥沃にする。"},
-{w:"forestry",emoji:"🌲",ipa:"/ˈfɔːrɪstri/",pos:"名",m:"森林管理",ex:"He studies forestry at university.",exja:"彼は大学で森林管理学を学んでいる。"},
-{w:"groundwater",emoji:"💧",ipa:"/ˈɡraʊndwɔːtər/",pos:"名",m:"地下水",ex:"The town relies on groundwater.",exja:"その町は地下水に頼っている。"},
-{w:"irrigate",emoji:"💦",ipa:"/ˈɪrɪɡeɪt/",pos:"動",m:"灌漑する",ex:"Farmers irrigate the fields in summer.",exja:"農家は夏に畑を灌漑する。"},
-{w:"nitrogen",emoji:"🧪",ipa:"/ˈnaɪtrədʒən/",pos:"名",m:"窒素",ex:"Plants need nitrogen to grow.",exja:"植物は成長に窒素を必要とする。"},
-{w:"phenomenon",emoji:"🌈",ipa:"/fəˈnɑːmɪnən/",pos:"名",m:"現象",ex:"It is a rare natural phenomenon.",exja:"それは珍しい自然現象だ。"},
-{w:"pollination",emoji:"🐝",ipa:"/ˌpɑːləˈneɪʃən/",pos:"名",m:"授粉",ex:"Bees play a key role in pollination.",exja:"ミツバチは授粉に重要な役割を果たす。"},
-{w:"preserve",emoji:"🛡️",ipa:"/prɪˈzɜːrv/",pos:"動",m:"保護する",ex:"We must preserve the forest.",exja:"私たちは森を保護しなければならない。"},
-{w:"reproduce",emoji:"🐣",ipa:"/ˌriːprəˈduːs/",pos:"動",m:"子を産む",ex:"Rabbits reproduce quickly.",exja:"ウサギは速く繁殖する。"},
-{w:"beam",emoji:"😊",ipa:"/biːm/",pos:"動",m:"ほほ笑む",ex:"She beamed with joy.",exja:"彼女は喜びに満ちてほほ笑んだ。"},
-{w:"boast",emoji:"😎",ipa:"/boʊst/",pos:"動",m:"自慢する",ex:"He boasted about his new car.",exja:"彼は新しい車を自慢した。"},
-{w:"corridor",emoji:"🚪",ipa:"/ˈkɔːrɪdər/",pos:"名",m:"廊下",ex:"The classroom is down the corridor.",exja:"教室は廊下の先にある。"},
-{w:"fumble",emoji:"🤲",ipa:"/ˈfʌmbəl/",pos:"動",m:"手で探る",ex:"He fumbled for his keys in the dark.",exja:"彼は暗闇の中で鍵を手探りした。"},
-{w:"grumble",emoji:"😤",ipa:"/ˈɡrʌmbəl/",pos:"動",m:"ぶつぶつ文句を言う",ex:"She grumbled about the weather.",exja:"彼女は天気について文句を言った。"},
-{w:"hectic",emoji:"🏃‍♂️",ipa:"/ˈhektɪk/",pos:"形",m:"忙しい",ex:"I had a hectic day at work.",exja:"仕事で慌ただしい一日だった。"},
-{w:"irritate",emoji:"😤",ipa:"/ˈɪrɪteɪt/",pos:"動",m:"いらつかせる",ex:"The noise irritated everyone.",exja:"その騒音はみんなをいらつかせた。"},
-{w:"leftover",emoji:"🍱",ipa:"/ˈleftoʊvər/",pos:"名",m:"食べ残し",ex:"We had leftovers for dinner.",exja:"夕食は残り物で済ませた。"},
-{w:"loiter",emoji:"🚶",ipa:"/ˈlɔɪtər/",pos:"動",m:"ぶらぶらする",ex:"Teenagers were loitering near the store.",exja:"十代の若者たちが店の近くをぶらついていた。"},
-{w:"luxurious",emoji:"💎",ipa:"/lʌɡˈʒʊəriəs/",pos:"形",m:"ぜいたくな",ex:"They stayed in a luxurious hotel.",exja:"彼らはぜいたくなホテルに泊まった。"},
-{w:"nudge",emoji:"👉",ipa:"/nʌdʒ/",pos:"動",m:"小突く",ex:"She nudged him to wake up.",exja:"彼女は彼を起こそうと小突いた。"},
-{w:"workout",emoji:"🏋️",ipa:"/ˈwɜːrkaʊt/",pos:"名",m:"運動",ex:"I do a workout every morning.",exja:"私は毎朝運動をしている。"},
-{w:"autobiography",emoji:"📖",ipa:"/ˌɔːtəbaɪˈɑːɡrəfi/",pos:"名",m:"自伝",ex:"He wrote his autobiography at 80.",exja:"彼は80歳で自伝を書いた。"},
-{w:"bystander",emoji:"👀",ipa:"/ˈbaɪstændər/",pos:"名",m:"傍観者",ex:"Several bystanders witnessed the accident.",exja:"数人の傍観者がその事故を目撃した。"},
-{w:"decentralize",emoji:"🌐",ipa:"/diːˈsentrəlaɪz/",pos:"動",m:"分散させる",ex:"The company decided to decentralize its offices.",exja:"その会社はオフィスを分散させることにした。"},
-{w:"dehydration",emoji:"🥵",ipa:"/ˌdiːhaɪˈdreɪʃən/",pos:"名",m:"脱水",ex:"He suffered from dehydration in the heat.",exja:"彼は暑さで脱水症状になった。"},
-{w:"discredit",emoji:"👎",ipa:"/dɪsˈkredɪt/",pos:"動",m:"信頼を失わせる",ex:"The scandal discredited the politician.",exja:"その醜聞はその政治家の信頼を失わせた。"},
-{w:"enforce",emoji:"👮",ipa:"/ɪnˈfɔːrs/",pos:"動",m:"強化する、実行する",ex:"Police enforce the traffic laws.",exja:"警察は交通法を執行する。"},
-{w:"indefinite",emoji:"❓",ipa:"/ɪnˈdefɪnət/",pos:"形",m:"不定の",ex:"The meeting was postponed indefinitely.",exja:"会議は無期限に延期された。"},
-{w:"intersection",emoji:"🚦",ipa:"/ˌɪntərˈsekʃən/",pos:"名",m:"交差点",ex:"Turn left at the next intersection.",exja:"次の交差点を左に曲がって。"},
-{w:"offset",emoji:"⚖️",ipa:"/ˈɔːfset/",pos:"動",m:"相殺する",ex:"The bonus offsets the pay cut.",exja:"ボーナスが減給を相殺する。"},
-{w:"overrated",emoji:"📈",ipa:"/ˌoʊvərˈreɪtɪd/",pos:"形",m:"過大評価された",ex:"I think the movie was overrated.",exja:"その映画は過大評価されていると思う。"},
-{w:"postscript",emoji:"✉️",ipa:"/ˈpoʊstskrɪpt/",pos:"名",m:"追伸",ex:"She added a postscript to the letter.",exja:"彼女は手紙に追伸を加えた。"},
-{w:"restore",emoji:"🔄",ipa:"/rɪˈstɔːr/",pos:"動",m:"復元する",ex:"They restored the old painting.",exja:"彼らは古い絵画を修復した。"},
-{w:"underdressed",emoji:"👕",ipa:"/ˌʌndərˈdrest/",pos:"形",m:"控えめな服装の",ex:"I felt underdressed at the party.",exja:"パーティーで服装が地味すぎると感じた。"},
-{w:"get along",emoji:"🤝",ipa:"/ɡet əˈlɔːŋ/",pos:"熟",m:"順調に進む、仲良くやる",ex:"We get along well with our neighbors.",exja:"私たちは近所の人とうまくやっている。"},
-{w:"get around to doing",emoji:"⏰",ipa:"/ɡet əˈraʊnd tuː ˈduːɪŋ/",pos:"熟",m:"〜する時間ができて取り掛かる",ex:"I finally got around to cleaning my room.",exja:"やっと部屋の掃除に取り掛かった。"},
-{w:"get away with",emoji:"🏃‍♂️",ipa:"/ɡet əˈweɪ wɪð/",pos:"熟",m:"罰されずに〜する",ex:"He got away with the lie.",exja:"彼はその嘘を罰されずに済ませた。"},
-{w:"get by",emoji:"🙆",ipa:"/ɡet baɪ/",pos:"熟",m:"何とかやっていく",ex:"We can get by on a small budget.",exja:"少ない予算でも何とかやっていける。"},
-{w:"get down to",emoji:"💪",ipa:"/ɡet daʊn tuː/",pos:"熟",m:"本腰を入れて取り組む",ex:"Let's get down to business.",exja:"さあ本題に取り掛かろう。"},
-{w:"make for",emoji:"🏃",ipa:"/meɪk fɔːr/",pos:"熟",m:"〜に急いで向かう",ex:"He made for the exit immediately.",exja:"彼はすぐに出口に向かった。"},
-{w:"make out",emoji:"👓",ipa:"/meɪk aʊt/",pos:"熟",m:"理解する、判読する",ex:"I couldn't make out what he said.",exja:"彼が何と言ったのか聞き取れなかった。"},
-{w:"make up for",emoji:"➕",ipa:"/meɪk ʌp fɔːr/",pos:"熟",m:"埋め合わせをする",ex:"Extra practice will make up for lost time.",exja:"追加練習が失った時間を埋め合わせるだろう。"},
-{w:"make it",emoji:"🎉",ipa:"/meɪk ɪt/",pos:"熟",m:"間に合う、成功する",ex:"We made it to the station on time.",exja:"私たちは駅に間に合った。"},
-{w:"take after",emoji:"👨‍👦",ipa:"/teɪk ˈæftər/",pos:"熟",m:"似ている",ex:"She takes after her mother.",exja:"彼女は母親に似ている。"},
-{w:"take on",emoji:"🙋",ipa:"/teɪk ɑːn/",pos:"熟",m:"引き受ける",ex:"He took on extra work this month.",exja:"彼は今月追加の仕事を引き受けた。"},
-{w:"take over",emoji:"🔄",ipa:"/teɪk ˈoʊvər/",pos:"熟",m:"引き継ぐ",ex:"She will take over the project next week.",exja:"彼女は来週そのプロジェクトを引き継ぐ。"},
-{w:"take to",emoji:"❤️",ipa:"/teɪk tuː/",pos:"熟",m:"気に入る",ex:"He quickly took to his new job.",exja:"彼はすぐに新しい仕事を気に入った。"},
-{w:"take up",emoji:"🆕",ipa:"/teɪk ʌp/",pos:"熟",m:"始める、取り上げる",ex:"She took up painting last year.",exja:"彼女は昨年絵を始めた。"},
-{w:"put aside",emoji:"📦",ipa:"/pʊt əˈsaɪd/",pos:"熟",m:"脇に置く",ex:"Let's put aside our differences.",exja:"私たちの意見の違いは脇に置こう。"},
-{w:"put down",emoji:"✍️",ipa:"/pʊt daʊn/",pos:"熟",m:"書き留める",ex:"Please put down your address here.",exja:"ここに住所を書いてください。"},
-{w:"put forth",emoji:"📤",ipa:"/pʊt fɔːrθ/",pos:"熟",m:"〜を出す",ex:"She put forth a new proposal.",exja:"彼女は新しい提案を出した。"},
-{w:"put off",emoji:"⏳",ipa:"/pʊt ɔːf/",pos:"熟",m:"延期する",ex:"We had to put off the meeting.",exja:"私たちは会議を延期しなければならなかった。"},
-{w:"put through",emoji:"☎️",ipa:"/pʊt θruː/",pos:"熟",m:"電話をつなぐ",ex:"Please put me through to the manager.",exja:"マネージャーにつないでください。"},
-{w:"see about",emoji:"🤔",ipa:"/siː əˈbaʊt/",pos:"熟",m:"検討する",ex:"I'll see about getting a refund.",exja:"返金について検討してみる。"},
-{w:"see off",emoji:"👋",ipa:"/siː ɔːf/",pos:"熟",m:"見送る",ex:"We went to see her off at the airport.",exja:"私たちは空港で彼女を見送った。"},
-{w:"see to",emoji:"📋",ipa:"/siː tuː/",pos:"熟",m:"手配する",ex:"He will see to the arrangements.",exja:"彼が手配してくれるだろう。"},
-{w:"turn away",emoji:"🚫",ipa:"/tɜːrn əˈweɪ/",pos:"熟",m:"追い返す",ex:"The guard turned away uninvited guests.",exja:"警備員は招かれていない客を追い返した。"},
-{w:"turn down",emoji:"🙅",ipa:"/tɜːrn daʊn/",pos:"熟",m:"断る、音を下げる",ex:"She turned down the job offer.",exja:"彼女はその仕事の申し出を断った。"},
-{w:"turn in",emoji:"📥",ipa:"/tɜːrn ɪn/",pos:"熟",m:"提出する",ex:"Please turn in your homework by Friday.",exja:"金曜までに宿題を提出してください。"},
-{w:"turn up",emoji:"✨",ipa:"/tɜːrn ʌp/",pos:"熟",m:"現れる、音を上げる",ex:"He turned up late again.",exja:"彼はまた遅れて現れた。"},
-{w:"account for",emoji:"📊",ipa:"/əˈkaʊnt fɔːr/",pos:"熟",m:"説明する、占める",ex:"Tourism accounts for a large part of the economy.",exja:"観光業は経済の大部分を占める。"},
-{w:"allow for",emoji:"🤔",ipa:"/əˈlaʊ fɔːr/",pos:"熟",m:"考慮に入れる",ex:"You should allow for delays.",exja:"遅延を考慮に入れておくべきだ。"},
-{w:"bank on",emoji:"🙏",ipa:"/bæŋk ɑːn/",pos:"熟",m:"頼りにする",ex:"Don't bank on his help.",exja:"彼の助けを当てにしないほうがいい。"},
-{w:"bear with",emoji:"😌",ipa:"/ber wɪð/",pos:"熟",m:"辛抱して付き合う",ex:"Please bear with me for a moment.",exja:"少しの間我慢してお付き合いください。"},
-{w:"bow out",emoji:"🚪",ipa:"/baʊ aʊt/",pos:"熟",m:"退場する、引退する",ex:"He decided to bow out of the race.",exja:"彼はそのレースから退くことにした。"},
-{w:"chip in",emoji:"🪙",ipa:"/tʃɪp ɪn/",pos:"熟",m:"負担を分け合う",ex:"Everyone chipped in for the gift.",exja:"みんなでその贈り物の費用を出し合った。"},
-{w:"draw on",emoji:"🎨",ipa:"/drɔː ɑːn/",pos:"熟",m:"使用する",ex:"She drew on her experience to solve it.",exja:"彼女は経験を活用してそれを解決した。"},
-{w:"feel out",emoji:"🕵️",ipa:"/fiːl aʊt/",pos:"熟",m:"意向を探る",ex:"He tried to feel out her opinion.",exja:"彼は彼女の意見を探ろうとした。"},
-{w:"knock down",emoji:"🔨",ipa:"/nɑːk daʊn/",pos:"熟",m:"引き倒す",ex:"They knocked down the old building.",exja:"彼らは古い建物を取り壊した。"},
-{w:"let down",emoji:"😞",ipa:"/let daʊn/",pos:"熟",m:"がっかりさせる",ex:"I don't want to let you down.",exja:"あなたをがっかりさせたくない。"},
-{w:"mess with",emoji:"🙅‍♂️",ipa:"/mes wɪð/",pos:"熟",m:"干渉する",ex:"Don't mess with my computer.",exja:"私のパソコンをいじらないで。"},
-{w:"pull over",emoji:"🚗",ipa:"/pʊl ˈoʊvər/",pos:"熟",m:"車を路肩に寄せる",ex:"The police told him to pull over.",exja:"警察は彼に車を路肩に寄せるよう言った。"},
-{w:"relate to",emoji:"🔗",ipa:"/rɪˈleɪt tuː/",pos:"熟",m:"関係がある、共感する",ex:"I really relate to her story.",exja:"私は彼女の話に本当に共感する。"},
-{w:"settle for",emoji:"🤷",ipa:"/ˈsetəl fɔːr/",pos:"熟",m:"妥協する",ex:"He wasn't willing to settle for less.",exja:"彼はそれ以下で妥協するつもりはなかった。"},
-{w:"throw up",emoji:"🤮",ipa:"/θroʊ ʌp/",pos:"熟",m:"吐く",ex:"She felt sick and threw up.",exja:"彼女は気分が悪くなって吐いた。"}
+{w:"avoidance",emoji:"🙈",ipa:"/əˈvɔɪdəns/",pos:"名",m:"回避",ex:"Avoidance of the topic made everyone suspicious.",exja:"その話題を避けたことで皆が怪しんだ。",def:"the act of staying away from something or someone"},
+{w:"apply",emoji:"📝",ipa:"/əˈplaɪ/",pos:"動",m:"申し込む、適用する",ex:"You can apply for the scholarship online.",exja:"その奨学金にはオンラインで申し込める。",def:"to make a formal request, often in writing"},
+{w:"collide",emoji:"💥",ipa:"/kəˈlaɪd/",pos:"動",m:"衝突する",ex:"The two cars collided at the intersection.",exja:"二台の車が交差点で衝突した。",def:"to hit something violently while moving"},
+{w:"collision",emoji:"💥",ipa:"/kəˈlɪʒən/",pos:"名",m:"衝突",ex:"The collision caused minor injuries.",exja:"衝突で軽傷者が出た。",def:"a violent event in which vehicles or objects hit each other"},
+{w:"compensate",emoji:"💰",ipa:"/ˈkɑːmpənseɪt/",pos:"動",m:"補償する",ex:"The company compensated him for the loss.",exja:"会社は彼の損失を補償した。",def:"to give someone money or something else because of loss or harm"},
+{w:"compensation",emoji:"💰",ipa:"/ˌkɑːmpənˈseɪʃən/",pos:"名",m:"補償",ex:"She received compensation for the damage.",exja:"彼女は損害への補償を受けた。",def:"money given to make up for loss, injury, or damage"},
+{w:"complaint",emoji:"😠",ipa:"/kəmˈpleɪnt/",pos:"名",m:"苦情",ex:"He filed a complaint about the noise.",exja:"彼は騒音について苦情を申し立てた。",def:"a statement that something is unsatisfactory"},
+{w:"complain",emoji:"😠",ipa:"/kəmˈpleɪn/",pos:"動",m:"不満を言う",ex:"Stop complaining and start working.",exja:"文句を言うのをやめて働き始めなさい。",def:"to say that you are unhappy about something"},
+{w:"complete",emoji:"✅",ipa:"/kəmˈpliːt/",pos:"動/形",m:"完了する、完全な",ex:"Please complete the form by Friday.",exja:"金曜までにその用紙を記入してください。",def:"to finish doing or making something"},
+{w:"consequence",emoji:"➡️",ipa:"/ˈkɑːnsɪkwens/",pos:"名",m:"結果",ex:"Every action has a consequence.",exja:"どんな行動にも結果が伴う。",def:"a result of a particular action or situation"},
+{w:"consequent",emoji:"➡️",ipa:"/ˈkɑːnsɪkwənt/",pos:"形",m:"結果として起こる",ex:"The flood and its consequent damage were severe.",exja:"洪水とその結果生じた被害は深刻だった。",def:"happening as a result of something"},
+{w:"consistent",emoji:"🔁",ipa:"/kənˈsɪstənt/",pos:"形",m:"一貫した",ex:"Try to be consistent with your schedule.",exja:"スケジュールに一貫性を持たせるようにしなさい。",def:"always behaving or happening in the same way"},
+{w:"consistency",emoji:"🔁",ipa:"/kənˈsɪstənsi/",pos:"名",m:"一貫性",ex:"The report lacks consistency.",exja:"その報告書には一貫性が欠けている。",def:"the quality of always behaving in the same way"},
+{w:"depress",emoji:"😞",ipa:"/dɪˈpres/",pos:"動",m:"落ち込ませる",ex:"Bad news can depress anyone.",exja:"悪い知らせは誰でも落ち込ませる。",def:"to make someone feel very sad"},
+{w:"depression",emoji:"😞",ipa:"/dɪˈpreʃən/",pos:"名",m:"憂鬱、不景気",ex:"The country fell into depression.",exja:"その国は不景気に陥った。",def:"a state of feeling very sad, or a period of low economic activity"},
+{w:"detain",emoji:"🚔",ipa:"/dɪˈteɪn/",pos:"動",m:"拘留する",ex:"Police detained the suspect overnight.",exja:"警察はその容疑者を一晩拘留した。",def:"to officially stop someone leaving a place, often by force"},
+{w:"detention",emoji:"🚔",ipa:"/dɪˈtenʃən/",pos:"名",m:"拘留",ex:"He was held in detention for a week.",exja:"彼は一週間拘留された。",def:"the state of being kept somewhere, often by the police"},
+{w:"emit",emoji:"💨",ipa:"/ɪˈmɪt/",pos:"動",m:"排出する",ex:"Factories emit a lot of smoke.",exja:"工場は多くの煙を排出する。",def:"to send out a gas, light, sound, etc."},
+{w:"emission",emoji:"💨",ipa:"/ɪˈmɪʃən/",pos:"名",m:"排出",ex:"The law limits carbon emission.",exja:"その法律は二酸化炭素の排出を制限する。",def:"a substance that is sent out into the air"},
+{w:"exist",emoji:"🌍",ipa:"/ɪɡˈzɪst/",pos:"動",m:"存在する",ex:"Does life exist on other planets?",exja:"他の惑星に生命は存在するのか。",def:"to be real or to be present"},
+{w:"existence",emoji:"🌍",ipa:"/ɪɡˈzɪstəns/",pos:"名",m:"存在",ex:"The company has been in existence for decades.",exja:"その会社は数十年存在し続けている。",def:"the state of being real or present"},
+{w:"expose",emoji:"🔦",ipa:"/ɪkˈspoʊz/",pos:"動",m:"さらす、暴く",ex:"The report exposed the truth.",exja:"その報道が真実を暴いた。",def:"to uncover something or reveal a hidden truth"},
+{w:"exposure",emoji:"🔦",ipa:"/ɪkˈspoʊʒər/",pos:"名",m:"露出",ex:"Long exposure to the sun is harmful.",exja:"長時間日光にさらされるのは有害だ。",def:"the state of being affected by something through contact with it"},
+{w:"immigrate",emoji:"✈️",ipa:"/ˈɪmɪɡreɪt/",pos:"動",m:"移住する",ex:"They immigrated to Canada last year.",exja:"彼らは昨年カナダに移住した。",def:"to come to live permanently in a foreign country"},
+{w:"immigrant",emoji:"🧳",ipa:"/ˈɪmɪɡrənt/",pos:"名",m:"移民",ex:"Many immigrants work in this city.",exja:"多くの移民がこの街で働いている。",def:"a person who comes to live permanently in a foreign country"},
+{w:"regulate",emoji:"⚖️",ipa:"/ˈreɡjəleɪt/",pos:"動",m:"規制する",ex:"The government regulates food safety.",exja:"政府は食品安全を規制している。",def:"to control something by means of official rules"},
+{w:"regulation",emoji:"⚖️",ipa:"/ˌreɡjəˈleɪʃən/",pos:"名",m:"規制",ex:"New regulations were introduced.",exja:"新しい規制が導入された。",def:"an official rule that controls how something is done"},
+{w:"reside",emoji:"🏠",ipa:"/rɪˈzaɪd/",pos:"動",m:"住む",ex:"She resides in a small village.",exja:"彼女は小さな村に住んでいる。",def:"to live somewhere permanently"},
+{w:"residential",emoji:"🏘️",ipa:"/ˌrezɪˈdenʃəl/",pos:"形",m:"住宅の",ex:"This is a quiet residential area.",exja:"ここは静かな住宅地だ。",def:"relating to an area where people live"},
+{w:"resident",emoji:"🏠",ipa:"/ˈrezɪdənt/",pos:"名",m:"住民",ex:"Local residents opposed the plan.",exja:"地元住民はその計画に反対した。",def:"a person who lives somewhere permanently"},
+{w:"suspect",emoji:"🕵️",ipa:"/səˈspekt/",pos:"動",m:"疑いを持つ",ex:"Police suspect he is lying.",exja:"警察は彼が嘘をついていると疑っている。",def:"to believe that something is likely, especially something bad"},
+{w:"suspicion",emoji:"🕵️",ipa:"/səˈspɪʃən/",pos:"名",m:"疑い",ex:"Her behavior raised suspicion.",exja:"彼女の行動は疑いを招いた。",def:"a feeling that something bad may be true"},
+{w:"transport",emoji:"🚚",ipa:"/trænsˈpɔːrt/",pos:"動",m:"輸送する",ex:"Goods are transported by ship.",exja:"商品は船で輸送される。",def:"to take goods or people from one place to another"},
+{w:"transportation",emoji:"🚌",ipa:"/ˌtrænspərˈteɪʃən/",pos:"名",m:"輸送、交通機関",ex:"Public transportation is convenient here.",exja:"ここでは公共交通機関が便利だ。",def:"a system for moving people or goods from one place to another"},
+{w:"require",emoji:"❗",ipa:"/rɪˈkwaɪər/",pos:"動",m:"要求する",ex:"The job requires experience.",exja:"その仕事は経験を要求する。",def:"to need something"},
+{w:"requirement",emoji:"📋",ipa:"/rɪˈkwaɪərmənt/",pos:"名",m:"必要条件",ex:"Meeting the requirement takes time.",exja:"必要条件を満たすには時間がかかる。",def:"something that is needed"},
+{w:"recede",emoji:"⬅️",ipa:"/rɪˈsiːd/",pos:"動",m:"後退する",ex:"The flood water slowly receded.",exja:"洪水の水は徐々に引いた。",def:"to move back or gradually become weaker"},
+{w:"recession",emoji:"📉",ipa:"/rɪˈseʃən/",pos:"名",m:"不景気",ex:"The economy entered a recession.",exja:"経済は不景気に突入した。",def:"a period when a country's economy is doing badly"},
+{w:"deforestation",emoji:"🪓🌲",ipa:"/diːˌfɔːrɪˈsteɪʃən/",pos:"名",m:"森林伐採",ex:"Deforestation harms wildlife.",exja:"森林伐採は野生生物に害を与える。",def:"the cutting down of all the trees in a large area"},
+{w:"disorder",emoji:"🌀",ipa:"/dɪsˈɔːrdər/",pos:"名",m:"混乱、障害",ex:"The room was in complete disorder.",exja:"部屋は完全に混乱していた。",def:"a state of confusion or lack of order"},
+{w:"coauthor",emoji:"👥📖",ipa:"/ˌkoʊˈɔːθər/",pos:"名",m:"共著者",ex:"She is the coauthor of this book.",exja:"彼女はこの本の共著者だ。",def:"a person who writes a book or article together with another person"},
+{w:"inequality",emoji:"⚖️",ipa:"/ˌɪnɪˈkwɑːləti/",pos:"名",m:"不平等",ex:"Income inequality is a serious issue.",exja:"所得の不平等は深刻な問題だ。",def:"an unfair difference between groups in society"},
+{w:"precaution",emoji:"⚠️",ipa:"/prɪˈkɔːʃən/",pos:"名",m:"用心、予防",ex:"Take precautions against fire.",exja:"火災への予防措置を取りなさい。",def:"something done in advance to prevent a possible problem"},
+{w:"microscope",emoji:"🔬",ipa:"/ˈmaɪkrəskoʊp/",pos:"名",m:"顕微鏡",ex:"He examined the cell under a microscope.",exja:"彼は顕微鏡で細胞を調べた。",def:"an instrument used to look closely at very small objects"},
+{w:"telescope",emoji:"🔭",ipa:"/ˈtelɪskoʊp/",pos:"名",m:"望遠鏡",ex:"We watched stars through a telescope.",exja:"望遠鏡で星を観察した。",def:"an instrument used to look at objects far away, such as stars"},
+{w:"alimony",emoji:"💸",ipa:"/ˈæləˌmoʊni/",pos:"名",m:"離婚後の扶養料",ex:"He pays alimony every month.",exja:"彼は毎月扶養料を支払っている。",def:"money that a person must pay to a former spouse after divorce"},
+{w:"anatomy",emoji:"🫀",ipa:"/əˈnætəmi/",pos:"名",m:"解剖学",ex:"She studies human anatomy.",exja:"彼女は人体解剖学を学んでいる。",def:"the scientific study of the structure of bodies"},
+{w:"anthropology",emoji:"🧑‍🤝‍🧑",ipa:"/ˌænθrəˈpɑːlədʒi/",pos:"名",m:"人類学",ex:"He majored in anthropology.",exja:"彼は人類学を専攻した。",def:"the study of human societies and cultures"},
+{w:"bankruptcy",emoji:"💸📉",ipa:"/ˈbæŋkrʌptsi/",pos:"名",m:"倒産",ex:"The store filed for bankruptcy.",exja:"その店は倒産を申請した。",def:"the legal state of being unable to pay one's debts"},
+{w:"debris",emoji:"🧱",ipa:"/dəˈbriː/",pos:"名",m:"破片",ex:"Debris covered the street after the storm.",exja:"嵐の後、道路は破片で覆われた。",def:"pieces of something that has been destroyed"},
+{w:"hydrogen",emoji:"⚛️",ipa:"/ˈhaɪdrədʒən/",pos:"名",m:"水素",ex:"Hydrogen is the lightest element.",exja:"水素は最も軽い元素だ。",def:"a colorless gas that is the lightest chemical element"},
+{w:"infrastructure",emoji:"🏗️",ipa:"/ˈɪnfrəstrʌktʃər/",pos:"名",m:"基盤、インフラ",ex:"The city needs better infrastructure.",exja:"この市はより良いインフラを必要としている。",def:"the basic systems and structures a country needs, such as roads"},
+{w:"irrigation",emoji:"💧",ipa:"/ˌɪrɪˈɡeɪʃən/",pos:"名",m:"灌漑",ex:"Irrigation helps crops grow in dry areas.",exja:"灌漑は乾燥地で作物の成長を助ける。",def:"supplying land with water so that crops will grow"},
+{w:"sanction",emoji:"🚫",ipa:"/ˈsæŋkʃən/",pos:"名",m:"制裁",ex:"The country faced economic sanctions.",exja:"その国は経済制裁を受けた。",def:"an official action taken against a country to force it to obey rules"},
+{w:"revenue",emoji:"💵",ipa:"/ˈrevənuː/",pos:"名",m:"収入、歳入",ex:"The company's revenue increased this year.",exja:"今年会社の収入は増加した。",def:"money that a government or company receives regularly"},
+{w:"veterinarian",emoji:"🐾",ipa:"/ˌvetərəˈneriən/",pos:"名",m:"獣医",ex:"The veterinarian examined my dog.",exja:"獣医が私の犬を診察した。",def:"a doctor who treats sick or injured animals"},
+{w:"bankrupt",emoji:"💸",ipa:"/ˈbæŋkrʌpt/",pos:"形",m:"倒産した",ex:"The business went bankrupt last year.",exja:"その会社は昨年倒産した。",def:"unable to pay one's debts"},
+{w:"beneficial",emoji:"👍",ipa:"/ˌbenɪˈfɪʃəl/",pos:"形",m:"有益な",ex:"Exercise is beneficial to health.",exja:"運動は健康に有益だ。",def:"having a helpful or good effect"},
+{w:"decisive",emoji:"✅",ipa:"/dɪˈsaɪsɪv/",pos:"形",m:"決定的な",ex:"She took decisive action.",exja:"彼女は決定的な行動を取った。",def:"showing an ability to make decisions quickly and confidently"},
+{w:"flexible",emoji:"🤸",ipa:"/ˈfleksəbəl/",pos:"形",m:"柔軟な",ex:"My work hours are flexible.",exja:"私の勤務時間は柔軟だ。",def:"able to change or be changed easily to suit new conditions"},
+{w:"neurological",emoji:"🧠",ipa:"/ˌnʊərəˈlɑːdʒɪkəl/",pos:"形",m:"神経の",ex:"He has a neurological disorder.",exja:"彼は神経疾患を抱えている。",def:"relating to the nerves or the nervous system"},
+{w:"reliable",emoji:"🤝",ipa:"/rɪˈlaɪəbəl/",pos:"形",m:"信頼できる",ex:"She is a reliable friend.",exja:"彼女は信頼できる友人だ。",def:"able to be trusted to do what is expected"},
+{w:"spacious",emoji:"🏠",ipa:"/ˈspeɪʃəs/",pos:"形",m:"広々とした",ex:"They live in a spacious apartment.",exja:"彼らは広々とした部屋に住んでいる。",def:"having a lot of open space"},
+{w:"vigorous",emoji:"💪",ipa:"/ˈvɪɡərəs/",pos:"形",m:"活発な",ex:"He does vigorous exercise every morning.",exja:"彼は毎朝活発な運動をする。",def:"full of energy, strength, and enthusiasm"},
+{w:"clinical",emoji:"🏥",ipa:"/ˈklɪnɪkəl/",pos:"形",m:"臨床の",ex:"The drug passed clinical trials.",exja:"その薬は臨床試験に合格した。",def:"relating to the medical treatment of patients"},
+{w:"deceitful",emoji:"🤥",ipa:"/dɪˈsiːtfəl/",pos:"形",m:"嘘つきの",ex:"He is known for deceitful behavior.",exja:"彼は嘘つきな行動で知られている。",def:"dishonest and tending to hide the truth"},
+{w:"disabled",emoji:"♿",ipa:"/dɪsˈeɪbəld/",pos:"形",m:"障がいを持った",ex:"The building has access for disabled people.",exja:"その建物には障がい者用の入口がある。",def:"having a physical or mental condition that limits movement or activity"},
+{w:"extraordinary",emoji:"🌟",ipa:"/ɪkˈstrɔːrdəneri/",pos:"形",m:"並外れた",ex:"She has extraordinary talent.",exja:"彼女は並外れた才能を持つ。",def:"very unusual or remarkable"},
+{w:"illegal",emoji:"🚫",ipa:"/ɪˈliːɡəl/",pos:"形",m:"違法の",ex:"Parking here is illegal.",exja:"ここに駐車するのは違法だ。",def:"not allowed by law"},
+{w:"indispensable",emoji:"🔑",ipa:"/ˌɪndɪˈspensəbəl/",pos:"形",m:"不可欠な",ex:"Water is indispensable to life.",exja:"水は生命に不可欠だ。",def:"too important or necessary to be without"},
+{w:"threatened",emoji:"⚠️",ipa:"/ˈθretənd/",pos:"形",m:"危機に瀕した",ex:"The species is now threatened.",exja:"その種は今や絶滅の危機にある。",def:"in danger of being harmed, destroyed, or lost"},
+{w:"unexpected",emoji:"😲",ipa:"/ˌʌnɪkˈspektɪd/",pos:"形",m:"予期せぬ",ex:"We had an unexpected visitor.",exja:"予期せぬ来客があった。",def:"not expected or predicted"},
+{w:"formidable task",emoji:"💪📚",ipa:"/ˈfɔːrmɪdəbəl tæsk/",pos:"熟",m:"手強い課題",ex:"Learning a new language is a formidable task.",exja:"新しい言語を学ぶことは手強い課題だ。",def:"a job that is difficult and requires great effort"},
+{w:"moderate income",emoji:"💵",ipa:"/ˈmɑːdərət ˈɪnkʌm/",pos:"熟",m:"適度な収入",ex:"They live comfortably on a moderate income.",exja:"彼らは適度な収入で快適に暮らしている。",def:"an amount of money earned that is neither high nor low"},
+{w:"preliminary survey",emoji:"📋",ipa:"/prɪˈlɪməneri ˈsɜːrveɪ/",pos:"熟",m:"予備的な調査",ex:"The preliminary survey results look promising.",exja:"予備調査の結果は有望に見える。",def:"an early investigation carried out before the main one"},
+{w:"unanimous vote",emoji:"🙌🗳️",ipa:"/juˈnænɪməs voʊt/",pos:"熟",m:"満場一致の投票",ex:"The board reached a unanimous vote.",exja:"役員会は満場一致の投票に至った。",def:"a decision in which everyone agrees"},
+{w:"approximately",emoji:"≈",ipa:"/əˈprɑːksɪmətli/",pos:"副",m:"おおよそ",ex:"It takes approximately two hours.",exja:"それにはおおよそ2時間かかる。",def:"close to a particular number, but not exact"},
+{w:"definitely",emoji:"✔️",ipa:"/ˈdefɪnətli/",pos:"副",m:"確かに",ex:"I will definitely call you back.",exja:"必ず折り返し電話します。",def:"without any doubt; certainly"},
+{w:"desperately",emoji:"😣",ipa:"/ˈdespərətli/",pos:"副",m:"必死に",ex:"He desperately needed help.",exja:"彼は必死に助けを必要としていた。",def:"in a way that shows a strong or urgent need"},
+{w:"genuinely",emoji:"💯",ipa:"/ˈdʒenjuɪnli/",pos:"副",m:"真に",ex:"She is genuinely happy for you.",exja:"彼女はあなたのことを心から喜んでいる。",def:"in a true and sincere way"},
+{w:"intuitively",emoji:"💡",ipa:"/ɪnˈtuːɪtɪvli/",pos:"副",m:"直感的に",ex:"The app is intuitively designed.",exja:"そのアプリは直感的に設計されている。",def:"in a way based on instinct or feeling rather than facts"},
+{w:"profoundly",emoji:"🌊",ipa:"/prəˈfaʊndli/",pos:"副",m:"深く",ex:"The book profoundly changed my view.",exja:"その本は私の考えを深く変えた。",def:"to a very great or deep degree"},
+{w:"boost",emoji:"📈",ipa:"/buːst/",pos:"動",m:"押し上げる",ex:"The sale boosted the company's morale.",exja:"そのセールは会社の士気を押し上げた。",def:"to increase or improve something"},
+{w:"consume",emoji:"🍽️",ipa:"/kənˈsuːm/",pos:"動",m:"消費する",ex:"We consume too much energy at night.",exja:"私たちは夜にエネルギーを消費しすぎる。",def:"to use up energy, food, or another resource"},
+{w:"generate",emoji:"⚡",ipa:"/ˈdʒenəreɪt/",pos:"動",m:"生み出す",ex:"Wind turbines generate power.",exja:"風力タービンは電力を生み出す。",def:"to produce or create something"},
+{w:"implement",emoji:"🛠️",ipa:"/ˈɪmplɪment/",pos:"動",m:"実行する",ex:"The company will implement the new plan.",exja:"会社は新しい計画を実行するだろう。",def:"to put a plan, system, or decision into action"},
+{w:"issue",emoji:"📢",ipa:"/ˈɪʃuː/",pos:"動",m:"発する、発行する",ex:"The government issued a warning.",exja:"政府は警告を発した。",def:"to officially give out or send out something"},
+{w:"retain",emoji:"🧷",ipa:"/rɪˈteɪn/",pos:"動",m:"保つ",ex:"She retains a clear memory of that day.",exja:"彼女はその日の記憶を鮮明に保っている。",def:"to continue to have or keep something"},
+{w:"spoil",emoji:"🍼",ipa:"/spɔɪl/",pos:"動",m:"台無しにする、甘やかす",ex:"Don't spoil the child too much.",exja:"その子どもをあまり甘やかさないで。",def:"to make something worse, or to let a child have everything they want"},
+{w:"stimulate",emoji:"⚡",ipa:"/ˈstɪmjəleɪt/",pos:"動",m:"刺激する",ex:"Coffee stimulates the appetite.",exja:"コーヒーは食欲を刺激する。",def:"to encourage something to grow or become more active"},
+{w:"transmit",emoji:"📡",ipa:"/trænsˈmɪt/",pos:"動",m:"伝える",ex:"The virus is transmitted through contact.",exja:"そのウイルスは接触によって伝わる。",def:"to send out a signal, or pass something to another person"},
+{w:"yield",emoji:"🌾",ipa:"/jiːld/",pos:"動",m:"産出する",ex:"The field yields a good crop each year.",exja:"その畑は毎年良い作物を産出する。",def:"to produce a crop, result, or profit"},
+{w:"affliction",emoji:"😖",ipa:"/əˈflɪkʃən/",pos:"名",m:"苦悩、苦痛",ex:"He suffered a long affliction.",exja:"彼は長い苦悩に苦しんだ。",def:"a condition that causes pain or suffering"},
+{w:"bully",emoji:"😈",ipa:"/ˈbʊli/",pos:"動",m:"いじめる",ex:"He was bullied at school.",exja:"彼は学校でいじめられた。",def:"to frighten or hurt someone who is weaker than you"},
+{w:"cram",emoji:"📚",ipa:"/kræm/",pos:"動",m:"詰め込み学習する",ex:"Students cram for exams the night before.",exja:"学生は試験前夜に詰め込み勉強する。",def:"to study a lot of information in a short time before a test"},
+{w:"cultivate",emoji:"🌱",ipa:"/ˈkʌltɪveɪt/",pos:"動",m:"育てる、養う",ex:"Teachers cultivate curiosity in students.",exja:"教師は生徒の好奇心を養う。",def:"to prepare land and grow crops, or to develop a skill or quality"},
+{w:"enrollment",emoji:"🏫",ipa:"/ɪnˈroʊlmənt/",pos:"名",m:"入学、入学者数",ex:"School enrollment increased this year.",exja:"今年、学校の入学者数が増えた。",def:"the act of officially joining a school, course, or organization"},
+{w:"evaluate",emoji:"📝",ipa:"/ɪˈvæljueɪt/",pos:"動",m:"評価する",ex:"Teachers evaluate students' progress.",exja:"教師は生徒の進歩を評価する。",def:"to judge the quality, value, or importance of something"},
+{w:"humiliate",emoji:"😳",ipa:"/hjuːˈmɪlieɪt/",pos:"動",m:"辱める",ex:"He felt humiliated in front of the class.",exja:"彼はクラスの前で辱められたと感じた。",def:"to make someone feel ashamed or foolish in front of others"},
+{w:"incentive",emoji:"🎯",ipa:"/ɪnˈsentɪv/",pos:"名",m:"動機、要因",ex:"The bonus is a strong incentive to work hard.",exja:"ボーナスは一生懸命働く強い動機になる。",def:"something that encourages a person to do something"},
+{w:"temperament",emoji:"🎭",ipa:"/ˈtempərəmənt/",pos:"名",m:"気質、気性",ex:"She has a calm temperament.",exja:"彼女は穏やかな気質を持つ。",def:"a person's natural way of thinking, feeling, and behaving"},
+{w:"tempt",emoji:"🍫",ipa:"/tempt/",pos:"動",m:"引きつける",ex:"The smell tempted him to eat more.",exja:"その匂いは彼にもっと食べたいと思わせた。",def:"to make someone want to do something, especially something unwise"},
+{w:"truant",emoji:"🚫🏫",ipa:"/ˈtruːənt/",pos:"動",m:"無断欠席する",ex:"He often plays truant from school.",exja:"彼はよく学校を無断欠席する。",def:"a student who stays away from school without permission"},
+{w:"abandon",emoji:"🗑️",ipa:"/əˈbændən/",pos:"動",m:"捨て去る",ex:"They had to abandon the old plan.",exja:"彼らは古い計画を捨てざるを得なかった。",def:"to leave a place, person, or thing permanently"},
+{w:"adjust",emoji:"🔧",ipa:"/əˈdʒʌst/",pos:"動",m:"順応する",ex:"It took time to adjust to the new culture.",exja:"新しい文化に順応するのに時間がかかった。",def:"to change slightly in order to fit a new situation"},
+{w:"ancestor",emoji:"👴",ipa:"/ˈænsestər/",pos:"名",m:"祖先",ex:"Her ancestors came from Ireland.",exja:"彼女の祖先はアイルランド出身だ。",def:"a person from whom one is descended, especially one from long ago"},
+{w:"assimilate",emoji:"🔄",ipa:"/əˈsɪməleɪt/",pos:"動",m:"同化する",ex:"Immigrants often assimilate into the local culture.",exja:"移民はしばしば地元の文化に同化する。",def:"to become fully part of a different group or culture"},
+{w:"dictator",emoji:"👑",ipa:"/ˈdɪkteɪtər/",pos:"名",m:"独裁者",ex:"The country was ruled by a dictator.",exja:"その国は独裁者に支配されていた。",def:"a ruler who has complete, often unfair, power over a country"},
+{w:"inherit",emoji:"🎁",ipa:"/ɪnˈherɪt/",pos:"動",m:"受け継ぐ",ex:"She inherited the family business.",exja:"彼女は家業を受け継いだ。",def:"to receive money or property from someone after they die"},
+{w:"materialism",emoji:"💎",ipa:"/məˈtɪəriəlɪzəm/",pos:"名",m:"物質主義",ex:"He rejects modern materialism.",exja:"彼は現代の物質主義を拒否する。",def:"the belief that money and possessions are the most important things in life"},
+{w:"nomadic",emoji:"⛺",ipa:"/noʊˈmædɪk/",pos:"形",m:"遊牧の",ex:"They live a nomadic lifestyle.",exja:"彼らは遊牧的な生活を送っている。",def:"moving from place to place instead of living in one location"},
+{w:"pilgrim",emoji:"🚶‍♂️⛪",ipa:"/ˈpɪlɡrɪm/",pos:"名",m:"巡礼者",ex:"Pilgrims travel to the holy site.",exja:"巡礼者たちはその聖地へ旅する。",def:"a person who travels a long way to a sacred place for religious reasons"},
+{w:"tyrant",emoji:"👑",ipa:"/ˈtaɪrənt/",pos:"名",m:"暴君",ex:"The king ruled as a tyrant.",exja:"その王は暴君として統治した。",def:"a cruel and unfair ruler"},
+{w:"conserve",emoji:"♻️",ipa:"/kənˈsɜːrv/",pos:"動",m:"保存する",ex:"We should conserve water.",exja:"私たちは水を節約すべきだ。",def:"to protect something and prevent it from being damaged or used up"},
+{w:"contaminate",emoji:"☣️",ipa:"/kənˈtæmɪneɪt/",pos:"動",m:"汚染する",ex:"Chemicals contaminated the river.",exja:"化学物質が川を汚染した。",def:"to make something dirty, impure, or poisonous"},
+{w:"fertilize",emoji:"🌱",ipa:"/ˈfɜːrtəlaɪz/",pos:"動",m:"肥沃にする",ex:"Farmers fertilize the soil every spring.",exja:"農家は毎春土壌を肥沃にする。",def:"to add substances to soil to help plants grow better"},
+{w:"forestry",emoji:"🌲",ipa:"/ˈfɔːrɪstri/",pos:"名",m:"森林管理",ex:"He studies forestry at university.",exja:"彼は大学で森林管理学を学んでいる。",def:"the science and practice of planting and taking care of forests"},
+{w:"groundwater",emoji:"💧",ipa:"/ˈɡraʊndwɔːtər/",pos:"名",m:"地下水",ex:"The town relies on groundwater.",exja:"その町は地下水に頼っている。",def:"water that is held in the ground beneath the surface"},
+{w:"irrigate",emoji:"💦",ipa:"/ˈɪrɪɡeɪt/",pos:"動",m:"灌漑する",ex:"Farmers irrigate the fields in summer.",exja:"農家は夏に畑を灌漑する。",def:"to supply land with water using channels, pipes, or other methods"},
+{w:"nitrogen",emoji:"🧪",ipa:"/ˈnaɪtrədʒən/",pos:"名",m:"窒素",ex:"Plants need nitrogen to grow.",exja:"植物は成長に窒素を必要とする。",def:"a colorless gas that makes up most of the earth's atmosphere"},
+{w:"phenomenon",emoji:"🌈",ipa:"/fəˈnɑːmɪnən/",pos:"名",m:"現象",ex:"It is a rare natural phenomenon.",exja:"それは珍しい自然現象だ。",def:"a fact or event, especially one that is unusual or remarkable"},
+{w:"pollination",emoji:"🐝",ipa:"/ˌpɑːləˈneɪʃən/",pos:"名",m:"授粉",ex:"Bees play a key role in pollination.",exja:"ミツバチは授粉に重要な役割を果たす。",def:"the process of transferring pollen so that plants can reproduce"},
+{w:"preserve",emoji:"🛡️",ipa:"/prɪˈzɜːrv/",pos:"動",m:"保護する",ex:"We must preserve the forest.",exja:"私たちは森を保護しなければならない。",def:"to keep something safe and in its original state"},
+{w:"reproduce",emoji:"🐣",ipa:"/ˌriːprəˈduːs/",pos:"動",m:"子を産む",ex:"Rabbits reproduce quickly.",exja:"ウサギは速く繁殖する。",def:"to produce offspring or young"},
+{w:"beam",emoji:"😊",ipa:"/biːm/",pos:"動",m:"ほほ笑む",ex:"She beamed with joy.",exja:"彼女は喜びに満ちてほほ笑んだ。",def:"to smile brightly and happily"},
+{w:"boast",emoji:"😎",ipa:"/boʊst/",pos:"動",m:"自慢する",ex:"He boasted about his new car.",exja:"彼は新しい車を自慢した。",def:"to talk too proudly about what you own or have achieved"},
+{w:"corridor",emoji:"🚪",ipa:"/ˈkɔːrɪdər/",pos:"名",m:"廊下",ex:"The classroom is down the corridor.",exja:"教室は廊下の先にある。",def:"a long passage in a building with rooms leading off it"},
+{w:"fumble",emoji:"🤲",ipa:"/ˈfʌmbəl/",pos:"動",m:"手で探る",ex:"He fumbled for his keys in the dark.",exja:"彼は暗闇の中で鍵を手探りした。",def:"to touch, handle, or search for something clumsily"},
+{w:"grumble",emoji:"😤",ipa:"/ˈɡrʌmbəl/",pos:"動",m:"ぶつぶつ文句を言う",ex:"She grumbled about the weather.",exja:"彼女は天気について文句を言った。",def:"to complain about something in a quiet, bad-tempered way"},
+{w:"hectic",emoji:"🏃‍♂️",ipa:"/ˈhektɪk/",pos:"形",m:"忙しい",ex:"I had a hectic day at work.",exja:"仕事で慌ただしい一日だった。",def:"full of activity and very busy"},
+{w:"irritate",emoji:"😤",ipa:"/ˈɪrɪteɪt/",pos:"動",m:"いらつかせる",ex:"The noise irritated everyone.",exja:"その騒音はみんなをいらつかせた。",def:"to make someone feel slightly angry"},
+{w:"leftover",emoji:"🍱",ipa:"/ˈleftoʊvər/",pos:"名",m:"食べ残し",ex:"We had leftovers for dinner.",exja:"夕食は残り物で済ませた。",def:"food that remains after a meal has been finished"},
+{w:"loiter",emoji:"🚶",ipa:"/ˈlɔɪtər/",pos:"動",m:"ぶらぶらする",ex:"Teenagers were loitering near the store.",exja:"十代の若者たちが店の近くをぶらついていた。",def:"to stand around in a place without any clear purpose"},
+{w:"luxurious",emoji:"💎",ipa:"/lʌɡˈʒʊəriəs/",pos:"形",m:"ぜいたくな",ex:"They stayed in a luxurious hotel.",exja:"彼らはぜいたくなホテルに泊まった。",def:"very comfortable, expensive, and of high quality"},
+{w:"nudge",emoji:"👉",ipa:"/nʌdʒ/",pos:"動",m:"小突く",ex:"She nudged him to wake up.",exja:"彼女は彼を起こそうと小突いた。",def:"to push someone gently, often with the elbow, to get their attention"},
+{w:"workout",emoji:"🏋️",ipa:"/ˈwɜːrkaʊt/",pos:"名",m:"運動",ex:"I do a workout every morning.",exja:"私は毎朝運動をしている。",def:"a period of physical exercise"},
+{w:"autobiography",emoji:"📖",ipa:"/ˌɔːtəbaɪˈɑːɡrəfi/",pos:"名",m:"自伝",ex:"He wrote his autobiography at 80.",exja:"彼は80歳で自伝を書いた。",def:"a book about a person's life, written by that person"},
+{w:"bystander",emoji:"👀",ipa:"/ˈbaɪstændər/",pos:"名",m:"傍観者",ex:"Several bystanders witnessed the accident.",exja:"数人の傍観者がその事故を目撃した。",def:"a person who is present at an event but does not take part in it"},
+{w:"decentralize",emoji:"🌐",ipa:"/diːˈsentrəlaɪz/",pos:"動",m:"分散させる",ex:"The company decided to decentralize its offices.",exja:"その会社はオフィスを分散させることにした。",def:"to move control or power from one central place to several places"},
+{w:"dehydration",emoji:"🥵",ipa:"/ˌdiːhaɪˈdreɪʃən/",pos:"名",m:"脱水",ex:"He suffered from dehydration in the heat.",exja:"彼は暑さで脱水症状になった。",def:"a harmful lack of water in the body"},
+{w:"discredit",emoji:"👎",ipa:"/dɪsˈkredɪt/",pos:"動",m:"信頼を失わせる",ex:"The scandal discredited the politician.",exja:"その醜聞はその政治家の信頼を失わせた。",def:"to cause people to stop believing or trusting someone"},
+{w:"enforce",emoji:"👮",ipa:"/ɪnˈfɔːrs/",pos:"動",m:"強化する、実行する",ex:"Police enforce the traffic laws.",exja:"警察は交通法を執行する。",def:"to make sure that a law or rule is obeyed"},
+{w:"indefinite",emoji:"❓",ipa:"/ɪnˈdefɪnət/",pos:"形",m:"不定の",ex:"The meeting was postponed indefinitely.",exja:"会議は無期限に延期された。",def:"not fixed, exact, or certain"},
+{w:"intersection",emoji:"🚦",ipa:"/ˌɪntərˈsekʃən/",pos:"名",m:"交差点",ex:"Turn left at the next intersection.",exja:"次の交差点を左に曲がって。",def:"a place where two or more roads meet or cross"},
+{w:"offset",emoji:"⚖️",ipa:"/ˈɔːfset/",pos:"動",m:"相殺する",ex:"The bonus offsets the pay cut.",exja:"ボーナスが減給を相殺する。",def:"to balance the effect of something with an opposite effect"},
+{w:"overrated",emoji:"📈",ipa:"/ˌoʊvərˈreɪtɪd/",pos:"形",m:"過大評価された",ex:"I think the movie was overrated.",exja:"その映画は過大評価されていると思う。",def:"considered to be better or more important than it really is"},
+{w:"postscript",emoji:"✉️",ipa:"/ˈpoʊstskrɪpt/",pos:"名",m:"追伸",ex:"She added a postscript to the letter.",exja:"彼女は手紙に追伸を加えた。",def:"an extra message added at the end of a letter after the signature"},
+{w:"restore",emoji:"🔄",ipa:"/rɪˈstɔːr/",pos:"動",m:"復元する",ex:"They restored the old painting.",exja:"彼らは古い絵画を修復した。",def:"to bring something back to its former good condition"},
+{w:"underdressed",emoji:"👕",ipa:"/ˌʌndərˈdrest/",pos:"形",m:"控えめな服装の",ex:"I felt underdressed at the party.",exja:"パーティーで服装が地味すぎると感じた。",def:"wearing clothes that are too casual or plain for an occasion"},
+{w:"get along",emoji:"🤝",ipa:"/ɡet əˈlɔːŋ/",pos:"熟",m:"順調に進む、仲良くやる",ex:"We get along well with our neighbors.",exja:"私たちは近所の人とうまくやっている。",def:"to have a friendly relationship with someone"},
+{w:"get around to doing",emoji:"⏰",ipa:"/ɡet əˈraʊnd tuː ˈduːɪŋ/",pos:"熟",m:"〜する時間ができて取り掛かる",ex:"I finally got around to cleaning my room.",exja:"やっと部屋の掃除に取り掛かった。",def:"to finally find time to do something after a delay"},
+{w:"get away with",emoji:"🏃‍♂️",ipa:"/ɡet əˈweɪ wɪð/",pos:"熟",m:"罰されずに〜する",ex:"He got away with the lie.",exja:"彼はその嘘を罰されずに済ませた。",def:"to do something wrong without being caught or punished"},
+{w:"get by",emoji:"🙆",ipa:"/ɡet baɪ/",pos:"熟",m:"何とかやっていく",ex:"We can get by on a small budget.",exja:"少ない予算でも何とかやっていける。",def:"to manage to live or survive with what little you have"},
+{w:"get down to",emoji:"💪",ipa:"/ɡet daʊn tuː/",pos:"熟",m:"本腰を入れて取り組む",ex:"Let's get down to business.",exja:"さあ本題に取り掛かろう。",def:"to begin to give serious, focused attention to something"},
+{w:"make for",emoji:"🏃",ipa:"/meɪk fɔːr/",pos:"熟",m:"〜に急いで向かう",ex:"He made for the exit immediately.",exja:"彼はすぐに出口に向かった。",def:"to move quickly and directly toward a place"},
+{w:"make out",emoji:"👓",ipa:"/meɪk aʊt/",pos:"熟",m:"理解する、判読する",ex:"I couldn't make out what he said.",exja:"彼が何と言ったのか聞き取れなかった。",def:"to manage to see, hear, or understand something with difficulty"},
+{w:"make up for",emoji:"➕",ipa:"/meɪk ʌp fɔːr/",pos:"熟",m:"埋め合わせをする",ex:"Extra practice will make up for lost time.",exja:"追加練習が失った時間を埋め合わせるだろう。",def:"to make something bad or missing better by doing something good"},
+{w:"make it",emoji:"🎉",ipa:"/meɪk ɪt/",pos:"熟",m:"間に合う、成功する",ex:"We made it to the station on time.",exja:"私たちは駅に間に合った。",def:"to succeed in arriving somewhere on time, or to succeed in general"},
+{w:"take after",emoji:"👨‍👦",ipa:"/teɪk ˈæftər/",pos:"熟",m:"似ている",ex:"She takes after her mother.",exja:"彼女は母親に似ている。",def:"to look or behave like an older relative, especially a parent"},
+{w:"take on",emoji:"🙋",ipa:"/teɪk ɑːn/",pos:"熟",m:"引き受ける",ex:"He took on extra work this month.",exja:"彼は今月追加の仕事を引き受けた。",def:"to accept a responsibility, job, or challenge"},
+{w:"take over",emoji:"🔄",ipa:"/teɪk ˈoʊvər/",pos:"熟",m:"引き継ぐ",ex:"She will take over the project next week.",exja:"彼女は来週そのプロジェクトを引き継ぐ。",def:"to gain control of something from someone else"},
+{w:"take to",emoji:"❤️",ipa:"/teɪk tuː/",pos:"熟",m:"気に入る",ex:"He quickly took to his new job.",exja:"彼はすぐに新しい仕事を気に入った。",def:"to begin to like a person, place, or activity"},
+{w:"take up",emoji:"🆕",ipa:"/teɪk ʌp/",pos:"熟",m:"始める、取り上げる",ex:"She took up painting last year.",exja:"彼女は昨年絵を始めた。",def:"to begin doing a new activity, or to fill an amount of space or time"},
+{w:"put aside",emoji:"📦",ipa:"/pʊt əˈsaɪd/",pos:"熟",m:"脇に置く",ex:"Let's put aside our differences.",exja:"私たちの意見の違いは脇に置こう。",def:"to save something for use later, or to stop considering a disagreement"},
+{w:"put down",emoji:"✍️",ipa:"/pʊt daʊn/",pos:"熟",m:"書き留める",ex:"Please put down your address here.",exja:"ここに住所を書いてください。",def:"to write something on paper"},
+{w:"put forth",emoji:"📤",ipa:"/pʊt fɔːrθ/",pos:"熟",m:"〜を出す",ex:"She put forth a new proposal.",exja:"彼女は新しい提案を出した。",def:"to offer or present an idea, plan, or proposal"},
+{w:"put off",emoji:"⏳",ipa:"/pʊt ɔːf/",pos:"熟",m:"延期する",ex:"We had to put off the meeting.",exja:"私たちは会議を延期しなければならなかった。",def:"to delay doing something until a later time"},
+{w:"put through",emoji:"☎️",ipa:"/pʊt θruː/",pos:"熟",m:"電話をつなぐ",ex:"Please put me through to the manager.",exja:"マネージャーにつないでください。",def:"to connect someone to another person by telephone"},
+{w:"see about",emoji:"🤔",ipa:"/siː əˈbaʊt/",pos:"熟",m:"検討する",ex:"I'll see about getting a refund.",exja:"返金について検討してみる。",def:"to deal with, arrange, or investigate something"},
+{w:"see off",emoji:"👋",ipa:"/siː ɔːf/",pos:"熟",m:"見送る",ex:"We went to see her off at the airport.",exja:"私たちは空港で彼女を見送った。",def:"to go with someone to the airport, station, etc. to say goodbye"},
+{w:"see to",emoji:"📋",ipa:"/siː tuː/",pos:"熟",m:"手配する",ex:"He will see to the arrangements.",exja:"彼が手配してくれるだろう。",def:"to make sure that something is dealt with or done"},
+{w:"turn away",emoji:"🚫",ipa:"/tɜːrn əˈweɪ/",pos:"熟",m:"追い返す",ex:"The guard turned away uninvited guests.",exja:"警備員は招かれていない客を追い返した。",def:"to refuse to let someone enter a place"},
+{w:"turn down",emoji:"🙅",ipa:"/tɜːrn daʊn/",pos:"熟",m:"断る、音を下げる",ex:"She turned down the job offer.",exja:"彼女はその仕事の申し出を断った。",def:"to refuse an offer or request, or to reduce the volume of a sound"},
+{w:"turn in",emoji:"📥",ipa:"/tɜːrn ɪn/",pos:"熟",m:"提出する",ex:"Please turn in your homework by Friday.",exja:"金曜までに宿題を提出してください。",def:"to submit or hand in something, such as homework"},
+{w:"turn up",emoji:"✨",ipa:"/tɜːrn ʌp/",pos:"熟",m:"現れる、音を上げる",ex:"He turned up late again.",exja:"彼はまた遅れて現れた。",def:"to arrive somewhere, or to increase the volume or amount of something"},
+{w:"account for",emoji:"📊",ipa:"/əˈkaʊnt fɔːr/",pos:"熟",m:"説明する、占める",ex:"Tourism accounts for a large part of the economy.",exja:"観光業は経済の大部分を占める。",def:"to give an explanation for something, or to form a certain part of a total"},
+{w:"allow for",emoji:"🤔",ipa:"/əˈlaʊ fɔːr/",pos:"熟",m:"考慮に入れる",ex:"You should allow for delays.",exja:"遅延を考慮に入れておくべきだ。",def:"to include the possibility of something when making a plan"},
+{w:"bank on",emoji:"🙏",ipa:"/bæŋk ɑːn/",pos:"熟",m:"頼りにする",ex:"Don't bank on his help.",exja:"彼の助けを当てにしないほうがいい。",def:"to depend on something happening as expected"},
+{w:"bear with",emoji:"😌",ipa:"/ber wɪð/",pos:"熟",m:"辛抱して付き合う",ex:"Please bear with me for a moment.",exja:"少しの間我慢してお付き合いください。",def:"to be patient with someone while they finish something"},
+{w:"bow out",emoji:"🚪",ipa:"/baʊ aʊt/",pos:"熟",m:"退場する、引退する",ex:"He decided to bow out of the race.",exja:"彼はそのレースから退くことにした。",def:"to formally stop taking part in an activity or competition"},
+{w:"chip in",emoji:"🪙",ipa:"/tʃɪp ɪn/",pos:"熟",m:"負担を分け合う",ex:"Everyone chipped in for the gift.",exja:"みんなでその贈り物の費用を出し合った。",def:"to give a small amount of money along with other people"},
+{w:"draw on",emoji:"🎨",ipa:"/drɔː ɑːn/",pos:"熟",m:"使用する",ex:"She drew on her experience to solve it.",exja:"彼女は経験を活用してそれを解決した。",def:"to use knowledge, skill, or experience that you have gained"},
+{w:"feel out",emoji:"🕵️",ipa:"/fiːl aʊt/",pos:"熟",m:"意向を探る",ex:"He tried to feel out her opinion.",exja:"彼は彼女の意見を探ろうとした。",def:"to carefully try to find out someone's opinion or feelings"},
+{w:"knock down",emoji:"🔨",ipa:"/nɑːk daʊn/",pos:"熟",m:"引き倒す",ex:"They knocked down the old building.",exja:"彼らは古い建物を取り壊した。",def:"to destroy or demolish a building"},
+{w:"let down",emoji:"😞",ipa:"/let daʊn/",pos:"熟",m:"がっかりさせる",ex:"I don't want to let you down.",exja:"あなたをがっかりさせたくない。",def:"to fail to give someone the help or support they expected"},
+{w:"mess with",emoji:"🙅‍♂️",ipa:"/mes wɪð/",pos:"熟",m:"干渉する",ex:"Don't mess with my computer.",exja:"私のパソコンをいじらないで。",def:"to interfere with or touch something without permission"},
+{w:"pull over",emoji:"🚗",ipa:"/pʊl ˈoʊvər/",pos:"熟",m:"車を路肩に寄せる",ex:"The police told him to pull over.",exja:"警察は彼に車を路肩に寄せるよう言った。",def:"to drive a vehicle to the side of the road and stop"},
+{w:"relate to",emoji:"🔗",ipa:"/rɪˈleɪt tuː/",pos:"熟",m:"関係がある、共感する",ex:"I really relate to her story.",exja:"私は彼女の話に本当に共感する。",def:"to understand and feel sympathy for someone's experience"},
+{w:"settle for",emoji:"🤷",ipa:"/ˈsetəl fɔːr/",pos:"熟",m:"妥協する",ex:"He wasn't willing to settle for less.",exja:"彼はそれ以下で妥協するつもりはなかった。",def:"to accept something that is less than what you really wanted"},
+{w:"throw up",emoji:"🤮",ipa:"/θroʊ ʌp/",pos:"熟",m:"吐く",ex:"She felt sick and threw up.",exja:"彼女は気分が悪くなって吐いた。",def:"to vomit"},
 ];
 WORDS.forEach((c,i)=>c.id=i);
 
@@ -622,7 +630,7 @@ const TEST_DIFF_CHOICES = [4,3,2];
 
 function startMiniTest(mode){
   testMode = mode;
-  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め'}[mode];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', definition:'英英定義当て'}[mode];
   showScreen('study');
   document.getElementById('study-body').innerHTML = `
     <div class="card-area">
@@ -665,7 +673,7 @@ function startMockExam(mode){
 
 function startPosQuiz(){
   testMode = 'pos';
-  testQueue = shuffleArr(WORDS.map(c=>c.id)).slice(0,5);
+  testQueue = shuffleArr(WORDS.filter(c=>c.pos!=='熟').map(c=>c.id)).slice(0,5);
   testIndex = 0;
   testScore = 0;
   testMissed = [];
@@ -676,10 +684,13 @@ function startPosQuiz(){
   renderTestQuestion();
 }
 
+const PER_WORD_TRACKED_MODES = ['definition', 'pos', 'cloze'];
+
 function startFullDrill(mode, weakOnly){
-  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', pos:'品詞当て'}[mode];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', pos:'品詞当て', definition:'英英定義当て'}[mode];
   showScreen('study');
-  if(mode==='pos'){
+  if(PER_WORD_TRACKED_MODES.includes(mode)){
+    // 単語ごとに記憶した習熟度からヒント数を自動決定するため、開始難易度の選択は不要
     startFullDrillWithDifficulty(mode, weakOnly, 0);
     return;
   }
@@ -687,7 +698,8 @@ function startFullDrill(mode, weakOnly){
     <div class="card-area">
       <div class="flash" style="text-align:center;">
         <span class="pos-tag">テスト直前モード（${modeLabel}・${weakOnly?'苦手のみ':'全190語'}）</span>
-        <div style="font-size:15px;color:var(--navy);font-weight:700;margin-top:14px;">難易度を選んでください</div>
+        <div style="font-size:15px;color:var(--navy);font-weight:700;margin-top:14px;">開始時の難易度を選んでください</div>
+        <div style="font-size:11.5px;color:#8A8474;margin-top:4px;">正解が続くと自動でヒントが減り、間違えると増えます</div>
         <div style="width:100%;margin-top:14px;">
           ${TEST_DIFF_LABELS.map((label,i)=>
             `<button class="btn btn-secondary" style="margin-top:8px;" onclick="startFullDrillWithDifficulty('${mode}',${weakOnly},${i})">${label}</button>`
@@ -698,9 +710,10 @@ function startFullDrill(mode, weakOnly){
 }
 
 function startFullDrillWithDifficulty(mode, weakOnly, diffIndex){
-  let ids = WORDS.map(c=>c.id);
+  const weakTrack = PER_WORD_TRACKED_MODES.includes(mode) ? mode : 'recognize';
+  let ids = WORDS.filter(c => mode!=='pos' || c.pos!=='熟').map(c=>c.id);
   if(weakOnly){
-    ids = ids.filter(id => { const p = getP(id,'recognize'); return !p || p.box<=1; });
+    ids = ids.filter(id => { const p = getP(id,weakTrack); return !p || p.box<=1; });
   }
   if(ids.length===0){
     document.getElementById('study-body').innerHTML =
@@ -723,14 +736,31 @@ function startFullDrillWithDifficulty(mode, weakOnly, diffIndex){
   renderTestQuestion();
 }
 
-function advanceTest(){
+function effDifficultyFor(c){
+  if(sessionType==='cramDrill' && PER_WORD_TRACKED_MODES.includes(testMode)){
+    return Math.min((getP(c.id, testMode) || {box:0}).box, 3);
+  }
+  return testDifficulty;
+}
+
+function gradeAdvance(isCorrect){
+  if(sessionType==='cramDrill'){
+    if(PER_WORD_TRACKED_MODES.includes(testMode)){
+      // 単語ごとの正解率をSRS進捗として記憶し、次回以降のヒント数に反映する
+      const c = WORDS[testQueue[testIndex]];
+      rate(c.id, testMode, isCorrect ? 'good' : 'again');
+    } else {
+      // テスト直前モードは正解率に応じて次の問題の難易度を自動調整
+      testDifficulty = isCorrect ? Math.min(testDifficulty+1, 3) : Math.max(testDifficulty-1, 0);
+    }
+  }
   testIndex++;
 }
 
 function renderTestQuestion(){
   if(testIndex >= testQueue.length){ renderTestResult(); return; }
   const c = WORDS[testQueue[testIndex]];
-  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め'}[testMode];
+  const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', definition:'英英定義当て'}[testMode];
   const diffLabel = TEST_DIFF_LABELS[testDifficulty];
   const testTypeLabel = sessionType==='cramDrill' ? 'テスト直前' : (isMockExam ? '模擬試験' : '小テスト');
   const countLabel = `${testIndex+1}/${testQueue.length}`;
@@ -782,6 +812,7 @@ function renderTestQuestion(){
             <span class="pos-tag">${testTypeLabel}（${modeLabel}・${diffLabel}）${countLabel}</span>
             ${promptHtml}
             <div class="meaning" id="test-self-meaning" style="display:none;">${c.m}</div>
+            <div class="ipa" id="test-self-pos-tag" style="display:none;">${c.pos}</div>
             <div class="example" id="test-self-example" style="display:none;">${c.ex}</div>
             <div class="exampleja" id="test-self-exampleja" style="display:none;">${c.exja}</div>
             <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
@@ -798,6 +829,7 @@ function renderTestQuestion(){
       }
       document.getElementById('test-self-reveal').addEventListener('click', ()=>{
         document.getElementById('test-self-meaning').style.display='block';
+        document.getElementById('test-self-pos-tag').style.display='block';
         document.getElementById('test-self-example').style.display='block';
         document.getElementById('test-self-exampleja').style.display='block';
         document.getElementById('test-self-reveal').style.display='none';
@@ -839,15 +871,22 @@ function renderTestQuestion(){
           ${statusHtml}
         </div>`;
       document.getElementById('test-check-btn').addEventListener('click', testCheckSpelling);
-      document.getElementById('test-next-btn').addEventListener('click', ()=>{ renderTestQuestion(); });
-      const input = document.getElementById('test-spell-input');
+            const input = document.getElementById('test-spell-input');
       input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckSpelling(); } });
       setTimeout(()=>input.focus(), 50);
     }
   } else if(testMode==='cloze') {
     const cz = buildCloze(c.ex, c.w);
-    if(testDifficulty <= 2){
-      const n = TEST_DIFF_CHOICES[testDifficulty];
+    const effDifficulty = effDifficultyFor(c);
+    const effDiffLabel = TEST_DIFF_LABELS[effDifficulty];
+    const effStatusHtml = sessionType==='cramDrill'
+      ? `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　この単語の難易度：${effDiffLabel}</div>`
+      : statusHtml;
+    const sentenceHtml = `
+      <div style="font-size:17px;margin-top:10px;color:var(--ink);line-height:1.6;">${cz.cloze}</div>
+      <div style="font-size:13px;margin-top:4px;color:#8A8474;">${c.exja}</div>`;
+    if(effDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[effDifficulty];
       const choices = buildChoices(c.w, n);
       const choiceButtons = choices.map(opt =>
         `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${opt}</button>`
@@ -855,54 +894,136 @@ function renderTestQuestion(){
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
-            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${diffLabel}）${countLabel}</span>
-            <div class="example" style="font-size:17px;margin-top:10px;">${cz.cloze}</div>
-            <div class="exampleja">${c.exja}</div>
+            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${effDiffLabel}）${countLabel}</span>
+            ${sentenceHtml}
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
           </div>
-          ${statusHtml}
+          ${effStatusHtml}
         </div>`;
     } else {
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
-            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${diffLabel}）${countLabel}</span>
-            <div class="example" style="font-size:17px;margin-top:10px;">${cz.cloze}</div>
-            <div class="exampleja">${c.exja}</div>
+            <span class="pos-tag">${testTypeLabel}（例文穴埋め・${effDiffLabel}）${countLabel}</span>
+            ${sentenceHtml}
             <input type="text" id="test-spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
                    placeholder="空欄の単語を入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
             <div id="test-feedback" style="margin-top:10px;font-weight:700;"></div>
             <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
+            <div class="ipa" id="test-answer-pos" style="display:none;">${c.pos}</div>
             <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
             <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
           </div>
-          ${statusHtml}
+          ${effStatusHtml}
         </div>`;
       document.getElementById('test-check-btn').addEventListener('click', ()=>testCheckCloze(cz));
-      document.getElementById('test-next-btn').addEventListener('click', ()=>{ renderTestQuestion(); });
       const input = document.getElementById('test-spell-input');
       input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckCloze(cz); } });
       setTimeout(()=>input.focus(), 50);
     }
+  } else if(testMode==='definition') {
+    // テスト直前モードでは単語ごとに記憶した習熟度（box）からヒント数を決定する
+    const effDifficulty = effDifficultyFor(c);
+    const effDiffLabel = TEST_DIFF_LABELS[effDifficulty];
+    const effStatusHtml = sessionType==='cramDrill'
+      ? `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　この単語の難易度：${effDiffLabel}</div>`
+      : statusHtml;
+    let hintHtml = '';
+    if(effDifficulty===0){
+      hintHtml = `<div style="font-size:12.5px;color:#8A8474;margin-top:8px;">ヒント：先頭の文字は「${c.w.charAt(0).toUpperCase()}」／発音記号 ${c.ipa}</div>`;
+    } else if(effDifficulty===1){
+      hintHtml = `<div style="font-size:12.5px;color:#8A8474;margin-top:8px;">ヒント：先頭の文字は「${c.w.charAt(0).toUpperCase()}」</div>`;
+    }
+    const defHtml = `<div style="font-size:16px;margin-top:10px;color:var(--ink);line-height:1.6;">${c.def}</div>${hintHtml}`;
+    if(effDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[effDifficulty];
+      const choices = buildChoices(c.w, n);
+      const choiceButtons = choices.map(opt =>
+        `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${opt}</button>`
+      ).join('');
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（英英定義当て・${effDiffLabel}）${countLabel}</span>
+            ${defHtml}
+            <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+            <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+          </div>
+          ${effStatusHtml}
+        </div>`;
+    } else {
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（英英定義当て・${effDiffLabel}）${countLabel}</span>
+            ${defHtml}
+            <input type="text" id="test-spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
+                   placeholder="単語のつづりを入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <div id="test-feedback" style="margin-top:10px;font-weight:700;"></div>
+            <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
+            <div class="ipa" id="test-answer-pos" style="display:none;">${c.pos}</div>
+            <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
+            <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+          </div>
+          ${effStatusHtml}
+        </div>`;
+      document.getElementById('test-check-btn').addEventListener('click', testCheckSpelling);
+      const input = document.getElementById('test-spell-input');
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); testCheckSpelling(); } });
+      setTimeout(()=>input.focus(), 50);
+    }
   } else if(testMode==='pos') {
-    const tags = shuffleArr(['名','動','形','副','熟']);
-    const choiceButtons = tags.map(tag =>
-      `<button class="btn btn-secondary mc-btn" data-tag="${tag}" onclick="testSelectPos(this)" style="margin-top:8px;">${tag}</button>`
-    ).join('');
-    document.getElementById('study-body').innerHTML = `
-      <div class="card-area">
-        <div class="flash" id="flash">
-          <span class="pos-tag">${testTypeLabel}（品詞当て）${countLabel}</span>
-          <div class="emoji">${c.emoji}</div>
-          <div class="word">${c.w}</div>
-          <div class="ipa">${c.ipa}</div>
-          <div class="meaning" style="font-size:16px;">${c.m}</div>
-          <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
-          <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
-        </div>
-        ${statusHtml}
-      </div>`;
+    const correctTags = c.pos.split('/');
+    const effDifficulty = effDifficultyFor(c);
+    const effDiffLabel = TEST_DIFF_LABELS[effDifficulty];
+    const effStatusHtml = sessionType==='cramDrill'
+      ? `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　この単語の難易度：${effDiffLabel}</div>`
+      : statusHtml;
+    if(effDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[effDifficulty];
+      const tags = buildPosChoices(correctTags, n);
+      const choiceButtons = tags.map(tag =>
+        `<button class="btn btn-secondary mc-btn" data-tag="${tag}" onclick="testSelectPos(this)" style="margin-top:8px;">${tag}</button>`
+      ).join('');
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（品詞当て・${effDiffLabel}）${countLabel}</span>
+            <div class="emoji">${c.emoji}</div>
+            <div class="word">${c.w}</div>
+            <div class="ipa">${c.ipa}</div>
+            <div style="font-size:16px;margin-top:10px;color:var(--ink);">${c.m}</div>
+            <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
+            <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+          </div>
+          ${effStatusHtml}
+        </div>`;
+    } else {
+      // ヒントなし：自己採点
+      document.getElementById('study-body').innerHTML = `
+        <div class="card-area">
+          <div class="flash" id="flash">
+            <span class="pos-tag">${testTypeLabel}（品詞当て・${effDiffLabel}）${countLabel}</span>
+            <div class="emoji">${c.emoji}</div>
+            <div class="word">${c.w}</div>
+            <div class="ipa">${c.ipa}</div>
+            <div style="font-size:16px;margin-top:10px;color:var(--ink);">${c.m}</div>
+            <div style="font-size:22px;font-weight:700;color:var(--coral-dark);margin-top:14px;display:none;" id="test-self-pos">${c.pos}</div>
+            <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
+            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
+              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
+              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
+            </div>
+          </div>
+          ${effStatusHtml}
+        </div>`;
+      document.getElementById('test-self-reveal').addEventListener('click', ()=>{
+        document.getElementById('test-self-pos').style.display='block';
+        document.getElementById('test-self-reveal').style.display='none';
+        document.getElementById('test-self-grade').style.display='grid';
+      });
+    }
   }
 }
 
@@ -922,9 +1043,9 @@ function testSelectMeaning(btn){
     document.getElementById('test-listen-ipa').style.display='block';
   }
   const fb = document.getElementById('test-feedback');
-  fb.textContent = isCorrect ? '正解！' : '不正解';
+  fb.textContent = (isCorrect ? '正解！' : '不正解') + `（${c.pos}）`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
 }
 
 function testSelectSpelling(btn){
@@ -938,15 +1059,15 @@ function testSelectSpelling(btn){
   });
   if(isCorrect) testScore++; else testMissed.push(c);
   const fb = document.getElementById('test-feedback');
-  fb.textContent = isCorrect ? '正解！' : '不正解';
+  fb.textContent = isCorrect ? '正解！' : `不正解（正解：${c.w}・${c.pos}）`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
 }
 
 function testSelfGrade(isCorrect){
   const c = WORDS[testQueue[testIndex]];
   if(isCorrect) testScore++; else testMissed.push(c);
-  advanceTest();
+  gradeAdvance(isCorrect);
   renderTestQuestion();
 }
 
@@ -957,13 +1078,14 @@ function testCheckSpelling(){
   input.disabled = true;
   if(isCorrect) testScore++; else testMissed.push(c);
   document.getElementById('test-answer').style.display='block';
+  const posEl = document.getElementById('test-answer-pos');
+  if(posEl) posEl.style.display='block';
   const fb = document.getElementById('test-feedback');
   fb.textContent = isCorrect ? '正解！' : '不正解（正しいつづり ↓）';
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
   document.getElementById('test-check-btn').style.display='none';
   document.getElementById('test-next-btn').style.display='block';
-  document.getElementById('test-next-btn').dataset.pending = isCorrect ? '1' : '0';
-  document.getElementById('test-next-btn').onclick = ()=>{ advanceTest(); renderTestQuestion(); };
+  document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
 }
 
 function testCheckCloze(cz){
@@ -974,12 +1096,14 @@ function testCheckCloze(cz){
   input.disabled = true;
   if(isCorrect) testScore++; else testMissed.push(c);
   document.getElementById('test-answer').style.display='block';
+  const posEl = document.getElementById('test-answer-pos');
+  if(posEl) posEl.style.display='block';
   const fb = document.getElementById('test-feedback');
   fb.textContent = isCorrect ? '正解！' : '不正解（正しい単語 ↓）';
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
   document.getElementById('test-check-btn').style.display='none';
   document.getElementById('test-next-btn').style.display='block';
-  document.getElementById('test-next-btn').onclick = ()=>{ advanceTest(); renderTestQuestion(); };
+  document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
 }
 
 function testSelectPos(btn){
@@ -994,9 +1118,11 @@ function testSelectPos(btn){
   });
   if(isCorrect) testScore++; else testMissed.push(c);
   const fb = document.getElementById('test-feedback');
-  fb.textContent = isCorrect ? '正解！' : `不正解（正解：${c.pos}）`;
+  fb.innerHTML = isCorrect
+    ? '正解！'
+    : `不正解（正解：${c.pos}）<br><span style="font-weight:400;font-size:13px;">${c.w}（${c.m}）</span>`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ advanceTest(); renderTestQuestion(); }, 1300);
+  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
 }
 
 function renderTestResult(){
@@ -1005,20 +1131,15 @@ function renderTestResult(){
       testMissed.map(m=>`<div style="margin-top:6px;">${m.emoji} <b>${m.w}</b>（${m.m}）</div>`).join('') + '</div>'
     : '<div style="margin-top:18px;">全問正解です！🎉</div>';
   const modeLabel = sessionType==='cramDrill'
-    ? {recognize:'読みテスト直前', spell:'書きテスト直前', listening:'リスニングテスト直前', cloze:'例文穴埋めテスト直前', pos:'品詞当てテスト直前'}[testMode]
+    ? {recognize:'読みテスト直前', spell:'書きテスト直前', listening:'リスニングテスト直前', cloze:'例文穴埋めテスト直前', pos:'品詞当てテスト直前', definition:'英英定義当てテスト直前'}[testMode]
     : isMockExam
-    ? {recognize:'読み模擬試験', spell:'書き模擬試験', listening:'リスニング模擬試験', cloze:'例文穴埋め模擬試験'}[testMode]
-    : {recognize:'読み小テスト', spell:'書き小テスト', listening:'リスニング小テスト', cloze:'例文穴埋め小テスト', pos:'品詞当て小テスト'}[testMode];
+    ? {recognize:'読み模擬試験', spell:'書き模擬試験', listening:'リスニング模擬試験', cloze:'例文穴埋め模擬試験', definition:'英英定義当て模擬試験'}[testMode]
+    : {recognize:'読み小テスト', spell:'書き小テスト', listening:'リスニング小テスト', cloze:'例文穴埋め小テスト', pos:'品詞当て小テスト', definition:'英英定義当て小テスト'}[testMode];
   const retryButtonsHtml = sessionType==='cramDrill'
-    ? (testMode==='pos'
-      ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
-           <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
-           <button class="btn btn-primary" onclick="startFullDrillWithDifficulty('pos',${cramWeakOnly},0)">もう一周</button>
-         </div>`
-      : `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
-           <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
-           <button class="btn btn-primary" onclick="startFullDrillWithDifficulty('${testMode}',${cramWeakOnly},${testDifficulty})">もう一周</button>
-         </div>`)
+    ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
+         <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
+         <button class="btn btn-primary" onclick="startFullDrillWithDifficulty('${testMode}',${cramWeakOnly},${testDifficulty})">もう一周</button>
+       </div>`
     : testMode==='pos'
     ? `<div class="btn-row" style="margin-top:16px;margin-bottom:30px;">
          <button class="btn btn-secondary" onclick="showScreen('train')">戻る</button>
@@ -1248,6 +1369,13 @@ function maskWord(word, n){
   for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; }
   const chosen = new Set(shuffled.slice(0, blankCount));
   return word.split('').map((ch,i)=> chosen.has(i) ? '_' : ch).join('');
+}
+
+function buildPosChoices(correctTags, n){
+  const allTags = ['名','動','形','副','熟'];
+  const wrongPool = shuffleArr(allTags.filter(t=>!correctTags.includes(t)));
+  const choices = wrongPool.slice(0, n-1).concat([correctTags[0]]);
+  return shuffleArr(choices);
 }
 
 function buildChoices(correctWord, n){
@@ -1502,11 +1630,14 @@ document.getElementById('btn-cram-pos-all').addEventListener('click', ()=>startF
 document.getElementById('btn-cram-pos-weak').addEventListener('click', ()=>startFullDrill('pos', true));
 document.getElementById('btn-cram-cloze-all').addEventListener('click', ()=>startFullDrill('cloze', false));
 document.getElementById('btn-cram-cloze-weak').addEventListener('click', ()=>startFullDrill('cloze', true));
+document.getElementById('btn-cram-definition-all').addEventListener('click', ()=>startFullDrill('definition', false));
+document.getElementById('btn-cram-definition-weak').addEventListener('click', ()=>startFullDrill('definition', true));
 document.getElementById('btn-test-recognize').addEventListener('click', ()=>startMiniTest('recognize'));
 document.getElementById('btn-test-spell').addEventListener('click', ()=>startMiniTest('spell'));
 document.getElementById('btn-test-listening').addEventListener('click', ()=>startMiniTest('listening'));
 document.getElementById('btn-test-pos').addEventListener('click', ()=>startPosQuiz());
 document.getElementById('btn-test-cloze').addEventListener('click', ()=>startMiniTest('cloze'));
+document.getElementById('btn-test-definition').addEventListener('click', ()=>startMiniTest('definition'));
 document.getElementById('btn-mock-recognize').addEventListener('click', ()=>startMockExam('recognize'));
 document.getElementById('btn-mock-spell').addEventListener('click', ()=>startMockExam('spell'));
 document.getElementById('btn-mock-listening').addEventListener('click', ()=>startMockExam('listening'));
