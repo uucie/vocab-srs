@@ -993,7 +993,6 @@ function renderTestQuestion(){
             <div class="emoji">${c.emoji}</div>
             <div class="word">${c.w}</div>
             <div class="ipa">${c.ipa}</div>
-            <div style="font-size:16px;margin-top:10px;color:var(--ink);">${c.m}</div>
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
           </div>
@@ -1008,8 +1007,8 @@ function renderTestQuestion(){
             <div class="emoji">${c.emoji}</div>
             <div class="word">${c.w}</div>
             <div class="ipa">${c.ipa}</div>
-            <div style="font-size:16px;margin-top:10px;color:var(--ink);">${c.m}</div>
             <div style="font-size:22px;font-weight:700;color:var(--coral-dark);margin-top:14px;display:none;" id="test-self-pos">${c.pos}</div>
+            <div style="font-size:15px;margin-top:6px;color:var(--ink);display:none;" id="test-self-pos-meaning">${c.m}</div>
             <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
             <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
               <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
@@ -1020,6 +1019,7 @@ function renderTestQuestion(){
         </div>`;
       document.getElementById('test-self-reveal').addEventListener('click', ()=>{
         document.getElementById('test-self-pos').style.display='block';
+        document.getElementById('test-self-pos-meaning').style.display='block';
         document.getElementById('test-self-reveal').style.display='none';
         document.getElementById('test-self-grade').style.display='grid';
       });
@@ -1118,9 +1118,8 @@ function testSelectPos(btn){
   });
   if(isCorrect) testScore++; else testMissed.push(c);
   const fb = document.getElementById('test-feedback');
-  fb.innerHTML = isCorrect
-    ? '正解！'
-    : `不正解（正解：${c.pos}）<br><span style="font-weight:400;font-size:13px;">${c.w}（${c.m}）</span>`;
+  fb.innerHTML = (isCorrect ? '正解！' : `不正解（正解：${c.pos}）`) +
+    `<br><span style="font-weight:400;font-size:13px;">${c.w}（${c.m}）</span>`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
   setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
 }
@@ -1372,7 +1371,7 @@ function maskWord(word, n){
 }
 
 function buildPosChoices(correctTags, n){
-  const allTags = ['名','動','形','副','熟'];
+  const allTags = ['名','動','形','副']; // 熟語は品詞当ての対象外なので選択肢からも除外
   const wrongPool = shuffleArr(allTags.filter(t=>!correctTags.includes(t)));
   const choices = wrongPool.slice(0, n-1).concat([correctTags[0]]);
   return shuffleArr(choices);
