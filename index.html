@@ -187,6 +187,22 @@
   #screen-home{padding-bottom:40px;}
   #screen-study{padding-bottom:60px;}
   #screen-train{padding-bottom:60px;}
+  #screen-story{padding-bottom:60px;}
+  .story-chapter-title{
+    font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--navy);
+    margin:22px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line);
+  }
+  .story-chapter-title:first-child{margin-top:0;}
+  .story-sentence{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;cursor:pointer;
+  }
+  .story-sentence .stext{flex:1;font-size:15px;line-height:1.6;color:var(--ink);}
+  .story-sentence .stext b{color:var(--coral-dark);}
+  .story-sentence .sspeak{
+    flex-shrink:0;background:var(--navy);color:#fff;border:none;border-radius:16px;
+    padding:5px 10px;font-size:12px;cursor:pointer;
+  }
 
   .modal-bg{
     display:none;position:fixed;inset:0;background:rgba(36,35,42,0.45);z-index:10;
@@ -322,6 +338,18 @@
     <div id="study-body"></div>
   </section>
 
+  <!-- STORY -->
+  <section id="screen-story" class="screen">
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-primary" id="btn-story-play-all">▶ 全文を英語で聴く</button>
+    </div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-secondary" id="btn-story-stop" style="font-size:13px;">■ 停止</button>
+      <button class="btn btn-secondary" id="btn-story-lang-toggle" style="font-size:13px;">全文の言語を切り替え</button>
+    </div>
+    <div id="story-body"></div>
+  </section>
+
   <!-- BROWSE -->
   <section id="screen-browse" class="screen">
     <input class="search" id="search-input" placeholder="英単語・意味で検索…">
@@ -337,6 +365,7 @@
   <button data-screen="home" class="tab-btn active"><span class="ic">🏠</span>ホーム</button>
   <button data-screen="study" class="tab-btn"><span class="ic">📇</span>学習</button>
   <button data-screen="train" class="tab-btn"><span class="ic">🔥</span>特訓</button>
+  <button data-screen="story" class="tab-btn"><span class="ic">📖</span>物語</button>
   <button data-screen="browse" class="tab-btn"><span class="ic">🔍</span>一覧</button>
 </nav>
 
@@ -536,6 +565,315 @@ const WORDS = [
 ];
 WORDS.forEach((c,i)=>c.id=i);
 
+const STORY = [
+{
+"titleEn": "A New Home",
+"titleJa": "新しい家",
+"sentences": [
+{
+"en": "Maya's family decided to <b>immigrate</b> to a small coastal town after years of uncertainty.",
+"ja": "何年も不安定な生活を送った末、マヤの家族は小さな海辺の町へ移住することに決めた。"
+},
+{
+"en": "As <b>immigrants</b>, they had to <b>adjust</b> to a new language and a new rhythm of life.",
+"ja": "移民として、彼らは新しい言語と新しい生活のリズムに順応しなければならなかった。"
+},
+{
+"en": "Their <b>ancestors</b> had lived as <b>nomadic</b> herders for generations, but now Maya's parents wanted to <b>reside</b> somewhere permanent.",
+"ja": "彼らの祖先は何世代にもわたって遊牧民として暮らしてきたが、今マヤの両親はどこかに永住したいと考えていた。"
+},
+{
+"en": "The <b>residential</b> street was quiet, lined with <b>spacious</b> houses and narrow <b>corridors</b> between gardens.",
+"ja": "その住宅街は静かで、広々とした家々が並び、庭の間には細い通路があった。"
+},
+{
+"en": "Maya's father, once a <b>coauthor</b> of several academic papers, had to start his career again from nothing.",
+"ja": "かつて複数の学術論文の共著者だったマヤの父は、ゼロからキャリアを始め直さなければならなかった。"
+},
+{
+"en": "He worried that people would <b>suspect</b> he could not adapt to the local culture.",
+"ja": "彼は、自分が地元の文化に適応できないと人々に疑われるのではないかと心配していた。"
+},
+{
+"en": "But their new neighbors were surprisingly <b>beneficial</b> to the family's transition, offering advice and encouragement.",
+"ja": "しかし新しい隣人たちは意外にも家族の移行に有益で、助言や励ましをくれた。"
+},
+{
+"en": "Little by little, Maya's family began to <b>assimilate</b> into the community without losing their own traditions.",
+"ja": "少しずつ、マヤの家族は自分たちの伝統を失うことなく、地域社会に同化していった。"
+},
+{
+"en": "They tried hard to <b>preserve</b> the recipes and songs passed down by their ancestors.",
+"ja": "彼らは祖先から受け継いだレシピや歌を懸命に守ろうとした。"
+}
+]
+},
+{
+"titleEn": "Growing Up",
+"titleJa": "成長",
+"sentences": [
+{
+"en": "At school, Maya was often <b>bullied</b> for her accent, and it left a quiet <b>affliction</b> in her heart.",
+"ja": "学校で、マヤはなまりのせいでよくいじめられ、それは彼女の心に静かな苦しみを残した。"
+},
+{
+"en": "A kind teacher noticed and refused to let anyone <b>humiliate</b> her again.",
+"ja": "ある優しい先生がそれに気づき、二度と誰にも彼女を辱めさせなかった。"
+},
+{
+"en": "That teacher had a calm <b>temperament</b> and never seemed <b>hectic</b>, even during exam season.",
+"ja": "その先生は穏やかな気質の持ち主で、試験期間中でさえ慌ただしく見えることはなかった。"
+},
+{
+"en": "Every June, students would <b>cram</b> for their final exams late into the night.",
+"ja": "毎年6月になると、生徒たちは夜遅くまで期末試験のために詰め込み勉強をした。"
+},
+{
+"en": "Maya's <b>enrollment</b> in the advanced <b>anthropology</b> class changed the direction of her life.",
+"ja": "マヤが上級人類学クラスに入学したことが、彼女の人生の方向を変えた。"
+},
+{
+"en": "She loved studying the <b>anatomy</b> of ancient tools and the daily lives of early humans.",
+"ja": "彼女は古代の道具の構造や、初期の人類の日常生活を学ぶのが大好きだった。"
+},
+{
+"en": "Her professor would <b>evaluate</b> each student's essay with <b>extraordinary</b> care.",
+"ja": "彼女の教授は、並外れた丁寧さで一人ひとりの学生のエッセイを評価した。"
+},
+{
+"en": "Maya was a <b>truant</b> only once, the day her grandmother passed away.",
+"ja": "マヤが無断欠席をしたのは一度だけ、祖母が亡くなった日だった。"
+},
+{
+"en": "She discovered that curiosity was the greatest <b>incentive</b> for learning.",
+"ja": "彼女は、好奇心こそが学びの最大の動機であることに気づいた。"
+},
+{
+"en": "Reading about ancient <b>dictators</b> and their <b>tyrant</b>-like rule fascinated her.",
+"ja": "古代の独裁者たちと、その暴君のような統治について読むことに彼女は夢中になった。"
+},
+{
+"en": "She wrote a paper on <b>pilgrims</b> who once crossed deserts for their faith.",
+"ja": "彼女はかつて信仰のために砂漠を越えた巡礼者についての論文を書いた。"
+}
+]
+},
+{
+"titleEn": "The River Project",
+"titleJa": "川のプロジェクト",
+"sentences": [
+{
+"en": "After university, Maya <b>took on</b> a job with an environmental group that worked to <b>conserve</b> the region's rivers.",
+"ja": "大学卒業後、マヤはその地域の川を保全する環境団体の仕事を引き受けた。"
+},
+{
+"en": "Factories nearby would sometimes <b>contaminate</b> the <b>groundwater</b> with waste.",
+"ja": "近くの工場が廃棄物で地下水を汚染することがあった。"
+},
+{
+"en": "The team worked to prevent further <b>deforestation</b> along the riverbanks.",
+"ja": "チームは川岸のさらなる森林伐採を防ごうと努めた。"
+},
+{
+"en": "They studied <b>irrigation</b> systems that could <b>irrigate</b> fields without wasting water.",
+"ja": "彼らは、水を無駄にせずに畑を灌漑できる灌漑システムを研究した。"
+},
+{
+"en": "Farmers needed to <b>fertilize</b> their soil more carefully to avoid runoff.",
+"ja": "農家は流出を避けるため、より注意深く土壌に肥料を与える必要があった。"
+},
+{
+"en": "A local <b>phenomenon</b> of disappearing bees troubled everyone, since <b>pollination</b> was essential for the crops.",
+"ja": "ミツバチが姿を消すという地域の現象は、授粉が作物に不可欠だったため、皆を悩ませた。"
+},
+{
+"en": "Maya learned about <b>hydrogen</b>-based fuel as a cleaner alternative to old machines.",
+"ja": "マヤは、古い機械に代わるよりクリーンな選択肢として水素燃料について学んだ。"
+},
+{
+"en": "<b>Nitrogen</b> levels in the water were tested every week by her team.",
+"ja": "水中の窒素濃度は、彼女のチームによって毎週検査された。"
+},
+{
+"en": "The project depended heavily on the region's aging <b>infrastructure</b>.",
+"ja": "そのプロジェクトは、その地域の老朽化したインフラに大きく依存していた。"
+},
+{
+"en": "A <b>microscope</b> helped researchers see the smallest organisms living in the water.",
+"ja": "顕微鏡は、研究者たちが水中に生きる最も小さな生物を見るのに役立った。"
+},
+{
+"en": "Sometimes, at night, Maya used an old <b>telescope</b> to look at the stars and clear her mind.",
+"ja": "時々、夜になるとマヤは古い望遠鏡を使って星を眺め、心を落ち着けた。"
+}
+]
+},
+{
+"titleEn": "Office Life",
+"titleJa": "職場にて",
+"sentences": [
+{
+"en": "Maya eventually took a job at a company that wanted to <b>boost</b> its public image.",
+"ja": "マヤはやがて、企業イメージを押し上げたいと考える会社に就職した。"
+},
+{
+"en": "Her manager asked her to <b>implement</b> a new recycling policy across every department.",
+"ja": "上司は彼女に、すべての部署で新しいリサイクル方針を実行するよう頼んだ。"
+},
+{
+"en": "The company decided to <b>issue</b> a public statement about its environmental goals.",
+"ja": "会社は環境目標について公式声明を発表することに決めた。"
+},
+{
+"en": "Maya had to <b>compensate</b> for a colleague's mistake more than once.",
+"ja": "マヤは一度ならず、同僚の失敗を埋め合わせなければならなかった。"
+},
+{
+"en": "She learned to stay <b>consistent</b>, even when the workload felt overwhelming.",
+"ja": "仕事量に圧倒されそうなときでも、彼女は一貫性を保つことを学んだ。"
+},
+{
+"en": "Her boss praised her for being <b>reliable</b> and <b>decisive</b> under pressure.",
+"ja": "上司はプレッシャーの中でも信頼でき、決断力があると彼女を称賛した。"
+},
+{
+"en": "When the economy slipped into a <b>recession</b>, the office became tense.",
+"ja": "経済が不景気に陥ると、オフィスには緊張が走った。"
+},
+{
+"en": "Some employees worried the company might go <b>bankrupt</b>.",
+"ja": "一部の社員は、会社が倒産するのではないかと心配した。"
+},
+{
+"en": "Rumors of <b>bankruptcy</b> spread quickly through the break room.",
+"ja": "倒産の噂は休憩室に瞬く間に広がった。"
+},
+{
+"en": "Despite the fear, Maya's team worked to <b>generate</b> new ideas for <b>revenue</b>.",
+"ja": "不安の中でも、マヤのチームは収入を生み出す新しいアイデアを考えようと努めた。"
+},
+{
+"en": "She had to <b>account for</b> every dollar spent on the new project.",
+"ja": "彼女は新しいプロジェクトに使われたすべてのお金の使途を説明しなければならなかった。"
+},
+{
+"en": "Maya <b>put forth</b> a proposal to cut waste without cutting jobs.",
+"ja": "マヤは雇用を削減せずに無駄を削る提案を出した。"
+},
+{
+"en": "Her manager decided to <b>put off</b> the final decision until spring.",
+"ja": "上司は最終決定を春まで延期することに決めた。"
+}
+]
+},
+{
+"titleEn": "Family Matters",
+"titleJa": "家族の事情",
+"sentences": [
+{
+"en": "Meanwhile, Maya's uncle was going through a difficult divorce and had to pay <b>alimony</b> every month.",
+"ja": "一方、マヤのおじはつらい離婚を経験しており、毎月扶養料を支払わなければならなかった。"
+},
+{
+"en": "Her aunt tried to <b>bear with</b> the stress of the separation as calmly as she could.",
+"ja": "おばはできる限り穏やかに、別居のストレスに耐えようとした。"
+},
+{
+"en": "The family gathered to <b>bank on</b> each other for emotional support.",
+"ja": "家族は互いを心の支えとして頼りにするために集まった。"
+},
+{
+"en": "Maya's cousin, a <b>coauthor</b> on a legal paper, offered free advice about the case.",
+"ja": "法律論文の共著者であるマヤのいとこが、その件について無料で助言してくれた。"
+},
+{
+"en": "The judge <b>required</b> both sides to reach a <b>unanimous vote</b> on the custody arrangement.",
+"ja": "裁判官は、親権の取り決めについて双方が満場一致に至ることを求めた。"
+},
+{
+"en": "It was a <b>formidable task</b> to keep the family calm during the hearing.",
+"ja": "審理中に家族を落ち着かせておくのは、手強い課題だった。"
+},
+{
+"en": "In the end, everyone agreed to <b>settle for</b> a fair compromise.",
+"ja": "結局、全員が公正な妥協案で手を打つことに同意した。"
+}
+]
+},
+{
+"titleEn": "A Quiet Evening",
+"titleJa": "静かな夜",
+"sentences": [
+{
+"en": "On weekends, Maya liked to <b>take up</b> painting to relax after a <b>hectic</b> week.",
+"ja": "週末になると、マヤは慌ただしい一週間の後にリラックスするため絵を始めるのが好きだった。"
+},
+{
+"en": "She would <b>beam</b> with joy whenever she finished a new piece of art.",
+"ja": "新しい作品を完成させるたびに、彼女は喜びに満ちてほほ笑んだ。"
+},
+{
+"en": "Sometimes she would <b>grumble</b> about the weather, but she never let it ruin her mood.",
+"ja": "時々天気について文句を言うこともあったが、それで機嫌を損ねることは決してなかった。"
+},
+{
+"en": "Her neighbor often <b>loitered</b> near the garden, watching the sunset in silence.",
+"ja": "隣人はよく庭の近くをぶらつきながら、静かに夕日を眺めていた。"
+},
+{
+"en": "Maya learned to <b>feel out</b> her neighbor's mood before starting a conversation.",
+"ja": "マヤは会話を始める前に、隣人の機嫌をそれとなく探ることを覚えた。"
+},
+{
+"en": "They would talk about anything, from <b>luxurious</b> vacations to simple <b>leftover</b> dinners.",
+"ja": "二人はぜいたくな休暇からありあわせの残り物の夕食まで、何でも話した。"
+},
+{
+"en": "One evening, her neighbor accidentally <b>knocked down</b> a small fence while gardening.",
+"ja": "ある晩、隣人は庭仕事中に誤って小さな柵を壊してしまった。"
+},
+{
+"en": "Maya offered to <b>chip in</b> for the repairs, and they laughed about it together.",
+"ja": "マヤは修理費を出し合おうと申し出て、二人はそれについて一緒に笑った。"
+},
+{
+"en": "Life, she realized, was never completely predictable, but it always seemed to work out.",
+"ja": "人生は決して完全に予測できるものではないが、いつも何とかなるものだと彼女は気づいた。"
+}
+]
+},
+{
+"titleEn": "Looking Forward",
+"titleJa": "これから",
+"sentences": [
+{
+"en": "Years later, Maya became a mentor for young <b>immigrants</b> navigating the same challenges she once faced.",
+"ja": "何年か後、マヤはかつて自分が直面したのと同じ課題に取り組む若い移民たちの指導役になった。"
+},
+{
+"en": "She told them that <b>unexpected</b> difficulties often led to the deepest personal growth.",
+"ja": "彼女は、予期せぬ困難こそが最も深い成長につながることが多いと彼らに伝えた。"
+},
+{
+"en": "She reminded them to <b>make up for</b> lost time, but never to rush their own healing.",
+"ja": "彼女は、失った時間を埋め合わせることは大切だが、自分の癒しを急いではいけないと彼らに念を押した。"
+},
+{
+"en": "Maya believed that everyone deserved a <b>moderate income</b> and a peaceful home.",
+"ja": "マヤは、誰もが適度な収入と平和な家庭を持つに値すると信じていた。"
+},
+{
+"en": "She often said that a <b>genuinely</b> warm smile could <b>offset</b> even the hardest day.",
+"ja": "彼女はよく、心からの笑顔はどんなに辛い一日をも相殺できると言っていた。"
+},
+{
+"en": "In the end, she was <b>profoundly</b> grateful for the long road that brought her home.",
+"ja": "最後には、彼女は自分をここまで導いてくれた長い道のりに、深く感謝していた。"
+}
+]
+}
+];
+
 /* ============ 復習間隔（エビングハウス風）============ */
 const DAYS = [1,2,4,7,15,30,90]; // box 0..6 の次回間隔（日）
 const MASTER_BOX = 4; // これ以上を「定着」とみなす
@@ -636,6 +974,14 @@ function buildQueue(mode, opts){
 }
 
 /* ============ 音声読み上げ ============ */
+/* ============ 発音記号のアクセント強調 ============ */
+function stressIpa(ipa){
+  if(!ipa) return ipa;
+  return ipa
+    .replace(/ˈ/g, '<span style="color:var(--coral-dark);font-weight:800;">ˈ</span>')
+    .replace(/ˌ/g, '<span style="color:var(--gold);font-weight:700;">ˌ</span>');
+}
+
 function speak(text, lang){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
@@ -652,6 +998,68 @@ function showScreen(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
   if(name==='home') renderHome();
   if(name==='browse') renderBrowse();
+  if(name==='story') renderStory();
+  if(name!=='story') stopStory();
+}
+
+/* ============ 物語（ボキャブラリーを使った読み物） ============ */
+let storyLangState = {}; // "chapterIdx-sentIdx" -> 'en' | 'ja'
+let storyAllJa = false;
+let storyPlaying = false;
+
+function stripTags(s){ return s.replace(/<\/?[^>]+>/g, ''); }
+
+function renderStory(){
+  const el = document.getElementById('story-body');
+  let html = '';
+  STORY.forEach((chapter, ci)=>{
+    html += `<div class="story-chapter-title">${chapter.titleEn}<br><span style="font-size:12.5px;color:#8A8474;font-weight:400;">${chapter.titleJa}</span></div>`;
+    chapter.sentences.forEach((s, si)=>{
+      const key = ci+'-'+si;
+      const lang = storyLangState[key] || (storyAllJa ? 'ja' : 'en');
+      const text = lang==='en' ? s.en : s.ja;
+      html += `<div class="story-sentence" onclick="toggleStorySentence('${key}')">
+        <div class="stext">${text}</div>
+        <button class="sspeak" onclick="event.stopPropagation();speak('${escAttr(stripTags(s.en))}','en-US')">🔊</button>
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+function toggleStorySentence(key){
+  const current = storyLangState[key] || (storyAllJa ? 'ja' : 'en');
+  storyLangState[key] = current==='en' ? 'ja' : 'en';
+  renderStory();
+}
+
+function toggleAllStoryLang(){
+  storyAllJa = !storyAllJa;
+  storyLangState = {}; // 個別の切り替えをリセットして全文を統一
+  document.getElementById('btn-story-lang-toggle').textContent = storyAllJa ? '全文を英語表示に戻す' : '全文の言語を切り替え';
+  renderStory();
+}
+
+function playStory(){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const allSentences = STORY.flatMap(ch=>ch.sentences);
+  storyPlaying = true;
+  let idx = 0;
+  function playNext(){
+    if(!storyPlaying || idx >= allSentences.length) { storyPlaying = false; return; }
+    const u = new SpeechSynthesisUtterance(stripTags(allSentences[idx].en));
+    u.lang = 'en-US';
+    u.rate = 0.95;
+    u.onend = ()=>{ idx++; playNext(); };
+    window.speechSynthesis.speak(u);
+  }
+  playNext();
+}
+
+function stopStory(){
+  storyPlaying = false;
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
 }
 
 /* ============ 小テスト（5問・採点あり） ============ */
@@ -821,7 +1229,7 @@ function renderTestQuestion(){
               <span class="pos-tag">${testTypeLabel}（リスニング・${diffLabel}）${countLabel}</span>
               <button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>
               <div class="word" id="test-listen-word" style="display:none;margin-top:16px;">${c.w}</div>
-              <div class="ipa" id="test-listen-ipa" style="display:none;">${c.ipa}</div>
+              <div class="ipa" id="test-listen-ipa" style="display:none;">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
             </div>
@@ -835,7 +1243,7 @@ function renderTestQuestion(){
             <div class="flash" id="flash">
               <span class="pos-tag">${testTypeLabel}（読み・${diffLabel}）${countLabel}</span>
               <div class="word">${c.w}</div>
-              <div class="ipa">${c.ipa}</div>
+              <div class="ipa">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
             </div>
@@ -846,7 +1254,7 @@ function renderTestQuestion(){
       // ヒントなし：自己採点
       const promptHtml = testMode==='listening'
         ? `<button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>`
-        : `<div class="word">${c.w}</div><div class="ipa">${c.ipa}</div>`;
+        : `<div class="word">${c.w}</div><div class="ipa">${stressIpa(c.ipa)}</div>`;
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
@@ -929,9 +1337,10 @@ function renderTestQuestion(){
     if(effDifficulty <= 2){
       const n = TEST_DIFF_CHOICES[effDifficulty];
       const choices = buildChoices(c.w, n);
-      const choiceButtons = choices.map(opt =>
-        `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${opt}</button>`
-      ).join('');
+      const choiceButtons = choices.map(opt => {
+        const label = (opt===c.w && cz.found) ? cz.match : opt; // 空欄に合う活用形で表示
+        return `<button class="btn btn-secondary mc-btn" data-word="${escAttr(opt)}" onclick="testSelectSpelling(this)" style="margin-top:8px;">${label}</button>`;
+      }).join('');
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
@@ -943,6 +1352,8 @@ function renderTestQuestion(){
           ${effStatusHtml}
         </div>`;
     } else {
+      const answerDisplay = cz.found && cz.match.toLowerCase()!==c.w.toLowerCase()
+        ? `${cz.match}（原形：${c.w}）` : c.w;
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
@@ -951,7 +1362,7 @@ function renderTestQuestion(){
             <input type="text" id="test-spell-input" class="search" style="margin-top:18px;text-align:center;font-size:17px;"
                    placeholder="空欄の単語を入力" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
             <div id="test-feedback" style="margin-top:10px;font-weight:700;"></div>
-            <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
+            <div class="word" id="test-answer" style="display:none;margin-top:6px;">${answerDisplay}</div>
             <div class="ipa" id="test-answer-pos" style="display:none;">${c.pos}</div>
             <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
             <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
@@ -970,13 +1381,8 @@ function renderTestQuestion(){
     const effStatusHtml = sessionType==='cramDrill'
       ? `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　この単語の難易度：${effDiffLabel}</div>`
       : statusHtml;
-    let hintHtml = '';
-    if(effDifficulty===0){
-      hintHtml = `<div style="font-size:12.5px;color:#8A8474;margin-top:8px;">ヒント：先頭の文字は「${c.w.charAt(0).toUpperCase()}」／発音記号 ${c.ipa}</div>`;
-    } else if(effDifficulty===1){
-      hintHtml = `<div style="font-size:12.5px;color:#8A8474;margin-top:8px;">ヒント：先頭の文字は「${c.w.charAt(0).toUpperCase()}」</div>`;
-    }
-    const defHtml = `<div style="font-size:16px;margin-top:10px;color:var(--ink);line-height:1.6;">${c.def}</div>${hintHtml}`;
+    // 選択肢がある場合は先頭文字・発音記号のヒントは出さない（選択肢自体がヒントになるため）
+    const defHtml = `<div style="font-size:16px;margin-top:10px;color:var(--ink);line-height:1.6;">${c.def}</div>`;
     if(effDifficulty <= 2){
       const n = TEST_DIFF_CHOICES[effDifficulty];
       const choices = buildChoices(c.w, n);
@@ -1033,7 +1439,7 @@ function renderTestQuestion(){
             <span class="pos-tag">${testTypeLabel}（品詞当て・${effDiffLabel}）${countLabel}</span>
             <div class="emoji">${c.emoji}</div>
             <div class="word">${c.w}</div>
-            <div class="ipa">${c.ipa}</div>
+            <div class="ipa">${stressIpa(c.ipa)}</div>
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
           </div>
@@ -1047,7 +1453,7 @@ function renderTestQuestion(){
             <span class="pos-tag">${testTypeLabel}（品詞当て・${effDiffLabel}）${countLabel}</span>
             <div class="emoji">${c.emoji}</div>
             <div class="word">${c.w}</div>
-            <div class="ipa">${c.ipa}</div>
+            <div class="ipa">${stressIpa(c.ipa)}</div>
             <div style="font-size:22px;font-weight:700;color:var(--coral-dark);margin-top:14px;display:none;" id="test-self-pos">${c.pos}</div>
             <div style="font-size:15px;margin-top:6px;color:var(--ink);display:none;" id="test-self-pos-meaning">${c.m}</div>
             <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
@@ -1311,7 +1717,7 @@ function renderRecognizeCard(c, remaining){
 
   const emojiHtml = qt.showEmoji ? `<div class="emoji">${c.emoji}</div>` : '';
   const posHtml = qt.showPos ? `<span class="pos-tag">${c.pos}・${qt.label}</span>` : `<span class="pos-tag" style="background:#8A8474;">${qt.label}</span>`;
-  const ipaHtml = qt.showIpa ? `<div class="ipa">${c.ipa}</div>` : '';
+  const ipaHtml = qt.showIpa ? `<div class="ipa">${stressIpa(c.ipa)}</div>` : '';
 
   const rateGridHtml = `
     <div class="rate-grid" id="rate-grid" style="display:none;">
@@ -1469,7 +1875,7 @@ function renderSpellCard(c, remaining){
 
   const revealBlockHtml = `
     <div class="word" id="spell-answer" style="display:none;margin-top:6px;">${c.w}</div>
-    <div class="ipa" id="spell-ipa" style="display:none;">${c.ipa}</div>
+    <div class="ipa" id="spell-ipa" style="display:none;">${stressIpa(c.ipa)}</div>
     <div class="example">${c.ex}</div>
     <div class="exampleja">${c.exja}</div>
     <div class="speak-row" id="spell-speak" style="display:none;">
@@ -1645,7 +2051,7 @@ function renderBrowse(filter){
         <div class="di"><span class="box-icon ${sCls}" title="${sTitle}">${sMark}</span><span class="di-label">書</span></div>
       </div>
       <div class="wtext">
-        <span class="emoji">${c.emoji}</span><span class="en">${c.w}</span><span class="ipa">${c.ipa}</span><span class="pos">${c.pos}</span>
+        <span class="emoji">${c.emoji}</span><span class="en">${c.w}</span><span class="ipa">${stressIpa(c.ipa)}</span><span class="pos">${c.pos}</span>
         <div class="jp">${c.m}</div>
         <div class="word-detail" id="detail-${c.id}">
           <div class="ex">${c.ex}</div>
@@ -1700,6 +2106,9 @@ document.getElementById('btn-toggle-weak').addEventListener('click', (e)=>{
   e.target.classList.toggle('btn-secondary', !weakOnlyFilter);
   renderBrowse(document.getElementById('search-input').value);
 });
+document.getElementById('btn-story-play-all').addEventListener('click', playStory);
+document.getElementById('btn-story-stop').addEventListener('click', stopStory);
+document.getElementById('btn-story-lang-toggle').addEventListener('click', toggleAllStoryLang);
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   if(confirm('本当にすべての学習進捗をリセットしますか？この操作は元に戻せません。')){
     progress = {};
