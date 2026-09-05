@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vocab-srs-v22';
+const CACHE_NAME = 'vocab-srs-v25';
 const ASSETS = [
   './',
   './index.html',

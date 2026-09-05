@@ -203,6 +203,31 @@
     flex-shrink:0;background:var(--navy);color:#fff;border:none;border-radius:16px;
     padding:5px 10px;font-size:12px;cursor:pointer;
   }
+  .story-slider-box{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin-bottom:16px;
+  }
+  .story-slider-labels{
+    display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px;
+  }
+  #story-en-pct-label{color:var(--navy);}
+  #story-ja-pct-label{color:var(--coral-dark);}
+  .story-slider{
+    width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:6px;
+    background:linear-gradient(to right, var(--navy) 50%, var(--coral-dark) 50%);outline:none;
+  }
+  .story-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid var(--navy);cursor:pointer;
+  }
+  .story-slider::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--navy);cursor:pointer;
+  }
+  .story-tab-btn{
+    flex:1;background:var(--card);color:var(--navy);border:1.5px solid var(--line);
+    border-radius:12px;padding:11px 8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  .story-tab-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
 
   .modal-bg{
     display:none;position:fixed;inset:0;background:rgba(36,35,42,0.45);z-index:10;
@@ -340,12 +365,20 @@
 
   <!-- STORY -->
   <section id="screen-story" class="screen">
+    <div id="story-tabs" class="btn-row" style="margin-bottom:14px;"></div>
     <div class="btn-row" style="margin-bottom:14px;">
       <button class="btn btn-primary" id="btn-story-play-all">▶ 全文を英語で聴く</button>
     </div>
-    <div class="btn-row" style="margin-bottom:14px;">
+    <div class="btn-row" style="margin-bottom:8px;">
       <button class="btn btn-secondary" id="btn-story-stop" style="font-size:13px;">■ 停止</button>
-      <button class="btn btn-secondary" id="btn-story-lang-toggle" style="font-size:13px;">全文の言語を切り替え</button>
+    </div>
+    <div class="story-slider-box">
+      <div class="story-slider-labels">
+        <span id="story-en-pct-label">英語 50%</span>
+        <span id="story-ja-pct-label">日本語 50%</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="story-lang-slider" class="story-slider">
+      <button class="btn-ghost" id="btn-story-reshuffle" style="margin-top:4px;">同じ割合で表示位置をシャッフル</button>
     </div>
     <div id="story-body"></div>
   </section>
@@ -874,6 +907,300 @@ const STORY = [
 }
 ];
 
+const STORY2 = [
+{
+"titleEn": "Coffee Before Work",
+"titleJa": "出勤前のコーヒー",
+"sentences": [
+{
+"en": "Alex: \"Hey, can we <b>get down to</b> planning the new project before the meeting?\"",
+"ja": "アレックス「ねえ、会議の前に新しいプロジェクトの計画に本腰を入れて取り組める？」"
+},
+{
+"en": "Nora: \"Sure, but I have to <b>make it</b> to my nine o'clock appointment on time.\"",
+"ja": "ノラ「いいよ、でも9時の約束に間に合わせないといけないの。」"
+},
+{
+"en": "Alex: \"No worries, we'll <b>turn up</b> early enough.\"",
+"ja": "アレックス「心配しないで、早めに現れるようにするから。」"
+},
+{
+"en": "Nora: \"Did the landlord ever call you back about the apartment?\"",
+"ja": "ノラ「大家さん、アパートの件で結局連絡してきた？」"
+},
+{
+"en": "Alex: \"Not yet. He said he would, but he never <b>got around to doing</b> it.\"",
+"ja": "アレックス「まだだよ。連絡するって言ってたのに、結局その時間を作らなかったんだ。」"
+},
+{
+"en": "Nora: \"Typical. You should just <b>get by</b> without him for now.\"",
+"ja": "ノラ「相変わらずね。今のところは彼なしで何とかやっていくしかないね。」"
+},
+{
+"en": "Alex: \"I'm trying to <b>take after</b> my dad's patience about these things.\"",
+"ja": "アレックス「こういうことに関しては、父の忍耐強さを見習おうとしているんだ。」"
+},
+{
+"en": "Nora: \"Are you still planning to <b>take over</b> the marketing team next month?\"",
+"ja": "ノラ「来月マーケティングチームを引き継ぐ予定は変わらない？」"
+},
+{
+"en": "Alex: \"Yes, my manager finally decided to <b>put forth</b> the proposal.\"",
+"ja": "アレックス「うん、上司がついにその提案を出すことに決めたんだ。」"
+},
+{
+"en": "Nora: \"That's great news! Don't <b>let</b> anyone <b>let you down</b> before it even starts.\"",
+"ja": "ノラ「それはいいニュースね！始まる前から誰にもがっかりさせられないでね。」"
+}
+]
+},
+{
+"titleEn": "At the Clinic",
+"titleJa": "診療所にて",
+"sentences": [
+{
+"en": "Nora: \"I twisted my ankle at the gym. I need to see a doctor about it.\"",
+"ja": "ノラ「ジムで足首をひねっちゃった。お医者さんに診てもらわないと。」"
+},
+{
+"en": "Alex: \"There's a <b>clinical</b> down the street. I'll go with you.\"",
+"ja": "アレックス「この先に診療所があるよ。一緒に行くよ。」"
+},
+{
+"en": "Doctor: \"The joint seems <b>flexible</b> enough, but let's take an X-ray just in case.\"",
+"ja": "医師「関節は十分柔軟に見えますが、念のためレントゲンを撮りましょう。」"
+},
+{
+"en": "Doctor: \"There's no <b>neurological</b> damage, which is a relief.\"",
+"ja": "医師「神経系の損傷はありません、それは安心ですね。」"
+},
+{
+"en": "Nora: \"How long until I can do <b>vigorous</b> exercise again?\"",
+"ja": "ノラ「またしっかり運動できるようになるまで、どれくらいかかりますか？」"
+},
+{
+"en": "Doctor: \"About two weeks. Please don't push yourself too hard.\"",
+"ja": "医師「2週間ほどです。無理をしないでくださいね。」"
+},
+{
+"en": "Alex: \"On the way home, let's stop by the vet. My cat needs her shots.\"",
+"ja": "アレックス「帰り道、動物病院にも寄ろう。うちの猫の予防接種があるんだ。」"
+},
+{
+"en": "Nora: \"That <b>veterinarian</b> near the park is supposed to be excellent.\"",
+"ja": "ノラ「公園の近くにいる獣医さん、とても評判がいいらしいよ。」"
+},
+{
+"en": "Alex: \"I heard they have a ramp for <b>disabled</b> pets too, which I really appreciate.\"",
+"ja": "アレックス「障がいのあるペット用のスロープもあるらしくて、それは本当にありがたいよ。」"
+}
+]
+},
+{
+"titleEn": "The Traffic Stop",
+"titleJa": "交通取り締まり",
+"sentences": [
+{
+"en": "Alex: \"Careful! That car almost had a <b>collision</b> with us!\"",
+"ja": "アレックス「気をつけて！あの車、もう少しで衝突するところだったよ！」"
+},
+{
+"en": "Nora: \"I know, drivers around this <b>intersection</b> are always reckless.\"",
+"ja": "ノラ「そうなの、この交差点の周りの運転手はいつも無謀なんだから。」"
+},
+{
+"en": "Police Officer: \"Please <b>pull over</b> to the side of the road.\"",
+"ja": "警察官「道路の脇に車を寄せて止めてください。」"
+},
+{
+"en": "Alex: \"Was I driving too fast, officer?\"",
+"ja": "アレックス「スピードを出しすぎていましたか、警察官さん？」"
+},
+{
+"en": "Officer: \"Yes, and it's <b>illegal</b> to speed through a school zone.\"",
+"ja": "警察官「はい、それに学校のそばでスピードを出すのは違法です。」"
+},
+{
+"en": "Officer: \"As a <b>precaution</b>, please slow down from now on.\"",
+"ja": "警察官「用心のためにも、これからは速度を落としてください。」"
+},
+{
+"en": "Nora: \"See? I always tell you to be more careful with <b>transportation</b> safety.\"",
+"ja": "ノラ「ほら？いつも交通安全にはもっと気をつけてって言ってるでしょ。」"
+},
+{
+"en": "Alex: \"You're right. I'll be more careful when I <b>transport</b> people around town.\"",
+"ja": "アレックス「その通りだね。街中で人を送るときはもっと気をつけるよ。」"
+}
+]
+},
+{
+"titleEn": "A Complaint at the Office",
+"titleJa": "職場での苦情",
+"sentences": [
+{
+"en": "Nora: \"I need to file a <b>complaint</b> about the noisy construction next door.\"",
+"ja": "ノラ「隣の工事の騒音について苦情を申し立てないと。」"
+},
+{
+"en": "Alex: \"You should. Everyone in the office <b>complains</b> about it, but no one does anything.\"",
+"ja": "アレックス「そうすべきだよ。オフィスの皆が文句を言ってるのに、誰も何もしないんだから。」"
+},
+{
+"en": "Manager: \"I understand your <b>requirement</b> for a quieter workspace.\"",
+"ja": "上司「静かな職場環境が必要だというご要望は理解しました。」"
+},
+{
+"en": "Manager: \"As <b>compensation</b>, we'll offer everyone a few days working from home.\"",
+"ja": "上司「その埋め合わせとして、皆さんに数日間の在宅勤務を提供します。」"
+},
+{
+"en": "Nora: \"That seems fair. What are the <b>consequences</b> if the noise continues?\"",
+"ja": "ノラ「それは妥当ね。もし騒音が続いたらどうなるんですか？」"
+},
+{
+"en": "Manager: \"We'll have to <b>enforce</b> stricter building <b>regulations</b> on the contractor.\"",
+"ja": "上司「請負業者に対して、より厳しい建築規則を実行させる必要があります。」"
+},
+{
+"en": "Alex: \"Good. This kind of <b>disorder</b> shouldn't become the new normal.\"",
+"ja": "アレックス「よかった。こういう混乱が当たり前になってはいけないからね。」"
+},
+{
+"en": "Manager: \"Agreed. Quiet, focused work is <b>indispensable</b> for this team.\"",
+"ja": "上司「同感です。静かに集中できる環境は、このチームにとって不可欠ですから。」"
+}
+]
+},
+{
+"titleEn": "Family Dinner",
+"titleJa": "家族の夕食",
+"sentences": [
+{
+"en": "Nora's mom: \"Please don't <b>mess with</b> your brother's plate, sweetheart.\"",
+"ja": "ノラの母「弟のお皿にちょっかいを出さないでね、いい子だから。」"
+},
+{
+"en": "Little brother: \"I feel sick... I think I might <b>throw up</b>.\"",
+"ja": "弟「気持ち悪い…吐いちゃいそう。」"
+},
+{
+"en": "Nora: \"Slow down and take a breath. You ate too fast again.\"",
+"ja": "ノラ「落ち着いて、深呼吸して。また食べるのが速すぎたんでしょ。」"
+},
+{
+"en": "Dad: \"I really <b>relate to</b> that feeling. I did the same thing as a kid.\"",
+"ja": "父「その気持ち、よく分かるよ。私も子どものころ同じことをしたからね。」"
+},
+{
+"en": "Mom: \"Don't <b>boast</b> about your own childhood mistakes at the table, dear.\"",
+"ja": "母「食卓で自分の子ども時代の失敗自慢はやめてね、あなた。」"
+},
+{
+"en": "Dad: \"Fair enough. Anyway, someone <b>nudged</b> me to try this new soup recipe.\"",
+"ja": "父「わかったよ。それより、誰かに勧められてこの新しいスープのレシピを試してみたんだ。」"
+},
+{
+"en": "Nora: \"It's good, but you <b>fumbled</b> a little with the seasoning.\"",
+"ja": "ノラ「美味しいけど、味付けをちょっと手探りでやった感じがするね。」"
+},
+{
+"en": "Dad: \"True. Loud comments like that <b>irritate</b> the chef, you know.\"",
+"ja": "父「その通り。そういう率直な感想はシェフをいらつかせるものなんだよ。」"
+}
+]
+},
+{
+"titleEn": "Weekend Plans",
+"titleJa": "週末の予定",
+"sentences": [
+{
+"en": "Alex: \"Want to join my <b>workout</b> group at the park this Saturday?\"",
+"ja": "アレックス「今度の土曜日、公園での運動グループに参加しない？」"
+},
+{
+"en": "Nora: \"Maybe. I was tempted to just <b>abandon</b> my exercise plan this month.\"",
+"ja": "ノラ「どうしようかな。今月は運動計画をやめてしまおうかと思ってたところなの。」"
+},
+{
+"en": "Alex: \"Don't give up! A little effort can <b>stimulate</b> your whole mood.\"",
+"ja": "アレックス「あきらめないで！少し体を動かすだけで、気分全体が刺激されるものだよ。」"
+},
+{
+"en": "Nora: \"You're right. I shouldn't <b>put off</b> taking care of myself.\"",
+"ja": "ノラ「その通りね。自分の体を大切にすることを先延ばしにしちゃいけないわ。」"
+},
+{
+"en": "Alex: \"By the way, are you reading anything good these days?\"",
+"ja": "アレックス「ところで、最近何かいい本読んでる？」"
+},
+{
+"en": "Nora: \"I'm reading an <b>autobiography</b> about a woman who <b>inherited</b> an old farm.\"",
+"ja": "ノラ「古い農場を相続した女性についての自伝を読んでいるところなの。」"
+},
+{
+"en": "Alex: \"Interesting. Did she <b>cultivate</b> the land herself?\"",
+"ja": "アレックス「面白そうだね。その土地は彼女自身が耕したの？」"
+},
+{
+"en": "Nora: \"Yes, and the crops <b>yield</b> more each year, which surprised everyone.\"",
+"ja": "ノラ「そう、しかも作物の収穫量が年々増えていて、みんな驚いているの。」"
+},
+{
+"en": "Alex: \"It sounds like the book criticizes modern <b>materialism</b> a bit.\"",
+"ja": "アレックス「その本、現代の物質主義を少し批判しているみたいだね。」"
+},
+{
+"en": "Nora: \"Exactly. It made me want to <b>restore</b> my grandmother's old garden.\"",
+"ja": "ノラ「その通り。祖母の古い庭を元通りにしたくなったわ。」"
+}
+]
+},
+{
+"titleEn": "An Evening Phone Call",
+"titleJa": "夜の電話",
+"sentences": [
+{
+"en": "Nora: \"How was the town hall meeting tonight?\"",
+"ja": "ノラ「今夜のタウンホールミーティングはどうだった？」"
+},
+{
+"en": "Alex: \"Interesting. The mayor plans to <b>decentralize</b> some city offices.\"",
+"ja": "アレックス「面白かったよ。市長がいくつかの市役所の部署を分散させる予定なんだって。」"
+},
+{
+"en": "Nora: \"Did anyone <b>discredit</b> the plan during the discussion?\"",
+"ja": "ノラ「議論の中で誰かその計画に反対意見を出した？」"
+},
+{
+"en": "Alex: \"A few residents did, but most people were open to it.\"",
+"ja": "アレックス「何人かの住民はそうしたけど、ほとんどの人は前向きだったよ。」"
+},
+{
+"en": "Nora: \"Was there any talk about the old bridge? It seems <b>overrated</b>, if you ask me.\"",
+"ja": "ノラ「あの古い橋についての話はあった？私に言わせれば、あれは過大評価されている気がするんだけど。」"
+},
+{
+"en": "Alex: \"Actually, they want to fix it, not <b>abandon</b> it.\"",
+"ja": "アレックス「実は、あの橋は見捨てるんじゃなくて、修理したいらしいよ。」"
+},
+{
+"en": "Nora: \"That's a relief. Anyway, I should get some sleep. I feel a bit of <b>dehydration</b> from today's run.\"",
+"ja": "ノラ「それは安心ね。とにかく、そろそろ寝ないと。今日の走りのせいで少し脱水気味なの。」"
+},
+{
+"en": "Alex: \"Drink some water and get some rest. Talk tomorrow!\"",
+"ja": "アレックス「お水を飲んでゆっくり休んで。また明日話そう！」"
+}
+]
+}
+];
+
+const STORY_LIST = [
+  {id:'story1', title:'新しい町で', story:STORY},
+  {id:'story2', title:'会話でめぐる一日', story:STORY2}
+];
+
 /* ============ 復習間隔（エビングハウス風）============ */
 const DAYS = [1,2,4,7,15,30,90]; // box 0..6 の次回間隔（日）
 const MASTER_BOX = 4; // これ以上を「定着」とみなす
@@ -998,25 +1325,67 @@ function showScreen(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
   if(name==='home') renderHome();
   if(name==='browse') renderBrowse();
-  if(name==='story') renderStory();
+  if(name==='story'){ renderStoryTabs(); renderStory(); }
   if(name!=='story') stopStory();
 }
 
 /* ============ 物語（ボキャブラリーを使った読み物） ============ */
-let storyLangState = {}; // "chapterIdx-sentIdx" -> 'en' | 'ja'
-let storyAllJa = false;
+let currentStoryIdx = 0;
+let storyLangStateByStory = {}; // storyIdx -> { "chapterIdx-sentIdx": 'en'|'ja' }
+let storyEnglishPercent = 50;
 let storyPlaying = false;
 
 function stripTags(s){ return s.replace(/<\/?[^>]+>/g, ''); }
 
+function currentStory(){ return STORY_LIST[currentStoryIdx].story; }
+
+function renderStoryTabs(){
+  const el = document.getElementById('story-tabs');
+  el.innerHTML = STORY_LIST.map((s,i)=>
+    `<button class="story-tab-btn${i===currentStoryIdx?' active':''}" onclick="selectStory(${i})">${s.title}</button>`
+  ).join('');
+}
+
+function allStoryKeys(){
+  const keys = [];
+  currentStory().forEach((ch,ci)=>ch.sentences.forEach((s,si)=>keys.push(ci+'-'+si)));
+  return keys;
+}
+
+function randomizeStoryLanguage(percent){
+  storyEnglishPercent = percent;
+  const keys = shuffleArr(allStoryKeys());
+  const enCount = Math.round(keys.length * percent / 100);
+  const state = {};
+  keys.forEach((k, i)=>{ state[k] = i < enCount ? 'en' : 'ja'; });
+  storyLangStateByStory[currentStoryIdx] = state;
+  document.getElementById('story-en-pct-label').textContent = `英語 ${percent}%`;
+  document.getElementById('story-ja-pct-label').textContent = `日本語 ${100-percent}%`;
+  const slider = document.getElementById('story-lang-slider');
+  if(slider) slider.style.background = `linear-gradient(to right, var(--navy) ${percent}%, var(--coral-dark) ${percent}%)`;
+  renderStory();
+}
+
+function selectStory(idx){
+  currentStoryIdx = idx;
+  document.querySelectorAll('.story-tab-btn').forEach((b,i)=>b.classList.toggle('active', i===idx));
+  if(!storyLangStateByStory[currentStoryIdx]){
+    randomizeStoryLanguage(storyEnglishPercent);
+  } else {
+    renderStory();
+  }
+}
+
 function renderStory(){
+  const state = storyLangStateByStory[currentStoryIdx];
+  if(!state){ randomizeStoryLanguage(storyEnglishPercent); return; }
   const el = document.getElementById('story-body');
   let html = '';
-  STORY.forEach((chapter, ci)=>{
+  currentStory().forEach((chapter, ci)=>{
     html += `<div class="story-chapter-title">${chapter.titleEn}<br><span style="font-size:12.5px;color:#8A8474;font-weight:400;">${chapter.titleJa}</span></div>`;
     chapter.sentences.forEach((s, si)=>{
       const key = ci+'-'+si;
-      const lang = storyLangState[key] || (storyAllJa ? 'ja' : 'en');
+      const lang = state[key] || 'en';
       const text = lang==='en' ? s.en : s.ja;
       html += `<div class="story-sentence" onclick="toggleStorySentence('${key}')">
         <div class="stext">${text}</div>
@@ -1028,22 +1397,15 @@ function renderStory(){
 }
 
 function toggleStorySentence(key){
-  const current = storyLangState[key] || (storyAllJa ? 'ja' : 'en');
-  storyLangState[key] = current==='en' ? 'ja' : 'en';
-  renderStory();
-}
-
-function toggleAllStoryLang(){
-  storyAllJa = !storyAllJa;
-  storyLangState = {}; // 個別の切り替えをリセットして全文を統一
-  document.getElementById('btn-story-lang-toggle').textContent = storyAllJa ? '全文を英語表示に戻す' : '全文の言語を切り替え';
+  const state = storyLangStateByStory[currentStoryIdx];
+  state[key] = state[key]==='en' ? 'ja' : 'en';
   renderStory();
 }
 
 function playStory(){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
-  const allSentences = STORY.flatMap(ch=>ch.sentences);
+  const allSentences = currentStory().flatMap(ch=>ch.sentences);
   storyPlaying = true;
   let idx = 0;
   function playNext(){
@@ -1132,7 +1494,7 @@ function startPosQuiz(){
   renderTestQuestion();
 }
 
-const PER_WORD_TRACKED_MODES = ['definition', 'pos', 'cloze'];
+const PER_WORD_TRACKED_MODES = ['definition', 'pos', 'cloze', 'listening'];
 
 function startFullDrill(mode, weakOnly){
   const modeLabel = {recognize:'読み', spell:'書き', listening:'リスニング', cloze:'例文穴埋め', pos:'品詞当て', definition:'英英定義当て'}[mode];
@@ -1216,8 +1578,13 @@ function renderTestQuestion(){
   const statusHtml = `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　難易度：${diffLabel}</div>`;
 
   if(testMode==='recognize' || testMode==='listening'){
-    if(testDifficulty <= 2){
-      const n = TEST_DIFF_CHOICES[testDifficulty];
+    const effDifficulty = effDifficultyFor(c);
+    const effDiffLabel = TEST_DIFF_LABELS[effDifficulty];
+    const effStatusHtml = sessionType==='cramDrill' && PER_WORD_TRACKED_MODES.includes(testMode)
+      ? `<div class="queue-status">正解 ${testScore} / ${testIndex}問中　・　この単語の難易度：${effDiffLabel}</div>`
+      : statusHtml;
+    if(effDifficulty <= 2){
+      const n = TEST_DIFF_CHOICES[effDifficulty];
       const choices = buildMeaningChoices(c.m, n);
       const choiceButtons = choices.map(opt =>
         `<button class="btn btn-secondary mc-btn" data-meaning="${escAttr(opt)}" onclick="testSelectMeaning(this)" style="margin-top:8px;">${opt}</button>`
@@ -1226,14 +1593,14 @@ function renderTestQuestion(){
         document.getElementById('study-body').innerHTML = `
           <div class="card-area">
             <div class="flash" id="flash">
-              <span class="pos-tag">${testTypeLabel}（リスニング・${diffLabel}）${countLabel}</span>
+              <span class="pos-tag">${testTypeLabel}（リスニング・${effDiffLabel}）${countLabel}</span>
               <button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>
               <div class="word" id="test-listen-word" style="display:none;margin-top:16px;">${c.w}</div>
               <div class="ipa" id="test-listen-ipa" style="display:none;">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
             </div>
-            ${statusHtml}
+            ${effStatusHtml}
           </div>`;
         document.getElementById('test-listen-play').addEventListener('click', ()=>speak(c.w,'en-US'));
         setTimeout(()=>speak(c.w,'en-US'), 300);
@@ -1241,13 +1608,13 @@ function renderTestQuestion(){
         document.getElementById('study-body').innerHTML = `
           <div class="card-area">
             <div class="flash" id="flash">
-              <span class="pos-tag">${testTypeLabel}（読み・${diffLabel}）${countLabel}</span>
+              <span class="pos-tag">${testTypeLabel}（読み・${effDiffLabel}）${countLabel}</span>
               <div class="word">${c.w}</div>
               <div class="ipa">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
             </div>
-            ${statusHtml}
+            ${effStatusHtml}
           </div>`;
       }
     } else {
@@ -1258,7 +1625,7 @@ function renderTestQuestion(){
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
-            <span class="pos-tag">${testTypeLabel}（${modeLabel}・${diffLabel}）${countLabel}</span>
+            <span class="pos-tag">${testTypeLabel}（${modeLabel}・${effDiffLabel}）${countLabel}</span>
             ${promptHtml}
             <div class="meaning" id="test-self-meaning" style="display:none;">${c.m}</div>
             <div class="ipa" id="test-self-pos-tag" style="display:none;">${c.pos}</div>
@@ -1270,7 +1637,7 @@ function renderTestQuestion(){
               <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
             </div>
           </div>
-          ${statusHtml}
+          ${effStatusHtml}
         </div>`;
       if(testMode==='listening'){
         document.getElementById('test-listen-play').addEventListener('click', ()=>speak(c.w,'en-US'));
@@ -2108,7 +2475,12 @@ document.getElementById('btn-toggle-weak').addEventListener('click', (e)=>{
 });
 document.getElementById('btn-story-play-all').addEventListener('click', playStory);
 document.getElementById('btn-story-stop').addEventListener('click', stopStory);
-document.getElementById('btn-story-lang-toggle').addEventListener('click', toggleAllStoryLang);
+document.getElementById('story-lang-slider').addEventListener('input', (e)=>{
+  randomizeStoryLanguage(parseInt(e.target.value, 10));
+});
+document.getElementById('btn-story-reshuffle').addEventListener('click', ()=>{
+  randomizeStoryLanguage(storyEnglishPercent);
+});
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   if(confirm('本当にすべての学習進捗をリセットしますか？この操作は元に戻せません。')){
     progress = {};
