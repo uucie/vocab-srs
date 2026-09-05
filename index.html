@@ -58,6 +58,13 @@
   header.top .sub{font-size:12.5px;color:#C9D2E4;margin-top:6px;line-height:1.5;}
   .streak-row{display:flex;gap:8px;margin-top:12px;}
   .streak-pill{background:rgba(255,255,255,0.14);border-radius:20px;padding:6px 12px;font-size:12.5px;color:#fff;font-weight:700;}
+  .voice-row{margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .voice-row label{font-size:11.5px;color:#C9D2E4;}
+  .voice-row select{
+    background:rgba(255,255,255,0.14);color:#fff;border:none;border-radius:8px;
+    padding:5px 8px;font-size:12px;max-width:190px;font-family:inherit;
+  }
+  .voice-row select option{color:#24232A;}
 
   .screen{display:none;}
   .screen.active{display:block;}
@@ -249,6 +256,10 @@
     <h1>もっと！単語帳</h1>
     <div class="sub">エビングハウスの忘却曲線（1→2→4→7→15→30→90日）に沿って復習します。</div>
     <div class="streak-row" id="streak-row"></div>
+    <div class="voice-row">
+      <label for="voice-select">🔊 読み上げ音声</label>
+      <select id="voice-select"><option>読み込み中…</option></select>
+    </div>
   </header>
 </div>
 
@@ -1309,12 +1320,54 @@ function stressIpa(ipa){
     .replace(/ˌ/g, '<span style="color:var(--gold);font-weight:700;">ˌ</span>');
 }
 
+let selectedVoiceURI = null;
+
+function loadVoicePref(){
+  try{ selectedVoiceURI = localStorage.getItem('vocab-srs-voice'); }catch(e){}
+}
+function saveVoicePref(uri){
+  selectedVoiceURI = uri;
+  try{ localStorage.setItem('vocab-srs-voice', uri); }catch(e){}
+}
+function scoreVoice(v){
+  let score = 0;
+  if(/en-US/i.test(v.lang)) score += 3;
+  else if(/^en/i.test(v.lang)) score += 1;
+  if(/natural|neural|enhanced|premium|wavenet/i.test(v.name)) score += 5;
+  if(/google/i.test(v.name)) score += 2;
+  if(v.localService) score += 1;
+  return score;
+}
+function populateVoiceSelect(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoices = voices.filter(v=>/^en/i.test(v.lang));
+  const sel = document.getElementById('voice-select');
+  if(!sel || enVoices.length===0) return;
+  enVoices.sort((a,b)=>scoreVoice(b)-scoreVoice(a));
+  sel.innerHTML = enVoices.map(v=>`<option value="${escAttr(v.voiceURI)}">${v.name}（${v.lang}）</option>`).join('');
+  if(selectedVoiceURI && enVoices.some(v=>v.voiceURI===selectedVoiceURI)){
+    sel.value = selectedVoiceURI;
+  } else {
+    sel.value = enVoices[0].voiceURI;
+    saveVoicePref(enVoices[0].voiceURI);
+  }
+}
+function applyVoice(u){
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  const chosen = voices.find(v=>v.voiceURI===selectedVoiceURI);
+  if(chosen) u.voice = chosen;
+}
+
 function speak(text, lang){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang || 'en-US';
-  u.rate = 0.9;
+  u.rate = 0.95;
+  u.pitch = 1;
+  applyVoice(u);
   window.speechSynthesis.speak(u);
 }
 
@@ -1413,6 +1466,8 @@ function playStory(){
     const u = new SpeechSynthesisUtterance(stripTags(allSentences[idx].en));
     u.lang = 'en-US';
     u.rate = 0.95;
+    u.pitch = 1;
+    applyVoice(u);
     u.onend = ()=>{ idx++; playNext(); };
     window.speechSynthesis.speak(u);
   }
@@ -2494,6 +2549,12 @@ document.getElementById('btn-reset').addEventListener('click', ()=>{
   loadStreak();
   renderStreak();
   renderHome();
+  loadVoicePref();
+  populateVoiceSelect();
+  if('speechSynthesis' in window){
+    window.speechSynthesis.addEventListener('voiceschanged', populateVoiceSelect);
+  }
+  document.getElementById('voice-select').addEventListener('change', (e)=> saveVoicePref(e.target.value));
 })();
 
 if('serviceWorker' in navigator){
