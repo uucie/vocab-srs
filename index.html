@@ -117,6 +117,15 @@
     width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);
     background:var(--card);font-size:15px;margin-bottom:12px;font-family:inherit;
   }
+  .browse-controls-row{display:flex;gap:8px;margin-bottom:10px;}
+  .browse-select{
+    flex:1;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);
+    background:var(--card);font-size:13.5px;font-family:inherit;color:var(--ink);
+  }
+  .browse-dir-btn{
+    flex-shrink:0;background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    padding:10px 14px;font-size:13px;font-weight:700;color:var(--navy);
+  }
   .word-row{
     display:flex;align-items:center;gap:10px;background:var(--card);
     border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px;
@@ -378,7 +387,7 @@
   <section id="screen-story" class="screen">
     <div id="story-tabs" class="btn-row" style="margin-bottom:14px;"></div>
     <div class="btn-row" style="margin-bottom:14px;">
-      <button class="btn btn-primary" id="btn-story-play-all">▶ 全文を英語で聴く</button>
+      <button class="btn btn-primary" id="btn-story-play-all">▶ 表示中の言語で全文を聴く</button>
     </div>
     <div class="btn-row" style="margin-bottom:8px;">
       <button class="btn btn-secondary" id="btn-story-stop" style="font-size:13px;">■ 停止</button>
@@ -397,8 +406,29 @@
   <!-- BROWSE -->
   <section id="screen-browse" class="screen">
     <input class="search" id="search-input" placeholder="英単語・意味で検索…">
+    <div class="browse-controls-row">
+      <select id="sort-field-select" class="browse-select">
+        <option value="abc">abc順</option>
+        <option value="lastReviewed">復習した順</option>
+        <option value="box">習熟度順</option>
+      </select>
+      <button class="btn-ghost browse-dir-btn" id="btn-sort-dir">昇順 ▲</button>
+    </div>
+    <div class="browse-controls-row">
+      <select id="filter-select" class="browse-select" style="flex:1;">
+        <option value="all">すべて表示</option>
+        <option value="weak">苦手な単語だけ</option>
+        <option value="mastered">定着した単語だけ</option>
+        <option value="名">名詞だけ</option>
+        <option value="動">動詞だけ</option>
+        <option value="形">形容詞だけ</option>
+        <option value="副">副詞だけ</option>
+        <option value="熟">熟語だけ</option>
+      </select>
+    </div>
     <div class="btn-row" style="margin-bottom:12px;">
-      <button class="btn btn-secondary" id="btn-toggle-weak" style="font-size:13px;padding:10px;">苦手な単語だけ表示</button>
+      <button class="btn btn-secondary" id="btn-browse-play-all" style="font-size:13px;">🔊 一覧を音声で再生</button>
+      <button class="btn btn-secondary" id="btn-browse-stop" style="font-size:13px;display:none;">■ 停止</button>
     </div>
     <div id="browse-list"></div>
   </section>
@@ -1282,6 +1312,7 @@ function rate(id, mode, grade){
   if(!progress[id]) progress[id] = {};
   let p = progress[id][mode] || {box:0, due:0, reps:0};
   p.reps = (p.reps||0)+1;
+  p.lastReviewed = Date.now();
   if(grade==='again'){ p.box = 0; p.due = Date.now(); }
   else if(grade==='hard'){ p.due = Date.now() + DAYS[p.box]*DAY_MS; }
   else if(grade==='good'){ p.box = Math.min(p.box+1, DAYS.length-1); p.due = Date.now() + DAYS[p.box]*DAY_MS; }
@@ -1340,6 +1371,7 @@ function scoreVoice(v){
 }
 function populateVoiceSelect(){
   if(!('speechSynthesis' in window)) return;
+  voicePoolsCache = null; // 音声リストが変わったらキャッシュを作り直す
   const voices = window.speechSynthesis.getVoices();
   const enVoices = voices.filter(v=>/^en/i.test(v.lang));
   const sel = document.getElementById('voice-select');
@@ -1360,6 +1392,51 @@ function applyVoice(u){
   if(chosen) u.voice = chosen;
 }
 
+/* ============ 話者ごとの声の切り替え（物語の会話文用） ============ */
+const VOICE_NAME_HINTS = {
+  female: ['female','woman','samantha','victoria','karen','moira','tessa','susan','zira','eva','ava','fiona','kate','serena','allison','ava','joanna','salli','kimberly','amy','emma','olivia'],
+  male: ['male','man','daniel','fred','tom','david','mark','james','alex','matthew','justin','brian','guy','joey','arthur','oliver','ryan']
+};
+const SPEAKER_GENDER = {
+  "alex":"male", "nora":"female", "nora's mom":"female", "mom":"female",
+  "dad":"male", "little brother":"male", "doctor":"female",
+  "police officer":"male", "officer":"male", "manager":"female"
+};
+let voicePoolsCache = null;
+
+function classifyVoiceGender(name){
+  const n = name.toLowerCase();
+  if(VOICE_NAME_HINTS.female.some(h=>n.includes(h))) return 'female';
+  if(VOICE_NAME_HINTS.male.some(h=>n.includes(h))) return 'male';
+  return 'unknown';
+}
+
+function buildVoicePools(){
+  if(!('speechSynthesis' in window)) return {female:[], male:[], all:[]};
+  const enVoices = window.speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+  const female = enVoices.filter(v=>classifyVoiceGender(v.name)==='female');
+  const male = enVoices.filter(v=>classifyVoiceGender(v.name)==='male');
+  return {female, male, all: enVoices};
+}
+
+function extractSpeaker(text){
+  const m = text.match(/^([A-Za-z][A-Za-z\s']*?):\s*/);
+  return m ? m[1].trim().toLowerCase() : null;
+}
+
+function pickVoiceForSpeaker(speaker){
+  if(!voicePoolsCache) voicePoolsCache = buildVoicePools();
+  if(!speaker) return null;
+  const gender = SPEAKER_GENDER[speaker];
+  if(!gender) return null;
+  const pool = voicePoolsCache[gender];
+  if(!pool || pool.length===0) return null;
+  // 同じ性別内でも話者ごとに一貫した声になるよう、名前のハッシュで選ぶ
+  let hash = 0;
+  for(let i=0;i<speaker.length;i++) hash = (hash*31 + speaker.charCodeAt(i)) % pool.length;
+  return pool[hash];
+}
+
 function speak(text, lang){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
@@ -1368,6 +1445,11 @@ function speak(text, lang){
   u.rate = 0.95;
   u.pitch = 1;
   applyVoice(u);
+  if((lang||'en-US').startsWith('en')){
+    const speaker = extractSpeaker(text);
+    const voice = pickVoiceForSpeaker(speaker);
+    if(voice) u.voice = voice;
+  }
   window.speechSynthesis.speak(u);
 }
 
@@ -1380,6 +1462,7 @@ function showScreen(name){
   if(name==='browse') renderBrowse();
   if(name==='story'){ renderStoryTabs(); renderStory(); }
   if(name!=='story') stopStory();
+  if(name!=='browse') stopBrowsePlay();
 }
 
 /* ============ 物語（ボキャブラリーを使った読み物） ============ */
@@ -1440,9 +1523,11 @@ function renderStory(){
       const key = ci+'-'+si;
       const lang = state[key] || 'en';
       const text = lang==='en' ? s.en : s.ja;
+      const speakText = lang==='en' ? stripTags(s.en) : s.ja;
+      const speakLang = lang==='en' ? 'en-US' : 'ja-JP';
       html += `<div class="story-sentence" onclick="toggleStorySentence('${key}')">
         <div class="stext">${text}</div>
-        <button class="sspeak" onclick="event.stopPropagation();speak('${escAttr(stripTags(s.en))}','en-US')">🔊</button>
+        <button class="sspeak" onclick="event.stopPropagation();speak('${escAttr(speakText)}','${speakLang}')">🔊</button>
       </div>`;
     });
   });
@@ -1458,16 +1543,25 @@ function toggleStorySentence(key){
 function playStory(){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
+  const state = storyLangStateByStory[currentStoryIdx] || {};
   const allSentences = currentStory().flatMap(ch=>ch.sentences);
+  const allKeys = allStoryKeys();
   storyPlaying = true;
   let idx = 0;
   function playNext(){
     if(!storyPlaying || idx >= allSentences.length) { storyPlaying = false; return; }
-    const u = new SpeechSynthesisUtterance(stripTags(allSentences[idx].en));
-    u.lang = 'en-US';
+    const lang = state[allKeys[idx]] || 'en';
+    const text = lang==='en' ? stripTags(allSentences[idx].en) : allSentences[idx].ja;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang==='en' ? 'en-US' : 'ja-JP';
     u.rate = 0.95;
     u.pitch = 1;
-    applyVoice(u);
+    if(lang==='en'){
+      applyVoice(u);
+      const speaker = extractSpeaker(text);
+      const voice = pickVoiceForSpeaker(speaker);
+      if(voice) u.voice = voice;
+    }
     u.onend = ()=>{ idx++; playNext(); };
     window.speechSynthesis.speak(u);
   }
@@ -2437,17 +2531,47 @@ function answer(grade){
 function escAttr(s){ return s.replace(/'/g, "\\'").replace(/"/g,'&quot;'); }
 
 /* ============ 一覧画面 ============ */
-let weakOnlyFilter = false;
+let browseFilterValue = 'all';
+let browseSortField = 'abc';
+let browseSortDir = 'asc';
+let currentBrowseList = [];
+
+function applyBrowseFilterSort(searchText){
+  searchText = (searchText||'').trim().toLowerCase();
+  let list = WORDS.filter(c=>{
+    if(!searchText) return true;
+    return c.w.toLowerCase().includes(searchText) || c.m.includes(searchText);
+  });
+  if(browseFilterValue==='weak'){
+    list = list.filter(c=>{ const p = getP(c.id,'recognize'); return !p || p.box<=1; });
+  } else if(browseFilterValue==='mastered'){
+    list = list.filter(c=>{ const p = getP(c.id,'recognize'); return p && p.box>=MASTER_BOX; });
+  } else if(['名','動','形','副','熟'].includes(browseFilterValue)){
+    list = list.filter(c=>c.pos.split('/').includes(browseFilterValue));
+  }
+  list = list.slice(); // コピーしてソート
+  if(browseSortField==='abc'){
+    list.sort((a,b)=>a.w.localeCompare(b.w));
+  } else if(browseSortField==='lastReviewed'){
+    list.sort((a,b)=>{
+      const av = (getP(a.id,'recognize')||{}).lastReviewed || 0;
+      const bv = (getP(b.id,'recognize')||{}).lastReviewed || 0;
+      return av - bv;
+    });
+  } else if(browseSortField==='box'){
+    list.sort((a,b)=>{
+      const av = (getP(a.id,'recognize')||{}).box ?? -1;
+      const bv = (getP(b.id,'recognize')||{}).box ?? -1;
+      return av - bv;
+    });
+  }
+  if(browseSortDir==='desc') list.reverse();
+  return list;
+}
 
 function renderBrowse(filter){
-  filter = (filter||'').trim().toLowerCase();
-  let list = WORDS.filter(c=>{
-    if(!filter) return true;
-    return c.w.toLowerCase().includes(filter) || c.m.includes(filter);
-  });
-  if(weakOnlyFilter){
-    list = list.filter(c=>{ const p = getP(c.id,'recognize'); return !p || p.box<=1; });
-  }
+  const list = applyBrowseFilterSort(filter);
+  currentBrowseList = list;
   const el = document.getElementById('browse-list');
   if(list.length===0){
     el.innerHTML = '<div style="text-align:center;color:#8A8474;padding:30px 0;">該当する単語がありません。</div>';
@@ -2492,6 +2616,47 @@ function toggleDetail(id){
   if(!open) d.classList.add('open');
 }
 
+let browsePlaying = false;
+
+function speakStep(text, lang, useVoice){
+  return new Promise((resolve)=>{
+    if(!('speechSynthesis' in window) || !browsePlaying){ resolve(); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.95;
+    u.pitch = 1;
+    if(useVoice) applyVoice(u);
+    u.onend = resolve;
+    u.onerror = resolve;
+    window.speechSynthesis.speak(u);
+  });
+}
+
+async function playBrowseList(){
+  if(!('speechSynthesis' in window) || currentBrowseList.length===0) return;
+  window.speechSynthesis.cancel();
+  browsePlaying = true;
+  document.getElementById('btn-browse-play-all').style.display = 'none';
+  document.getElementById('btn-browse-stop').style.display = 'block';
+  for(const c of currentBrowseList){
+    if(!browsePlaying) break;
+    await speakStep(c.w, 'en-US', true);
+    await speakStep(c.m, 'ja-JP', false);
+    await speakStep(c.ex, 'en-US', true);
+    await speakStep(c.exja, 'ja-JP', false);
+  }
+  browsePlaying = false;
+  document.getElementById('btn-browse-play-all').style.display = 'block';
+  document.getElementById('btn-browse-stop').style.display = 'none';
+}
+
+function stopBrowsePlay(){
+  browsePlaying = false;
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  document.getElementById('btn-browse-play-all').style.display = 'block';
+  document.getElementById('btn-browse-stop').style.display = 'none';
+}
+
 /* ============ 初期化 ============ */
 document.querySelectorAll('.tab-btn').forEach(b=>{
   b.addEventListener('click', ()=>showScreen(b.dataset.screen));
@@ -2521,13 +2686,21 @@ document.getElementById('btn-mock-spell').addEventListener('click', ()=>startMoc
 document.getElementById('btn-mock-listening').addEventListener('click', ()=>startMockExam('listening'));
 document.getElementById('btn-goto-browse').addEventListener('click', ()=>showScreen('browse'));
 document.getElementById('search-input').addEventListener('input', (e)=>renderBrowse(e.target.value));
-document.getElementById('btn-toggle-weak').addEventListener('click', (e)=>{
-  weakOnlyFilter = !weakOnlyFilter;
-  e.target.textContent = weakOnlyFilter ? '苦手な単語だけ表示中（解除）' : '苦手な単語だけ表示';
-  e.target.classList.toggle('btn-primary', weakOnlyFilter);
-  e.target.classList.toggle('btn-secondary', !weakOnlyFilter);
+document.getElementById('sort-field-select').addEventListener('change', (e)=>{
+  browseSortField = e.target.value;
   renderBrowse(document.getElementById('search-input').value);
 });
+document.getElementById('btn-sort-dir').addEventListener('click', (e)=>{
+  browseSortDir = browseSortDir==='asc' ? 'desc' : 'asc';
+  e.target.textContent = browseSortDir==='asc' ? '昇順 ▲' : '降順 ▼';
+  renderBrowse(document.getElementById('search-input').value);
+});
+document.getElementById('filter-select').addEventListener('change', (e)=>{
+  browseFilterValue = e.target.value;
+  renderBrowse(document.getElementById('search-input').value);
+});
+document.getElementById('btn-browse-play-all').addEventListener('click', playBrowseList);
+document.getElementById('btn-browse-stop').addEventListener('click', stopBrowsePlay);
 document.getElementById('btn-story-play-all').addEventListener('click', playStory);
 document.getElementById('btn-story-stop').addEventListener('click', stopStory);
 document.getElementById('story-lang-slider').addEventListener('input', (e)=>{
