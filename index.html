@@ -1702,6 +1702,34 @@ function effDifficultyFor(c){
   return testDifficulty;
 }
 
+function isCramTracked(){
+  return sessionType==='cramDrill' && PER_WORD_TRACKED_MODES.includes(testMode);
+}
+
+function cramRateGridHtml(){
+  return `
+    <div class="rate-grid" id="cram-rate-grid" style="display:none;margin-top:14px;">
+      <button class="rate-btn rate-again" onclick="cramRate('again')">もう一度</button>
+      <button class="rate-btn rate-hard" onclick="cramRate('hard')">いまいち</button>
+      <button class="rate-btn rate-good" onclick="cramRate('good')">できた</button>
+      <button class="rate-btn rate-easy" onclick="cramRate('easy')">簡単</button>
+    </div>`;
+}
+
+function showCramRateGrid(){
+  const grid = document.getElementById('cram-rate-grid');
+  if(grid) grid.style.display = 'grid';
+}
+
+function cramRate(grade){
+  const c = WORDS[testQueue[testIndex]];
+  rate(c.id, testMode, grade);
+  recordActivity();
+  if(grade==='again' || grade==='hard'){ testMissed.push(c); } else { testScore++; }
+  testIndex++;
+  renderTestQuestion();
+}
+
 function gradeAdvance(isCorrect){
   recordActivity();
   if(sessionType==='cramDrill'){
@@ -1748,6 +1776,7 @@ function renderTestQuestion(){
               <div class="ipa" id="test-listen-ipa" style="display:none;">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+              ${cramRateGridHtml()}
             </div>
             ${effStatusHtml}
           </div>`;
@@ -1762,6 +1791,7 @@ function renderTestQuestion(){
               <div class="ipa">${stressIpa(c.ipa)}</div>
               <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
               <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+              ${cramRateGridHtml()}
             </div>
             ${effStatusHtml}
           </div>`;
@@ -1771,6 +1801,11 @@ function renderTestQuestion(){
       const promptHtml = testMode==='listening'
         ? `<button class="speak-btn" style="font-size:16px;padding:14px 24px;margin-top:6px;" id="test-listen-play">🔊 再生</button>`
         : `<div class="word">${c.w}</div><div class="ipa">${stressIpa(c.ipa)}</div>`;
+      const gradeButtonsHtml = isCramTracked() ? cramRateGridHtml() : `
+            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
+              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
+              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
+            </div>`;
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
@@ -1781,10 +1816,7 @@ function renderTestQuestion(){
             <div class="example" id="test-self-example" style="display:none;">${c.ex}</div>
             <div class="exampleja" id="test-self-exampleja" style="display:none;">${c.exja}</div>
             <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
-            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
-              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
-              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
-            </div>
+            ${gradeButtonsHtml}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1798,7 +1830,8 @@ function renderTestQuestion(){
         document.getElementById('test-self-example').style.display='block';
         document.getElementById('test-self-exampleja').style.display='block';
         document.getElementById('test-self-reveal').style.display='none';
-        document.getElementById('test-self-grade').style.display='grid';
+        if(isCramTracked()) showCramRateGrid();
+        else document.getElementById('test-self-grade').style.display='grid';
       });
     }
   } else if(testMode==='spell') {
@@ -1817,6 +1850,7 @@ function renderTestQuestion(){
             <div class="word" style="font-size:24px;">${c.m}</div>
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            ${cramRateGridHtml()}
           </div>
           ${statusHtml}
         </div>`;
@@ -1832,6 +1866,7 @@ function renderTestQuestion(){
             <div class="word" id="test-answer" style="display:none;margin-top:6px;">${c.w}</div>
             <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
             <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+            ${cramRateGridHtml()}
           </div>
           ${statusHtml}
         </div>`;
@@ -1864,6 +1899,7 @@ function renderTestQuestion(){
             ${sentenceHtml}
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            ${cramRateGridHtml()}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1882,6 +1918,7 @@ function renderTestQuestion(){
             <div class="ipa" id="test-answer-pos" style="display:none;">${c.pos}</div>
             <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
             <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+            ${cramRateGridHtml()}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1912,6 +1949,7 @@ function renderTestQuestion(){
             ${defHtml}
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            ${cramRateGridHtml()}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1928,6 +1966,7 @@ function renderTestQuestion(){
             <div class="ipa" id="test-answer-pos" style="display:none;">${c.pos}</div>
             <button class="btn btn-primary" id="test-check-btn" style="margin-top:18px;">答え合わせ</button>
             <button class="btn btn-secondary" id="test-next-btn" style="display:none;margin-top:10px;">次へ</button>
+            ${cramRateGridHtml()}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1958,11 +1997,17 @@ function renderTestQuestion(){
             <div class="ipa">${stressIpa(c.ipa)}</div>
             <div style="margin-top:16px;width:100%;">${choiceButtons}</div>
             <div id="test-feedback" style="margin-top:12px;font-weight:700;"></div>
+            ${cramRateGridHtml()}
           </div>
           ${effStatusHtml}
         </div>`;
     } else {
       // ヒントなし：自己採点
+      const gradeButtonsHtml = isCramTracked() ? cramRateGridHtml() : `
+            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
+              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
+              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
+            </div>`;
       document.getElementById('study-body').innerHTML = `
         <div class="card-area">
           <div class="flash" id="flash">
@@ -1973,10 +2018,7 @@ function renderTestQuestion(){
             <div style="font-size:22px;font-weight:700;color:var(--coral-dark);margin-top:14px;display:none;" id="test-self-pos">${c.pos}</div>
             <div style="font-size:15px;margin-top:6px;color:var(--ink);display:none;" id="test-self-pos-meaning">${c.m}</div>
             <button class="btn btn-primary" id="test-self-reveal" style="margin-top:18px;">答えを見る</button>
-            <div class="rate-grid" id="test-self-grade" style="display:none;grid-template-columns:repeat(2,1fr);margin-top:14px;">
-              <button class="rate-btn rate-good" onclick="testSelfGrade(true)">正解だった</button>
-              <button class="rate-btn rate-again" onclick="testSelfGrade(false)">不正解だった</button>
-            </div>
+            ${gradeButtonsHtml}
           </div>
           ${effStatusHtml}
         </div>`;
@@ -1984,7 +2026,8 @@ function renderTestQuestion(){
         document.getElementById('test-self-pos').style.display='block';
         document.getElementById('test-self-pos-meaning').style.display='block';
         document.getElementById('test-self-reveal').style.display='none';
-        document.getElementById('test-self-grade').style.display='grid';
+        if(isCramTracked()) showCramRateGrid();
+        else document.getElementById('test-self-grade').style.display='grid';
       });
     }
   }
@@ -1999,7 +2042,6 @@ function testSelectMeaning(btn){
     if(b.dataset.meaning === c.m){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
     else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
   });
-  if(isCorrect) testScore++; else testMissed.push(c);
   const listenWord = document.getElementById('test-listen-word');
   if(listenWord){
     listenWord.style.display='block';
@@ -2008,7 +2050,12 @@ function testSelectMeaning(btn){
   const fb = document.getElementById('test-feedback');
   fb.textContent = (isCorrect ? '正解！' : '不正解') + `（${c.pos}）`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  if(isCramTracked()){
+    showCramRateGrid();
+  } else {
+    if(isCorrect) testScore++; else testMissed.push(c);
+    setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  }
 }
 
 function testSelectSpelling(btn){
@@ -2020,11 +2067,15 @@ function testSelectSpelling(btn){
     if(b.dataset.word === c.w){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
     else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
   });
-  if(isCorrect) testScore++; else testMissed.push(c);
   const fb = document.getElementById('test-feedback');
   fb.textContent = isCorrect ? '正解！' : `不正解（正解：${c.w}・${c.pos}）`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  if(isCramTracked()){
+    showCramRateGrid();
+  } else {
+    if(isCorrect) testScore++; else testMissed.push(c);
+    setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  }
 }
 
 function testSelfGrade(isCorrect){
@@ -2039,7 +2090,6 @@ function testCheckSpelling(){
   const input = document.getElementById('test-spell-input');
   const isCorrect = normalizeSpelling(input.value) === normalizeSpelling(c.w);
   input.disabled = true;
-  if(isCorrect) testScore++; else testMissed.push(c);
   document.getElementById('test-answer').style.display='block';
   const posEl = document.getElementById('test-answer-pos');
   if(posEl) posEl.style.display='block';
@@ -2047,8 +2097,13 @@ function testCheckSpelling(){
   fb.textContent = isCorrect ? '正解！' : '不正解（正しいつづり ↓）';
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
   document.getElementById('test-check-btn').style.display='none';
-  document.getElementById('test-next-btn').style.display='block';
-  document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
+  if(isCramTracked()){
+    showCramRateGrid();
+  } else {
+    if(isCorrect) testScore++; else testMissed.push(c);
+    document.getElementById('test-next-btn').style.display='block';
+    document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
+  }
 }
 
 function testCheckCloze(cz){
@@ -2057,7 +2112,6 @@ function testCheckCloze(cz){
   const userVal = normalizeSpelling(input.value);
   const isCorrect = userVal === normalizeSpelling(c.w) || (cz.found && userVal === normalizeSpelling(cz.match));
   input.disabled = true;
-  if(isCorrect) testScore++; else testMissed.push(c);
   document.getElementById('test-answer').style.display='block';
   const posEl = document.getElementById('test-answer-pos');
   if(posEl) posEl.style.display='block';
@@ -2065,8 +2119,13 @@ function testCheckCloze(cz){
   fb.textContent = isCorrect ? '正解！' : '不正解（正しい単語 ↓）';
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
   document.getElementById('test-check-btn').style.display='none';
-  document.getElementById('test-next-btn').style.display='block';
-  document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
+  if(isCramTracked()){
+    showCramRateGrid();
+  } else {
+    if(isCorrect) testScore++; else testMissed.push(c);
+    document.getElementById('test-next-btn').style.display='block';
+    document.getElementById('test-next-btn').onclick = ()=>{ gradeAdvance(isCorrect); renderTestQuestion(); };
+  }
 }
 
 function testSelectPos(btn){
@@ -2079,12 +2138,16 @@ function testSelectPos(btn){
     if(correctTags.includes(b.dataset.tag)){ b.style.background='var(--sage)'; b.style.color='#fff'; b.style.borderColor='var(--sage)'; }
     else if(b===btn){ b.style.background='#B8523A'; b.style.color='#fff'; b.style.borderColor='#B8523A'; }
   });
-  if(isCorrect) testScore++; else testMissed.push(c);
   const fb = document.getElementById('test-feedback');
   fb.innerHTML = (isCorrect ? '正解！' : `不正解（正解：${c.pos}）`) +
     `<br><span style="font-weight:400;font-size:13px;">${c.w}（${c.m}）</span>`;
   fb.style.color = isCorrect ? 'var(--sage)' : 'var(--coral-dark)';
-  setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  if(isCramTracked()){
+    showCramRateGrid();
+  } else {
+    if(isCorrect) testScore++; else testMissed.push(c);
+    setTimeout(()=>{ gradeAdvance(isCorrect); renderTestQuestion(); }, 1300);
+  }
 }
 
 function renderTestResult(){
