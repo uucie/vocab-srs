@@ -2480,9 +2480,58 @@ function recognizeQuizTypeForBox(box){
   if(box<=0) return {type:'mc', n:4, showEmoji:true,  showPos:true,  showIpa:true,  label:'4択'};
   if(box===1) return {type:'mc', n:3, showEmoji:true,  showPos:true,  showIpa:true,  label:'3択'};
   if(box===2) return {type:'mc', n:2, showEmoji:false, showPos:true,  showIpa:true,  label:'2択'};
-  if(box===3) return {type:'reveal', showEmoji:false, showPos:false, showIpa:true,  label:'ヒント少なめ'};
-  if(box===4) return {type:'reveal', showEmoji:false, showPos:false, showIpa:true,  label:'ヒント少なめ'};
+  if(box===3) return {type:'meaningBlank', blankMode:'fixed',  showEmoji:false, showPos:false, showIpa:true, label:'穴埋め'};
+  if(box===4) return {type:'meaningBlank', blankMode:'random', showEmoji:false, showPos:false, showIpa:true, label:'穴埋め（入れ替え）'};
+  if(box===5) return {type:'reveal', showEmoji:false, showPos:false, showIpa:true,  label:'ヒント少なめ'};
   return       {type:'reveal', showEmoji:false, showPos:false, showIpa:false, label:'ヒントなし'};
+}
+
+function blankSegmentAt(segments, idx){
+  const seg = segments[idx];
+  const prefixMatch = seg.match(/^(〜(を|に|と|から|で|へ|が)?)/);
+  let prefix = '', core = seg;
+  if(prefixMatch){ prefix = prefixMatch[0]; core = seg.slice(prefix.length); }
+  let blanked;
+  if(prefix){
+    // 「〜を」などの助詞がある場合は、その後のコア部分をすべて隠す
+    blanked = prefix + '◯'.repeat(Math.max(core.length, 2));
+  } else if(core.length <= 1){
+    blanked = '◯'.repeat(Math.max(core.length, 1));
+  } else {
+    // 助詞がない語（名詞・形容詞など）は後半だけを隠し、ヒントなしと区別する
+    const half = Math.ceil(core.length/2);
+    blanked = core.slice(0, core.length-half) + '◯'.repeat(half);
+  }
+  const result = segments.slice();
+  result[idx] = blanked;
+  return result.join('、');
+}
+
+function blankMeaning(m){
+  const segments = m.split('、');
+  return blankSegmentAt(segments, 0);
+}
+
+function blankMeaningRandom(m){
+  const segments = m.split('、');
+  if(segments.length > 1){
+    const idx = Math.floor(Math.random()*segments.length);
+    return blankSegmentAt(segments, idx);
+  }
+  // 意味が1つしかない場合は、隠す位置（前半／後半）をランダムに入れ替える
+  const seg = segments[0];
+  const prefixMatch = seg.match(/^(〜(を|に|と|から|で|へ|が)?)/);
+  let prefix = '', core = seg;
+  if(prefixMatch){ prefix = prefixMatch[0]; core = seg.slice(prefix.length); }
+  if(core.length <= 1){
+    return prefix + '◯'.repeat(Math.max(core.length, 1));
+  }
+  const half = Math.ceil(core.length/2);
+  if(Math.random() < 0.5){
+    return prefix + '◯'.repeat(half) + core.slice(half);
+  } else {
+    return prefix + core.slice(0, core.length-half) + '◯'.repeat(half);
+  }
 }
 
 function buildMeaningChoices(correctMeaning, n){
@@ -2533,6 +2582,28 @@ function renderRecognizeCard(c, remaining){
         ${rateGridHtml}
         <div class="queue-status">残り ${remaining} 枚（${qt.label}）</div>
       </div>`;
+  } else if(qt.type==='meaningBlank'){
+    document.getElementById('study-body').innerHTML = `
+      <div class="card-area">
+        <div class="flash" id="flash">
+          ${posHtml}
+          ${emojiHtml}
+          <div class="word">${c.w}</div>
+          ${ipaHtml}
+          <div style="font-size:18px;margin-top:14px;color:var(--gold);font-weight:700;letter-spacing:1px;">${qt.blankMode==='random' ? blankMeaningRandom(c.m) : blankMeaning(c.m)}</div>
+          <div class="meaning">${c.m}</div>
+          <div class="example">${c.ex}</div>
+          <div class="exampleja">${c.exja}</div>
+          <div class="speak-row">
+            <button class="speak-btn" onclick="speak('${escAttr(c.w)}','en-US')">🔊 単語</button>
+            <button class="speak-btn" onclick="speak('${escAttr(c.ex)}','en-US')">🔊 例文</button>
+          </div>
+          <button class="btn btn-primary reveal-btn" id="reveal-btn">意味を見る</button>
+        </div>
+        ${rateGridHtml}
+        <div class="queue-status">残り ${remaining} 枚（${qt.label}）</div>
+      </div>`;
+    document.getElementById('reveal-btn').addEventListener('click', reveal);
   } else {
     document.getElementById('study-body').innerHTML = `
       <div class="card-area">
